@@ -368,9 +368,6 @@ local HOVER_HEIGHT      = 3
 local IDLE_LIMIT        = 40
 local AUTOCLICK_RATE    = 0.1
 
--- ============================================================
---  SERVICES
--- ============================================================
 do -- ============================================================
 --  AUTOFARM — FULL SCRIPT
 -- ============================================================
@@ -428,34 +425,22 @@ local ISLAND_TRAVEL_POINTS = {
     ["Lunar Islands"]   = 1,
 }
 
--- Build IslandTeleports from both tables for randomTeleport
-local IslandTeleports = {}
-for name, cf in pairs(larryTeleports) do
-    IslandTeleports[name] = { cf }
-end
-for name, cf in pairs(boatTeleports) do
-    if IslandTeleports[name] then
-        table.insert(IslandTeleports[name], cf)
-    else
-        IslandTeleports[name] = { cf }
-    end
-end
-
 -- ============================================================
 --  STATE
 -- ============================================================
-local autofarm_islands   = {}
-local autotravel_enabled = false
-local wildherd_capture   = false
+local autofarm_islands     = {}
+local autotravel_enabled   = false
+local wildherd_capture     = false
+local _teleportInProgress  = false
 
 -- ============================================================
 --  HOVER — LinearVelocity, no CFrame snap
 --  Prevents timesCaughtCheatingTeleport accumulation
 -- ============================================================
-local _hoverAttachment    = nil
+local _hoverAttachment     = nil
 local _hoverLinearVelocity = nil
-local _hoverConn          = nil
-local _hoverHumanoid      = nil
+local _hoverConn           = nil
+local _hoverHumanoid       = nil
 
 local function stopHover()
     if _hoverConn then
@@ -476,6 +461,51 @@ local function stopHover()
     end
 end
 
+-- ============================================================
+--  TERRAIN-AWARE HOVER TARGETING
+--  Raycasts toward the horse. If terrain or a solid model blocks
+--  the direct path (mountain ridges on Mountain/Blizzard/Volcano
+--  islands), lifts the aim point above the obstruction with a
+--  forward blend so the hover arcs over it instead of dragging
+--  along the slope.
+-- ============================================================
+local RaycastParams_Hover = RaycastParams.new()
+RaycastParams_Hover.FilterType = Enum.RaycastFilterType.Exclude
+RaycastParams_Hover.IgnoreWater = true
+
+local CLEARANCE  = 6
+local PROBE_DIST = 80
+
+local function getHoverTarget(root, horseRoot)
+    local rawTarget = horseRoot.Position + Vector3.new(0, HOVER_HEIGHT, 0)
+    local toTarget   = rawTarget - root.Position
+    local dist       = toTarget.Magnitude
+
+    if dist < 1 then return rawTarget end
+
+    RaycastParams_Hover.FilterDescendantsInstances = { player.Character }
+
+    local castDist = math.min(dist, PROBE_DIST)
+    local result = workspace:Raycast(root.Position, toTarget.Unit * castDist, RaycastParams_Hover)
+
+    if result and result.Instance then
+        local hitInstance  = result.Instance
+        local isTerrain    = hitInstance:IsA("Terrain")
+        local isSolidModel = hitInstance:IsA("BasePart") and hitInstance.CanCollide
+
+        if isTerrain or isSolidModel then
+            local liftedTarget = Vector3.new(
+                result.Position.X,
+                result.Position.Y + CLEARANCE,
+                result.Position.Z
+            )
+            return liftedTarget + (toTarget.Unit * 4)
+        end
+    end
+
+    return rawTarget
+end
+
 local function startHover(horseRoot)
     stopHover()
 
@@ -492,13 +522,13 @@ local function startHover(horseRoot)
     _hoverAttachment        = Instance.new("Attachment")
     _hoverAttachment.Parent = root
 
-    _hoverLinearVelocity                      = Instance.new("LinearVelocity")
-    _hoverLinearVelocity.Attachment0          = _hoverAttachment
-    _hoverLinearVelocity.MaxForce             = 1e6
-    _hoverLinearVelocity.RelativeTo           = Enum.ActuatorRelativeTo.World
+    _hoverLinearVelocity                        = Instance.new("LinearVelocity")
+    _hoverLinearVelocity.Attachment0            = _hoverAttachment
+    _hoverLinearVelocity.MaxForce               = 1e6
+    _hoverLinearVelocity.RelativeTo             = Enum.ActuatorRelativeTo.World
     _hoverLinearVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
-    _hoverLinearVelocity.VectorVelocity       = Vector3.zero
-    _hoverLinearVelocity.Parent               = root
+    _hoverLinearVelocity.VectorVelocity         = Vector3.zero
+    _hoverLinearVelocity.Parent                 = root
 
     local SPEED  = 120
     local SETTLE = 0.5
@@ -512,9 +542,9 @@ local function startHover(horseRoot)
         local root2 = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         if not root2 or not _hoverLinearVelocity then return end
 
-        local target  = horseRoot.Position + Vector3.new(0, HOVER_HEIGHT, 0)
-        local delta   = target - root2.Position
-        local dist    = delta.Magnitude
+        local target = getHoverTarget(root2, horseRoot)
+        local delta  = target - root2.Position
+        local dist   = delta.Magnitude
 
         if dist < SETTLE then
             _hoverLinearVelocity.VectorVelocity = Vector3.zero
@@ -548,35 +578,31 @@ local function getCurrentIsland()
     end
     return nil
 end
---[[
+
+-- ============================================================
+--  RANDOM TELEPORT — IslandTeleports lookup + slow LinearVelocity
+--  drift + concurrency guard so the autofarm's idle loop can't
+--  stack a second drift on top of one still in progress.
+-- ============================================================
 local function randomTeleport(root, island)
     if not island then return end
-    local teleports = IslandTeleports[island.Name]
-    if not teleports or #teleports == 0 then return end
-    root.CFrame = teleports[math.random(1, #teleports)]
-end--]]
+    if _teleportInProgress then return end
 
-local function randomTeleport(root, island)
-    if not island then return end
     local teleports = IslandTeleports[island.Name]
     if not teleports or #teleports == 0 then return end
 
-    local targetCF = teleports[math.random(1, #teleports)]
+    local targetCF  = teleports[math.random(1, #teleports)]
     local targetPos = targetCF.Position
 
     local character = player.Character
     if not character then return end
     local humanoid = character:FindFirstChildOfClass("Humanoid")
 
-    -- Reuse existing attachment/velocity if hover is already running,
-    -- otherwise build a temporary one just for the teleport glide
+    _teleportInProgress = true
+
     local usingHover = _hoverLinearVelocity ~= nil
-
-    local lv    = _hoverLinearVelocity
-    local att   = _hoverAttachment
-
-    local tempLV  = nil
-    local tempAtt = nil
+    local lv, att = _hoverLinearVelocity, _hoverAttachment
+    local tempLV, tempAtt = nil, nil
 
     if not usingHover then
         if humanoid then humanoid.PlatformStand = true end
@@ -592,12 +618,11 @@ local function randomTeleport(root, island)
         tempLV.VectorVelocity           = Vector3.zero
         tempLV.Parent                   = root
 
-        lv  = tempLV
-        att = tempAtt
+        lv, att = tempLV, tempAtt
     end
 
-    local SPEED  = 40     -- slower drift than hover (hover is 120)
-    local SETTLE = 2      -- wider settle radius for a teleport destination
+    local SPEED  = 40
+    local SETTLE = 2
 
     local conn
     conn = RunService.Heartbeat:Connect(function()
@@ -607,6 +632,7 @@ local function randomTeleport(root, island)
             if tempLV  then tempLV:Destroy()  end
             if tempAtt then tempAtt:Destroy() end
             if humanoid and not usingHover then humanoid.PlatformStand = false end
+            _teleportInProgress = false
             return
         end
 
@@ -614,20 +640,17 @@ local function randomTeleport(root, island)
         local dist  = delta.Magnitude
 
         if dist < SETTLE then
-            -- Arrived — zero out, restore orientation from target CFrame
             lv.VectorVelocity = Vector3.zero
             conn:Disconnect()
-
             if tempLV  then tempLV:Destroy()  end
             if tempAtt then tempAtt:Destroy() end
             if humanoid and not usingHover then humanoid.PlatformStand = false end
+            _teleportInProgress = false
         else
-            -- Slow proportional drive toward destination
             lv.VectorVelocity = delta.Unit * math.min(dist * 8, SPEED)
         end
     end)
 end
-
 
 local function getNearestHorse(root, island)
     local nearest  = nil
@@ -758,109 +781,122 @@ end
 --  AUTO-FARM
 -- ============================================================
 do
-    task.spawn(function()
-        local idleTime    = 0
-        local lockedHorse = nil
-        local isTravelling = false
-        local noHorseTime  = 0
+    local LOCK_GRACE = 3  -- consecutive 0.4s polls (1.2s) before releasing
 
-        local function releaseHorse()
-            stopHover()
-            lockedHorse = nil
-        end
+task.spawn(function()
+    local idleTime      = 0
+    local lockedHorse   = nil
+    local isTravelling  = false
+    local noHorseTime   = 0
+    local lockFailCount = 0
 
-        local function safeTravelTo(islandName)
-            if isTravelling then return end
-            isTravelling = true
-            idleTime     = 0
-            noHorseTime  = 0
+    local function releaseHorse()
+        stopHover()
+        lockedHorse   = nil
+        lockFailCount = 0
+    end
+
+    local function safeTravelTo(islandName)
+        if isTravelling then return end
+        isTravelling = true
+        idleTime     = 0
+        noHorseTime  = 0
+        releaseHorse()
+
+        travelToIsland(islandName)
+
+        local deadline = tick() + 30
+        repeat
+            task.wait(1)
+            local current = getCurrentIsland()
+            if current and current.Name == islandName then break end
+        until tick() > deadline
+
+        task.wait(2)
+        isTravelling = false
+    end
+
+    local function safeRandomTeleport(root)
+        local island = getCurrentIsland()
+        if not island then return end
+        randomTeleport(root, island)
+    end
+
+    while true do
+        task.wait(0.4)
+
+        if not autofarm_enabled then
             releaseHorse()
-
-            travelToIsland(islandName)
-
-            local deadline = tick() + 30
-            repeat
-                task.wait(1)
-                local current = getCurrentIsland()
-                if current and current.Name == islandName then break end
-            until tick() > deadline
-
-            task.wait(2)
-            isTravelling = false
+            idleTime    = 0
+            noHorseTime = 0
+            continue
         end
 
-        local function safeRandomTeleport(root)
-            local island = getCurrentIsland()
-            if not island then return end
-            randomTeleport(root, island)
+        if isTravelling then continue end
+
+        local character = player.Character
+        local root = character and character:FindFirstChild("HumanoidRootPart")
+        if not root then continue end
+
+        local island = getCurrentIsland()
+        if not island then continue end
+
+        if autotravel_enabled and not autofarm_islands[island.Name] then
+            local next = getNextFarmIsland(island.Name)
+            if next then safeTravelTo(next) end
+            continue
         end
 
-        while true do
-            task.wait(0.4)
-
-            if not autofarm_enabled then
-                releaseHorse()
-                idleTime    = 0
-                noHorseTime = 0
-                continue
-            end
-
-            if isTravelling then continue end
-
-            local character = player.Character
-            local root = character and character:FindFirstChild("HumanoidRootPart")
-            if not root then continue end
-
-            local island = getCurrentIsland()
-            if not island then continue end
-
-            if autotravel_enabled and not autofarm_islands[island.Name] then
-                local next = getNextFarmIsland(island.Name)
-                if next then safeTravelTo(next) end
-                continue
-            end
-
-            -- Clear dead horse reference
-            if lockedHorse and not lockedHorse.Parent then
-                releaseHorse()
-            end
-
-            -- Acquire nearest horse
-            if not lockedHorse then
-                lockedHorse = getNearestHorse(root, island)
-                if lockedHorse then
-                    startHover(lockedHorse)
-                end
-            end
-
-            if lockedHorse then
-                idleTime    = 0
-                noHorseTime = 0
+        -- ── Validity check with grace period instead of instant release ──
+        if lockedHorse then
+            local stillValid = lockedHorse.Parent ~= nil
+            if stillValid then
+                lockFailCount = 0
             else
-                stopHover()
-                idleTime    += 1
-                noHorseTime += 0.4
-
-                if autotravel_enabled and noHorseTime >= STILL_TRAVEL_TIME then
-                    local next = getNextFarmIsland(island.Name)
-                    if next and next ~= island.Name then
-                        safeTravelTo(next)
-                    else
-                        safeRandomTeleport(root)
-                        noHorseTime = 0
-                        idleTime    = 0
-                    end
-                    continue
-                end
-
-                if idleTime >= (tonumber(idle_limit) or IDLE_LIMIT) then
-                    safeRandomTeleport(root)
-                    idleTime = 0
+                lockFailCount += 1
+                if lockFailCount >= LOCK_GRACE then
+                    releaseHorse()
                 end
             end
         end
-    end)
-end
+
+        -- Acquire nearest horse only if not currently locked
+        if not lockedHorse then
+            lockedHorse = getNearestHorse(root, island)
+            if lockedHorse then
+                startHover(lockedHorse)
+                lockFailCount = 0
+            end
+        end
+
+        if lockedHorse then
+            idleTime    = 0
+            noHorseTime = 0
+        else
+            idleTime    += 1
+            noHorseTime += 0.4
+
+            if autotravel_enabled and noHorseTime >= STILL_TRAVEL_TIME then
+                local next = getNextFarmIsland(island.Name)
+                if next and next ~= island.Name then
+                    safeTravelTo(next)
+                else
+                    safeRandomTeleport(root)
+                    noHorseTime = 0
+                    idleTime    = 0
+                end
+                continue
+            end
+
+            if idleTime >= (tonumber(idle_limit) or IDLE_LIMIT) then
+                safeRandomTeleport(root)
+                idleTime = 0
+                end
+            end
+        end
+    end) -- closes task.spawn(function()
+end -- closes do (LOCK_GRACE block)
+
 
 end -- end of outer do block
 
@@ -2605,174 +2641,485 @@ end
 local Chests = Tabs.Main:AddLeftGroupbox('Chests', 'rabbit')
 
 do
-    local m_CharacterHandler = require(m_References.PlayerScripts.Priority.CharacterHandler)
-    local VirtualUser = game:GetService("VirtualUser")
-    local Camera = workspace.CurrentCamera
-    local UserInputService = game:GetService("UserInputService")
+local m_CharacterHandler = require(m_References.PlayerScripts.Priority.CharacterHandler)
+local VirtualUser = game:GetService("VirtualUser")
+local Camera = workspace.CurrentCamera
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
-    _G.AutoTreasure = _G.AutoTreasure or { Enabled = false }
+_G.AutoTreasure = _G.AutoTreasure or { Enabled = false }
 
-    local POLL_INTERVAL = 0.15
-    local EQUIP_COOLDOWN = 0.5
-    local RETRY_ATTEMPTS = 3
-    local RETRY_DELAY = 0.3
-    local DIG_RANGE = 30
-    local DIG_CLICKS = 8
-    local DIG_CLICK_DELAY = 0.1
+local POLL_INTERVAL   = 0.15
+local EQUIP_COOLDOWN  = 0.5
+local RETRY_ATTEMPTS  = 3
+local RETRY_DELAY     = 0.3
+local DIG_RANGE       = 30
+local DIG_CLICKS      = 8
+local DIG_CLICK_DELAY = 0.1
 
-    local lastEquipTime = 0
-    local isEquipping = false
+-- Treasure teleport tuning — slower than hover (40 studs/s),
+-- settles within 2 studs so InRange(point, 30) always passes.
+local TELE_SPEED  = 40
+local TELE_SETTLE = 2
 
-    local function equipShovel()
-        if isEquipping then return end
+local lastEquipTime = 0
+local isEquipping   = false
 
-        local now = tick()
-        if (now - lastEquipTime) < EQUIP_COOLDOWN then return end
+-- ── Smooth teleport ─────────────────────────────────────────
+-- Drives the character to targetPos via LinearVelocity instead
+-- of a CFrame snap. Blocks the calling coroutine until arrival
+-- so the treasure dig sequence continues at the right time.
+local ATTR_NAME   = "itemName"
+local HEALTH_ATTR = "health"
 
-        local ok, err = pcall(function()
-            local shovelSlot = m_Data.GetLocal({ "quickEquipment", "Tool" })
-            if not shovelSlot then
+-- ── Smooth-teleport tuning ─────────────────────────────────
+local TELE_SPEED  = 120   -- studs/s max velocity
+local TELE_SETTLE = 1.5   -- studs — arrival threshold
+
+local player     = game.Players.LocalPlayer
+local camera     = workspace.CurrentCamera
+local VIM        = game:GetService("VirtualInputManager")
+local RunService = game:GetService("RunService")
+
+local lastPos      = Vector3.zero
+local lastMoveTime = tick()
+
+-- ── Highlight ──────────────────────────────────────────────
+local oreHighlight = Instance.new("Highlight")
+oreHighlight.FillColor           = Color3.fromRGB(0, 255, 255)
+oreHighlight.OutlineColor        = Color3.fromRGB(255, 255, 255)
+oreHighlight.FillTransparency    = 0.5
+oreHighlight.OutlineTransparency = 0
+oreHighlight.Parent              = game:GetService("CoreGui")
+oreHighlight.Enabled             = false
+
+-- ── Smooth teleport ────────────────────────────────────────
+-- Drives the character to targetPos via LinearVelocity instead of a
+-- raw CFrame snap. PlatformStand is raised for the duration so the
+-- Humanoid controller doesn't fight the constraint, then restored on
+-- arrival or timeout.
+
+local function smoothTeleportTo(targetPos)
+    local character = player.Character
+    if not character then return end
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then humanoid.PlatformStand = true end
+
+    local att = Instance.new("Attachment")
+    att.Parent = root
+
+    local lv                      = Instance.new("LinearVelocity")
+    lv.Attachment0                = att
+    lv.MaxForce                   = 1e6
+    lv.RelativeTo                 = Enum.ActuatorRelativeTo.World
+    lv.VelocityConstraintMode     = Enum.VelocityConstraintMode.Vector
+    lv.VectorVelocity             = Vector3.zero
+    lv.Parent                     = root
+
+    local arrived = false
+
+    local conn = RunService.Heartbeat:Connect(function()
+        local r = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        if not r or not lv.Parent then
+            arrived = true
+            return
+        end
+
+        local delta = targetPos - r.Position
+        local dist  = delta.Magnitude
+
+        if dist < TELE_SETTLE then
+            lv.VectorVelocity = Vector3.zero
+            arrived = true
+        else
+            -- Proportional ramp: fast far out, decelerates on approach.
+            -- Capped at TELE_SPEED so it doesn't overshoot on long jumps.
+            lv.VectorVelocity = delta.Unit * math.min(dist * 8, TELE_SPEED)
+        end
+    end)
+
+    local deadline = tick() + 5
+    while not arrived and tick() < deadline do
+        task.wait(0.05)
+    end
+
+    conn:Disconnect()
+    lv:Destroy()
+    att:Destroy()
+    if humanoid then humanoid.PlatformStand = false end
+end
+
+-- ── Helpers ────────────────────────────────────────────────
+
+local function getCurrentIsland()
+    local islandsFolder = workspace:FindFirstChild("Islands")
+    if not islandsFolder then return nil end
+    for _, island in ipairs(islandsFolder:GetChildren()) do
+        if island:FindFirstChild(player.Name) then return island end
+    end
+    return nil
+end
+
+local function worldToScreen(worldPos)
+    local screenPos, onScreen = camera:WorldToViewportPoint(worldPos)
+    return screenPos.X, screenPos.Y, onScreen
+end
+
+local function aimCameraAt(targetPos)
+    local currentCF = camera.CFrame
+    local targetCF  = CFrame.new(currentCF.Position, targetPos)
+    for i = 1, 5 do
+        camera.CFrame = currentCF:Lerp(targetCF, i / 5)
+        task.wait()
+    end
+end
+
+local function clickOnTarget(targetPart)
+    local originalCFrame = camera.CFrame
+    camera.CFrame = CFrame.new(camera.CFrame.Position, targetPart.Position)
+
+    local x, y, onScreen = worldToScreen(targetPart.Position)
+    if not onScreen then
+        camera.CFrame = originalCFrame
+        return false
+    end
+
+    local success = pcall(function()
+        VIM:SendMouseMoveEvent(x, y, game)
+        VIM:SendMouseButtonEvent(x, y, 0, true,  game, 1)
+        task.wait(0.05)
+        VIM:SendMouseButtonEvent(x, y, 0, false, game, 1)
+    end)
+
+    task.defer(function()
+        camera.CFrame = originalCFrame
+    end)
+
+    return success
+end
+
+local function getNearestOre(island)
+    local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if not root then return nil end
+
+    local nearest, nearestDist = nil, math.huge
+
+    for _, obj in ipairs(island:GetDescendants()) do
+        local itemName = obj:GetAttribute(ATTR_NAME)
+        if obj:IsA("Model") and TARGET_ITEMS[itemName] == true then
+            local health = obj:GetAttribute(HEALTH_ATTR)
+            if health and health > 0 then
+                local part = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+                if part then
+                    local dist = (root.Position - part.Position).Magnitude
+                    if dist < nearestDist then
+                        nearestDist = dist
+                        nearest     = obj
+                    end
+                end
+            end
+        end
+    end
+
+    return nearest
+end
+
+-- ── Idle / Random TP thread ────────────────────────────────
+-- Raw CFrame swap replaced with smoothTeleportTo. The idle thread
+-- wraps it in task.spawn so it yields independently without blocking
+-- the 1-second poll interval.
+
+task.spawn(function()
+    while true do
+        task.wait(1)
+
+        if not AUTOFARM or not RANDOM_TP_ENABLED or isMining then
+            lastMoveTime = tick()
+            continue
+        end
+
+        local character = player.Character
+        local root = character and character:FindFirstChild("HumanoidRootPart")
+        if not root then continue end
+
+        if (root.Position - lastPos).Magnitude > 2 then
+            lastPos      = root.Position
+            lastMoveTime = tick()
+        elseif tick() - lastMoveTime > IDLE_THRESHOLD then
+            local myIsland = getCurrentIsland()
+            if myIsland then
+                local locations = (myIsland.Name == "Volcano Island")
+                    and VolcanoTeleports
+                    or  IslandTeleports[myIsland.Name]
+
+                if locations and #locations > 0 then
+                    local dest = locations[math.random(1, #locations)]
+                    -- dest is a CFrame from the original table — extract Position
+                    -- for smoothTeleportTo, then restore facing after arrival.
+                    task.spawn(function()
+                        smoothTeleportTo(dest.Position)
+                        -- Re-apply the original CFrame facing once settled so the
+                        -- character isn't left staring at the floor.
+                        local r = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        if r then r.CFrame = dest end
+                        print("[IdleTP] Smooth-arrived on", myIsland.Name)
+                    end)
+                end
+            end
+            lastMoveTime = tick()
+        end
+    end
+end)
+
+-- ── Main autofarm thread ───────────────────────────────────
+-- The follow lock (Heartbeat CFrame pin) stays as a raw CFrame assign
+-- because it runs every frame to hold the player against a moving ore.
+-- LinearVelocity there would race with the lock and lose. Only the
+-- one-shot repositions benefit from the physics-based approach.
+
+local followConnection = nil
+
+task.spawn(function()
+    while true do
+        task.wait(0.3)
+
+        if not AUTOFARM then
+            isMining = false
+            if followConnection then
+                stopHover()
+                local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then humanoid.PlatformStand = false end
+            end
+            continue
+        end
+
+        local myIsland = getCurrentIsland()
+        if not myIsland then continue end
+
+        local ore = getNearestOre(myIsland)
+        if not ore then
+            isMining = false
+            if followConnection then
+                stopHover()
+                local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then humanoid.PlatformStand = false end
+            end
+            continue
+        end
+
+        local targetPart = ore.PrimaryPart or ore:FindFirstChildWhichIsA("BasePart")
+        if not targetPart then continue end
+
+        if OREHIGHLIGHT then
+            oreHighlight.Adornee = ore
+            oreHighlight.Enabled = true
+        end
+
+        local isErupted   = ore:GetAttribute(ATTR_NAME) == "Erupted Deposit"
+        local hoverOffset = isErupted and Vector3.new(0, 10, 0) or Vector3.new(0, 2, 4)
+
+        if followConnection then
+            followConnection:Disconnect()
+            followConnection = nil
+        end
+
+        justTeleported = true
+        aimCameraAt(targetPart.Position)
+
+        if isErupted then
+            task.wait(3)
+            if not ore.Parent or (ore:GetAttribute(HEALTH_ATTR) or 0) <= 0 then
+                continue
+            end
+        end
+
+        isMining = true
+        followConnection = RunService.Heartbeat:Connect(function()
+            local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            if not root then return end
+
+            if not ore or not ore.Parent or (ore:GetAttribute(HEALTH_ATTR) or 0) <= 0 then
+                followConnection:Disconnect()
+                followConnection = nil
+                isMining = false
+                oreHighlight.Enabled = false
                 return
             end
 
-            local equipped = m_Data.GetLocal({ "temporary", "equippedEquipment" })
+            -- Raw CFrame assign is intentional here: this runs every Heartbeat
+            -- to pin the player. A LinearVelocity constraint would fight the
+            -- per-frame overwrite and produce jitter. CFrame wins at this frequency.
+            root.CFrame = CFrame.new(targetPart.Position + hoverOffset, targetPart.Position)
+            root.AssemblyLinearVelocity  = Vector3.zero
+            root.AssemblyAngularVelocity = Vector3.zero
+        end)
 
-            if tostring(equipped) ~= tostring(shovelSlot) then
-                isEquipping = true
-                lastEquipTime = tick()
+        local lastHealth           = ore:GetAttribute(HEALTH_ATTR)
+        local lastHealthChangeTime = tick()
 
-                for attempt = 1, RETRY_ATTEMPTS do
-                    Utilities.Network:FireServer("QuickEquipment", "Use", "Tool")
-                    task.wait(RETRY_DELAY)
+        while AUTOFARM and ore.Parent and (ore:GetAttribute(HEALTH_ATTR) or 0) > 0 and TARGET_ITEMS[ore:GetAttribute(ATTR_NAME)] == true do
+            camera.CFrame = CFrame.new(camera.CFrame.Position, targetPart.Position)
+            clickOnTarget(targetPart)
 
-                    local nowEquipped = m_Data.GetLocal({ "temporary", "equippedEquipment" })
-                    if tostring(nowEquipped) == tostring(shovelSlot) then
+            if justTeleported then
+                justTeleported = false
+                lastHealth           = ore:GetAttribute(HEALTH_ATTR)
+                lastHealthChangeTime = tick()
+                task.wait(0.1)
+            else
+                local clickSent    = tick()
+                local healthDropped = false
+
+                while tick() - clickSent < 5 do
+                    task.wait(0.05)
+
+                    if not ore.Parent or (ore:GetAttribute(HEALTH_ATTR) or 0) <= 0 then
+                        break
+                    end
+
+                    local currentHealth = ore:GetAttribute(HEALTH_ATTR)
+                    if currentHealth ~= lastHealth then
+                        lastHealth    = currentHealth
+                        healthDropped = true
                         break
                     end
                 end
 
-                isEquipping = false
+                if CLICK_COOLDOWN > 0 then
+                    task.wait(CLICK_COOLDOWN)
+                end
             end
-        end)
+        end
 
-        if not ok then
+        if followConnection then
+            followConnection:Disconnect()
+            followConnection = nil
+        end
+        isMining = false
+        oreHighlight.Enabled = false
+    end
+end)
+
+local function teleportTo(point)
+    smoothTeleportTo(point + Vector3.new(0, 5, 0))
+end
+
+-- ── Equipment helpers (unchanged) ───────────────────────────
+local function equipShovel()
+    if isEquipping then return end
+
+    local now = tick()
+    if (now - lastEquipTime) < EQUIP_COOLDOWN then return end
+
+    local ok, err = pcall(function()
+        local shovelSlot = m_Data.GetLocal({ "quickEquipment", "Tool" })
+        if not shovelSlot then return end
+
+        local equipped = m_Data.GetLocal({ "temporary", "equippedEquipment" })
+
+        if tostring(equipped) ~= tostring(shovelSlot) then
+            isEquipping   = true
+            lastEquipTime = tick()
+
+            for attempt = 1, RETRY_ATTEMPTS do
+                Utilities.Network:FireServer("QuickEquipment", "Use", "Tool")
+                task.wait(RETRY_DELAY)
+                local nowEquipped = m_Data.GetLocal({ "temporary", "equippedEquipment" })
+                if tostring(nowEquipped) == tostring(shovelSlot) then break end
+            end
+
             isEquipping = false
-            warn("[autotreasure] equip shovel error:", err)
-        end
-    end
-
-    local function reequipShovel()
-        do
-            Utilities.Network:FireServer("Inventory", "Use", m_Data.GetLocal({ "quickEquipment", "Tool" }), "Unequip")
-            task.wait(0.4)
-            isEquipping = false
-            lastEquipTime = 0
-            equipShovel()
-            task.wait(0.4)
-        end
-    end
-
-    local function getTreasurePoint()
-        local success, result = pcall(function()
-            return Utilities.Network:InvokeServer("BuriedTreasure", "GetPoint")
-        end)
-        if success and result then
-            return result
-        end
-        return nil
-    end
-
-    local function teleportTo(point)
-        do
-            local character = LocalPlayer.Character
-            if not character then return end
-            local hrp = character:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                hrp.CFrame = CFrame.new(point + Vector3.new(0, 5, 0))
-                task.wait(0.4)
-            end
-        end
-    end
-
-    local function clickShovel(times)
-        pcall(function()
-            do
-                local viewportSize = Camera.ViewportSize
-                local clickPosition = Vector2.new(viewportSize.X / 2, viewportSize.Y / 2)
-                if not UserInputService:GetFocusedTextBox() then
-                    for i = 1, times do
-                        VirtualUser:ClickButton1(clickPosition, Camera.CFrame)
-                        task.wait(DIG_CLICK_DELAY)
-                    end
-                end
-            end
-        end)
-    end
-
-    task.spawn(function()
-
-        while true do
-            task.wait(POLL_INTERVAL)
-
-            if not (_G.AutoTreasure and _G.AutoTreasure.Enabled) then
-                continue
-            end
-
-            do
-                equipShovel()
-                task.wait(0.6)
-
-                local point = nil
-                local attempts = 0
-                local maxAttempts = 10
-
-                while not point and attempts < maxAttempts do
-                    if not (_G.AutoTreasure and _G.AutoTreasure.Enabled) then break end
-
-                    point = getTreasurePoint()
-
-                    if not point then
-                        attempts = attempts + 1
-                        reequipShovel()
-                        task.wait(0.5)
-                    end
-                end
-
-                if not point then
-                    task.wait(1)
-                    continue
-                end
-
-                print("[AutoTreasure] Treasure at:", point)
-
-                teleportTo(point)
-
-                local inRange = m_CharacterHandler.object:InRange(point, DIG_RANGE)
-                if not inRange then
-                    teleportTo(point)
-                end
-
-                reequipShovel()
-                reequipShovel()
-                task.wait(0.3)
-
-                clickShovel(DIG_CLICKS)
-                task.wait(1.5)
-
-                reequipShovel()
-                task.wait(1)
-            end
         end
     end)
 
-    LocalPlayer.CharacterAdded:Connect(function()
-        do
-            task.wait(1.5)
-            isEquipping = false
-            lastEquipTime = 0
-            if _G.AutoTreasure and _G.AutoTreasure.Enabled then
-                equipShovel()
+    if not ok then
+        isEquipping = false
+        warn("[autotreasure] equip shovel error:", err)
+    end
+end
+
+local function reequipShovel()
+    Utilities.Network:FireServer("Inventory", "Use", m_Data.GetLocal({ "quickEquipment", "Tool" }), "Unequip")
+    task.wait(0.4)
+    isEquipping   = false
+    lastEquipTime = 0
+    equipShovel()
+    task.wait(0.4)
+end
+
+local function getTreasurePoint()
+    local success, result = pcall(function()
+        return Utilities.Network:InvokeServer("BuriedTreasure", "GetPoint")
+    end)
+    if success and result then return result end
+    return nil
+end
+
+local function clickShovel(times)
+    pcall(function()
+        local viewportSize  = Camera.ViewportSize
+        local clickPosition = Vector2.new(viewportSize.X / 2, viewportSize.Y / 2)
+        if not UserInputService:GetFocusedTextBox() then
+            for i = 1, times do
+                VirtualUser:ClickButton1(clickPosition, Camera.CFrame)
+                task.wait(DIG_CLICK_DELAY)
             end
+        end
+    end)
+end
+
+-- ── Main loop ────────────────────────────────────────────────
+task.spawn(function()
+    while true do
+        task.wait(POLL_INTERVAL)
+
+        if not (_G.AutoTreasure and _G.AutoTreasure.Enabled) then continue end
+
+        equipShovel()
+        task.wait(0.6)
+
+        local point    = nil
+        local attempts = 0
+
+        while not point and attempts < 10 do
+            if not (_G.AutoTreasure and _G.AutoTreasure.Enabled) then break end
+            point = getTreasurePoint()
+            if not point then
+                attempts += 1
+                reequipShovel()
+                task.wait(0.5)
+            end
+        end
+
+        if not point then task.wait(1) continue end
+
+        teleportTo(point)
+
+        if not m_CharacterHandler.object:InRange(point, DIG_RANGE) then
+            teleportTo(point)
+        end
+
+        reequipShovel()
+        reequipShovel()
+        task.wait(0.3)
+
+        clickShovel(DIG_CLICKS)
+        task.wait(1.5)
+
+        reequipShovel()
+        task.wait(1)
+    end
+end)
+
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(1.5)
+    isEquipping   = false
+    lastEquipTime = 0
+        if _G.AutoTreasure and _G.AutoTreasure.Enabled then
+            equipShovel()
         end
     end)
 end
