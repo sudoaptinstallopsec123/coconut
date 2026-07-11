@@ -11,16 +11,44 @@ loadstring([[
 ]])();
 
 
-local autofarm_enabled = false
-local autoclick_enabled = false
-local autoclick_duration = 0.05
+local Players           = game:GetService("Players")
+local RunService        = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local HOVER_HEIGHT = 6
-local IDLE_LIMIT = 40
-local TELEPORT_IF_STUCK_TIME = 6
+local m_References    = require(ReplicatedStorage:WaitForChild("References"))
+local m_TravelHandler = require(m_References.PlayerScripts:WaitForChild("Secondary"):WaitForChild("TravelHandler"))
 
-local lastPosition = nil
-local stuckTime = 0
+
+-- ============================================================
+--  CONFIG
+-- ============================================================
+local HOVER_HEIGHT      = 3
+local IDLE_LIMIT        = 40
+local AUTOCLICK_RATE    = 0.1
+local STILL_TRAVEL_TIME = 40
+
+local autofarm_enabled   = false
+local autoclick_enabled  = false
+local autoclick_duration = AUTOCLICK_RATE
+local idle_limit         = IDLE_LIMIT
+
+-- ============================================================
+--  ISLAND DATA
+-- ============================================================
+local AVAILABLE_ISLANDS = {
+    "Mainland", "Blizzard Island", "Forest Island", "Royal Island",
+    "Desert Island", "Glacier Island", "Mountain Island", "Jungle Island",
+    "Lunar Islands", "Volcano Island",
+}
+
+local ISLAND_TRAVEL_POINTS = {
+    ["Mainland"]        = 8, ["Stable Island"]   = 1,
+    ["Training Island"] = 1, ["Royal Island"]    = 1,
+    ["Volcano Island"]  = 1, ["Blizzard Island"] = 1,
+    ["Forest Island"]   = 1, ["Desert Island"]   = 1,
+    ["Glacier Island"]  = 1, ["Mountain Island"] = 1,
+    ["Jungle Island"]   = 1, ["Lunar Islands"]   = 1,
+}
 
 local IslandTeleports = {
     ["Mainland"] = {
@@ -333,8 +361,6 @@ local IslandTeleports = {
     },
 }
 
-local player = game:GetService("Players").LocalPlayer
-
 local larryTeleports = {
     ["Mainland"] = CFrame.new(34.923, 14.990, -470.256, -0.987316, 0, 0.158766, 0, 1, 0, -0.158766, 0, -0.987316),
     ["Blizzard Island"] = CFrame.new(-395.354, 15.404, -3828.735, -0.763117, 0, 0.646261, 0, 1, 0, -0.646261, 0, -0.763117),
@@ -362,156 +388,165 @@ local boatTeleports = {
 }
 
 -- ============================================================
---  CONFIG
+--  STATE
 -- ============================================================
-local HOVER_HEIGHT      = 3
-local IDLE_LIMIT        = 40
-local AUTOCLICK_RATE    = 0.1
+local autofarm_islands    = {}
+local autotravel_enabled  = false
+local wildherd_capture    = false
+local _teleportInProgress = false
+local _teleportStartTime  = 0
 
 do -- ============================================================
 --  AUTOFARM — FULL SCRIPT
 -- ============================================================
 
-local Players           = game:GetService("Players")
-local RunService        = game:GetService("RunService")
-local UserInputService  = game:GetService("UserInputService")
-local VirtualUser       = game:GetService("VirtualUser")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local player = Players.LocalPlayer
-
 -- ============================================================
---  REFERENCES
+--  HOVER CONSTANTS
 -- ============================================================
-local m_References    = require(ReplicatedStorage:WaitForChild("References"))
-local m_TravelHandler = require(m_References.PlayerScripts:WaitForChild("Secondary"):WaitForChild("TravelHandler"))
-
--- ============================================================
---  CONFIG
--- ============================================================
-local HOVER_HEIGHT      = 3
-local IDLE_LIMIT        = 40
-local AUTOCLICK_RATE    = 0.1
-local STILL_TRAVEL_TIME = 40
+local CLEARANCE      = 7
+local PROBE_DIST     = 90
+local LATERAL_ANGLE  = math.rad(60)
+local LATERAL_DIST   = 70
+local HOVER_SPEED    = 120
+local HOVER_SETTLE   = 0.5
+local STALL_DIST     = 2
+local STALL_WINDOW   = 2.0
+local NUDGE_DURATION = 0.6
 
 -- ============================================================
---  ISLAND DATA
--- ============================================================
-local AVAILABLE_ISLANDS = {
-    "Mainland",
-    "Blizzard Island",
-    "Forest Island",
-    "Royal Island",
-    "Desert Island",
-    "Glacier Island",
-    "Mountain Island",
-    "Jungle Island",
-    "Lunar Islands",
-    "Volcano Island",
-}
-
-local ISLAND_TRAVEL_POINTS = {
-    ["Mainland"]        = 8,
-    ["Stable Island"]   = 1,
-    ["Training Island"] = 1,
-    ["Royal Island"]    = 1,
-    ["Volcano Island"]  = 1,
-    ["Blizzard Island"] = 1,
-    ["Forest Island"]   = 1,
-    ["Desert Island"]   = 1,
-    ["Glacier Island"]  = 1,
-    ["Mountain Island"] = 1,
-    ["Jungle Island"]   = 1,
-    ["Lunar Islands"]   = 1,
-}
-
--- ============================================================
---  STATE
--- ============================================================
-local autofarm_islands     = {}
-local autotravel_enabled   = false
-local wildherd_capture     = false
-local _teleportInProgress  = false
-
--- ============================================================
---  HOVER — LinearVelocity, no CFrame snap
---  Prevents timesCaughtCheatingTeleport accumulation
+--  HOVER STATE
 -- ============================================================
 local _hoverAttachment     = nil
 local _hoverLinearVelocity = nil
 local _hoverConn           = nil
 local _hoverHumanoid       = nil
+local _hoverTargetModel    = nil
 
+-- ============================================================
+--  RAYCAST PARAMS
+-- ============================================================
+local RaycastParams_Hover = RaycastParams.new()
+RaycastParams_Hover.FilterType  = Enum.RaycastFilterType.Exclude
+RaycastParams_Hover.IgnoreWater = true
+
+-- ============================================================
+--  stopHover
+-- ============================================================
 local function stopHover()
-    if _hoverConn then
-        _hoverConn:Disconnect()
-        _hoverConn = nil
-    end
-    if _hoverLinearVelocity then
-        _hoverLinearVelocity:Destroy()
-        _hoverLinearVelocity = nil
-    end
-    if _hoverAttachment then
-        _hoverAttachment:Destroy()
-        _hoverAttachment = nil
-    end
-    if _hoverHumanoid then
+    if _hoverConn           then _hoverConn:Disconnect();        _hoverConn           = nil end
+    if _hoverLinearVelocity then _hoverLinearVelocity:Destroy(); _hoverLinearVelocity = nil end
+    if _hoverAttachment     then _hoverAttachment:Destroy();     _hoverAttachment     = nil end
+    if _hoverHumanoid       then
         _hoverHumanoid.PlatformStand = false
         _hoverHumanoid = nil
     end
+    _hoverTargetModel = nil
 end
 
 -- ============================================================
---  TERRAIN-AWARE HOVER TARGETING
---  Raycasts toward the horse. If terrain or a solid model blocks
---  the direct path (mountain ridges on Mountain/Blizzard/Volcano
---  islands), lifts the aim point above the obstruction with a
---  forward blend so the hover arcs over it instead of dragging
---  along the slope.
+--  castProbe
 -- ============================================================
-local RaycastParams_Hover = RaycastParams.new()
-RaycastParams_Hover.FilterType = Enum.RaycastFilterType.Exclude
-RaycastParams_Hover.IgnoreWater = true
-
-local CLEARANCE  = 6
-local PROBE_DIST = 80
-
-local function getHoverTarget(root, horseRoot)
-    local rawTarget = horseRoot.Position + Vector3.new(0, HOVER_HEIGHT, 0)
-    local toTarget   = rawTarget - root.Position
-    local dist       = toTarget.Magnitude
-
-    if dist < 1 then return rawTarget end
-
-    RaycastParams_Hover.FilterDescendantsInstances = { player.Character }
-
-    local castDist = math.min(dist, PROBE_DIST)
-    local result = workspace:Raycast(root.Position, toTarget.Unit * castDist, RaycastParams_Hover)
-
+local function castProbe(origin, direction, length)
+    local result = workspace:Raycast(origin, direction.Unit * length, RaycastParams_Hover)
     if result and result.Instance then
-        local hitInstance  = result.Instance
-        local isTerrain    = hitInstance:IsA("Terrain")
-        local isSolidModel = hitInstance:IsA("BasePart") and hitInstance.CanCollide
-
-        if isTerrain or isSolidModel then
-            local liftedTarget = Vector3.new(
-                result.Position.X,
-                result.Position.Y + CLEARANCE,
-                result.Position.Z
-            )
-            return liftedTarget + (toTarget.Unit * 4)
+        local inst = result.Instance
+        if inst:IsA("Terrain") or (inst:IsA("BasePart") and inst.CanCollide) then
+            return true, result.Position
         end
     end
-
-    return rawTarget
+    return false, nil
 end
 
+-- ============================================================
+--  getHoverVelocity — three-probe terrain steering
+-- ============================================================
+local function getHoverVelocity(root, horseRoot, activeNudge)
+    local targetPos = horseRoot.Position + Vector3.new(0, HOVER_HEIGHT, 0)
+    local toTarget  = targetPos - root.Position
+    local dist      = toTarget.Magnitude
+
+    if dist < HOVER_SETTLE then return Vector3.zero, dist end
+
+    local forward = toTarget.Unit
+
+    local excludeList = { player.Character }
+    if _hoverTargetModel then table.insert(excludeList, _hoverTargetModel) end
+    RaycastParams_Hover.FilterDescendantsInstances = excludeList
+
+    -- Forward probe
+    local fwdBlocked, fwdHitPos = castProbe(root.Position, forward, math.min(dist, PROBE_DIST))
+
+    if not fwdBlocked then
+        return forward * math.min(dist * 60, HOVER_SPEED), dist
+    end
+
+    -- Compute lift direction over obstruction
+    local obstructionY = fwdHitPos and fwdHitPos.Y or root.Position.Y
+    local liftTarget   = Vector3.new(targetPos.X, obstructionY + CLEARANCE, targetPos.Z)
+    local liftDir      = (liftTarget - root.Position).Unit
+
+    -- Active stall-break nudge blends with lift
+    if activeNudge then
+        local blended = (liftDir + activeNudge * 0.8).Unit
+        return blended * math.min(dist * 60, HOVER_SPEED), dist
+    end
+
+    -- Lateral probes
+    local flatForward = Vector3.new(forward.X, 0, forward.Z)
+    if flatForward.Magnitude < 0.01 then flatForward = Vector3.new(1, 0, 0) end
+    flatForward = flatForward.Unit
+
+    local cos_a, sin_a = math.cos(LATERAL_ANGLE), math.sin(LATERAL_ANGLE)
+
+    local leftDir = Vector3.new(
+        flatForward.X * cos_a - flatForward.Z * (-sin_a),
+        0,
+        flatForward.X * (-sin_a) + flatForward.Z * cos_a
+    ).Unit
+
+    local rightDir = Vector3.new(
+        flatForward.X * cos_a - flatForward.Z * sin_a,
+        0,
+        flatForward.X * sin_a  + flatForward.Z * cos_a
+    ).Unit
+
+    local leftBlocked  = castProbe(root.Position, leftDir,  LATERAL_DIST)
+    local rightBlocked = castProbe(root.Position, rightDir, LATERAL_DIST)
+
+    local lateralDir
+    if not leftBlocked and rightBlocked then
+        lateralDir = leftDir
+    elseif not rightBlocked and leftBlocked then
+        lateralDir = rightDir
+    elseif not leftBlocked and not rightBlocked then
+        local leftDot  = leftDir:Dot(forward)
+        local rightDot = rightDir:Dot(forward)
+        lateralDir = (leftDot >= rightDot) and leftDir or rightDir
+    else
+        lateralDir = nil
+    end
+
+    local finalDir
+    if lateralDir then
+        finalDir = (liftDir + lateralDir * 1.2).Unit
+    else
+        finalDir = liftDir
+    end
+
+    return finalDir * math.min(dist * 60, HOVER_SPEED), dist
+end
+
+-- ============================================================
+--  startHover
+-- ============================================================
 local function startHover(horseRoot)
     stopHover()
 
     local character = player.Character
     local root      = character and character:FindFirstChild("HumanoidRootPart")
     if not root then return end
+
+    _hoverTargetModel = horseRoot:FindFirstAncestorOfClass("Model")
 
     local humanoid = character:FindFirstChildOfClass("Humanoid")
     if humanoid then
@@ -530,8 +565,11 @@ local function startHover(horseRoot)
     _hoverLinearVelocity.VectorVelocity         = Vector3.zero
     _hoverLinearVelocity.Parent                 = root
 
-    local SPEED  = 120
-    local SETTLE = 0.5
+    -- Stall detection state
+    local lastPos      = root.Position
+    local lastMoveTime = tick()
+    local nudgeDir     = nil
+    local nudgeUntil   = 0
 
     _hoverConn = RunService.Heartbeat:Connect(function()
         if not horseRoot or not horseRoot.Parent then
@@ -542,15 +580,32 @@ local function startHover(horseRoot)
         local root2 = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         if not root2 or not _hoverLinearVelocity then return end
 
-        local target = getHoverTarget(root2, horseRoot)
-        local delta  = target - root2.Position
-        local dist   = delta.Magnitude
+        local now = tick()
 
-        if dist < SETTLE then
-            _hoverLinearVelocity.VectorVelocity = Vector3.zero
+        -- Stall detector
+        local moved = (root2.Position - lastPos).Magnitude
+        if moved > STALL_DIST then
+            lastPos      = root2.Position
+            lastMoveTime = now
+            if now > nudgeUntil then nudgeDir = nil end
         else
-            _hoverLinearVelocity.VectorVelocity = delta.Unit * math.min(dist * 60, SPEED)
+            local stalledFor = now - lastMoveTime
+            if stalledFor >= STALL_WINDOW and now > nudgeUntil then
+                local toHorse = horseRoot.Position - root2.Position
+                local flat    = Vector3.new(toHorse.X, 0, toHorse.Z)
+                if flat.Magnitude > 0.01 then
+                    local r    = flat.Unit:Cross(Vector3.new(0, 1, 0)).Unit
+                    nudgeDir   = (math.random(0, 1) == 0) and r or -r
+                    nudgeUntil = now + NUDGE_DURATION
+                    lastMoveTime = now
+                end
+            end
         end
+
+        local activeNudge = (now <= nudgeUntil) and nudgeDir or nil
+
+        local vel, _ = getHoverVelocity(root2, horseRoot, activeNudge)
+        _hoverLinearVelocity.VectorVelocity = vel
     end)
 end
 
@@ -560,9 +615,7 @@ end
 local function travelToIsland(islandName)
     if not islandName then return end
     local point = ISLAND_TRAVEL_POINTS[islandName] or 1
-    pcall(function()
-        m_TravelHandler.Travel(islandName, point)
-    end)
+    pcall(function() m_TravelHandler.Travel(islandName, point) end)
 end
 
 -- ============================================================
@@ -572,17 +625,13 @@ local function getCurrentIsland()
     local islandsFolder = workspace:FindFirstChild("Islands")
     if not islandsFolder then return nil end
     for _, island in ipairs(islandsFolder:GetChildren()) do
-        if island:FindFirstChild(player.Name) then
-            return island
-        end
+        if island:FindFirstChild(player.Name) then return island end
     end
     return nil
 end
 
 -- ============================================================
---  RANDOM TELEPORT — IslandTeleports lookup + slow LinearVelocity
---  drift + concurrency guard so the autofarm's idle loop can't
---  stack a second drift on top of one still in progress.
+--  randomTeleport — hang-proof
 -- ============================================================
 local function randomTeleport(root, island)
     if not island then return end
@@ -591,48 +640,60 @@ local function randomTeleport(root, island)
     local teleports = IslandTeleports[island.Name]
     if not teleports or #teleports == 0 then return end
 
-    local targetCF  = teleports[math.random(1, #teleports)]
-    local targetPos = targetCF.Position
-
+    local targetPos = teleports[math.random(1, #teleports)].Position
     local character = player.Character
     if not character then return end
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local humanoid  = character:FindFirstChildOfClass("Humanoid")
 
     _teleportInProgress = true
+    _teleportStartTime  = tick()
 
-    local usingHover = _hoverLinearVelocity ~= nil
-    local lv, att = _hoverLinearVelocity, _hoverAttachment
+    local TIMEOUT = 15
+
+    local usingHover      = _hoverLinearVelocity ~= nil
+    local lv, att         = _hoverLinearVelocity, _hoverAttachment
     local tempLV, tempAtt = nil, nil
 
     if not usingHover then
         if humanoid then humanoid.PlatformStand = true end
-
         tempAtt        = Instance.new("Attachment")
         tempAtt.Parent = root
-
-        tempLV                          = Instance.new("LinearVelocity")
-        tempLV.Attachment0              = tempAtt
-        tempLV.MaxForce                 = 1e6
-        tempLV.RelativeTo               = Enum.ActuatorRelativeTo.World
-        tempLV.VelocityConstraintMode   = Enum.VelocityConstraintMode.Vector
-        tempLV.VectorVelocity           = Vector3.zero
-        tempLV.Parent                   = root
-
+        tempLV                        = Instance.new("LinearVelocity")
+        tempLV.Attachment0            = tempAtt
+        tempLV.MaxForce               = 1e6
+        tempLV.RelativeTo             = Enum.ActuatorRelativeTo.World
+        tempLV.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
+        tempLV.VectorVelocity         = Vector3.zero
+        tempLV.Parent                 = root
         lv, att = tempLV, tempAtt
     end
 
     local SPEED  = 40
     local SETTLE = 2
 
+    local function cleanup()
+        if tempLV  then tempLV:Destroy()  end
+        if tempAtt then tempAtt:Destroy() end
+        if humanoid and not usingHover then humanoid.PlatformStand = false end
+        _teleportInProgress = false
+    end
+
     local conn
     conn = RunService.Heartbeat:Connect(function()
-        local r = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        -- Hard timeout — clears regardless of any other condition
+        if tick() - _teleportStartTime > TIMEOUT then
+            conn:Disconnect()
+            cleanup()
+            return
+        end
+
+        -- Validate against current character, not stale root capture
+        local currentChar = player.Character
+        local r = currentChar and currentChar:FindFirstChild("HumanoidRootPart")
+
         if not r or not lv or not lv.Parent then
-            if conn then conn:Disconnect() end
-            if tempLV  then tempLV:Destroy()  end
-            if tempAtt then tempAtt:Destroy() end
-            if humanoid and not usingHover then humanoid.PlatformStand = false end
-            _teleportInProgress = false
+            conn:Disconnect()
+            cleanup()
             return
         end
 
@@ -642,10 +703,7 @@ local function randomTeleport(root, island)
         if dist < SETTLE then
             lv.VectorVelocity = Vector3.zero
             conn:Disconnect()
-            if tempLV  then tempLV:Destroy()  end
-            if tempAtt then tempAtt:Destroy() end
-            if humanoid and not usingHover then humanoid.PlatformStand = false end
-            _teleportInProgress = false
+            cleanup()
         else
             lv.VectorVelocity = delta.Unit * math.min(dist * 8, SPEED)
         end
@@ -662,10 +720,7 @@ local function getNearestHorse(root, island)
                 local horseRoot = obj:FindFirstChild("HumanoidRootPart")
                 if horseRoot then
                     local dist = (root.Position - horseRoot.Position).Magnitude
-                    if dist < shortest then
-                        shortest = dist
-                        nearest  = horseRoot
-                    end
+                    if dist < shortest then shortest = dist; nearest = horseRoot end
                 end
             end
         end
@@ -678,10 +733,7 @@ local function getNearestHorse(root, island)
             local captureGui = obj:FindFirstChild("CaptureProgress", true)
             if horseRoot and captureGui then
                 local dist = (root.Position - horseRoot.Position).Magnitude
-                if dist < shortest then
-                    shortest = dist
-                    nearest  = horseRoot
-                end
+                if dist < shortest then shortest = dist; nearest = horseRoot end
             end
         end
     end
@@ -692,16 +744,12 @@ end
 local function getNextFarmIsland(currentIslandName)
     local enabled = {}
     for _, name in ipairs(AVAILABLE_ISLANDS) do
-        if autofarm_islands[name] then
-            table.insert(enabled, name)
-        end
+        if autofarm_islands[name] then table.insert(enabled, name) end
     end
     if #enabled == 0 then return nil end
     if #enabled == 1 then return enabled[1] end
     for i, name in ipairs(enabled) do
-        if name == currentIslandName then
-            return enabled[(i % #enabled) + 1]
-        end
+        if name == currentIslandName then return enabled[(i % #enabled) + 1] end
     end
     return enabled[1]
 end
@@ -717,9 +765,7 @@ local function destroyLavaTouchInterests()
     local lavaParts = volcanoIsland:FindFirstChild("LavaParts")
     if not lavaParts then return end
     for _, part in ipairs(lavaParts:GetDescendants()) do
-        if part:IsA("TouchTransmitter") then
-            part:Destroy()
-        end
+        if part:IsA("TouchTransmitter") then part:Destroy() end
     end
 end
 
@@ -735,31 +781,22 @@ do
         end
     end)
     task.spawn(function()
-        while true do
-            destroyLavaTouchInterests()
-            task.wait(3)
-        end
+        while true do destroyLavaTouchInterests(); task.wait(3) end
     end)
 end
 
 -- ============================================================
---  AUTO-CLICKER — target-aware, no blind cooldown burns
+--  AUTO-CLICKER
 -- ============================================================
 do
     local EquipmentHandler = require(m_References.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
-
     task.spawn(function()
         while true do
-            local duration = tonumber(autoclick_duration) or AUTOCLICK_RATE
-            task.wait(duration)
-
+            task.wait(tonumber(autoclick_duration) or AUTOCLICK_RATE)
             if not autoclick_enabled then continue end
-
             local obj = EquipmentHandler.object
             if not obj then continue end
-
             local hasTarget = false
-
             if obj.controller and obj.controller.GetTarget then
                 local ok, target = pcall(obj.controller.GetTarget, obj)
                 hasTarget = ok and target ~= nil
@@ -769,10 +806,7 @@ do
             else
                 hasTarget = true
             end
-
-            if hasTarget then
-                pcall(function() obj:Activate() end)
-            end
+            if hasTarget then pcall(function() obj:Activate() end) end
         end
     end)
 end
@@ -781,121 +815,131 @@ end
 --  AUTO-FARM
 -- ============================================================
 do
-    local LOCK_GRACE = 3  -- consecutive 0.4s polls (1.2s) before releasing
+    local LOCK_GRACE = 5
 
-task.spawn(function()
-    local idleTime      = 0
-    local lockedHorse   = nil
-    local isTravelling  = false
-    local noHorseTime   = 0
-    local lockFailCount = 0
+    task.spawn(function()
+        local idleTime      = 0
+        local lockedHorse   = nil
+        local isTravelling  = false
+        local noHorseTime   = 0
+        local lockFailCount = 0
 
-    local function releaseHorse()
-        stopHover()
-        lockedHorse   = nil
-        lockFailCount = 0
-    end
+        local function isHorseValid(horseRoot)
+            if not horseRoot then return false end
+            if not horseRoot.Parent then return false end
+            local model = horseRoot:FindFirstAncestorOfClass("Model")
+            if not model then return false end
+            if not model.Parent then return false end
+            return true
+        end
 
-    local function safeTravelTo(islandName)
-        if isTravelling then return end
-        isTravelling = true
-        idleTime     = 0
-        noHorseTime  = 0
-        releaseHorse()
+        local function releaseHorse()
+            stopHover()
+            lockedHorse   = nil
+            lockFailCount = 0
+        end
 
-        travelToIsland(islandName)
-
-        local deadline = tick() + 30
-        repeat
-            task.wait(1)
-            local current = getCurrentIsland()
-            if current and current.Name == islandName then break end
-        until tick() > deadline
-
-        task.wait(2)
-        isTravelling = false
-    end
-
-    local function safeRandomTeleport(root)
-        local island = getCurrentIsland()
-        if not island then return end
-        randomTeleport(root, island)
-    end
-
-    while true do
-        task.wait(0.4)
-
-        if not autofarm_enabled then
+        local function safeTravelTo(islandName)
+            if isTravelling then return end
+            isTravelling = true
+            idleTime     = 0
+            noHorseTime  = 0
             releaseHorse()
-            idleTime    = 0
-            noHorseTime = 0
-            continue
+            travelToIsland(islandName)
+            local deadline = tick() + 30
+            repeat
+                task.wait(1)
+                local current = getCurrentIsland()
+                if current and current.Name == islandName then break end
+            until tick() > deadline
+            task.wait(2)
+            isTravelling = false
         end
 
-        if isTravelling then continue end
-
-        local character = player.Character
-        local root = character and character:FindFirstChild("HumanoidRootPart")
-        if not root then continue end
-
-        local island = getCurrentIsland()
-        if not island then continue end
-
-        if autotravel_enabled and not autofarm_islands[island.Name] then
-            local next = getNextFarmIsland(island.Name)
-            if next then safeTravelTo(next) end
-            continue
+        local function safeRandomTeleport(root)
+            local island = getCurrentIsland()
+            if not island then return end
+            randomTeleport(root, island)
         end
 
-        -- ── Validity check with grace period instead of instant release ──
-        if lockedHorse then
-            local stillValid = lockedHorse.Parent ~= nil
-            if stillValid then
-                lockFailCount = 0
-            else
-                lockFailCount += 1
-                if lockFailCount >= LOCK_GRACE then
-                    releaseHorse()
-                end
+        while true do
+            task.wait(0.4)
+
+            -- Belt-and-suspenders: if _teleportInProgress has been stuck
+            -- for over 20s, force-clear it so the loop can't stay dead
+            if _teleportInProgress and tick() - _teleportStartTime > 20 then
+                _teleportInProgress = false
             end
-        end
 
-        -- Acquire nearest horse only if not currently locked
-        if not lockedHorse then
-            lockedHorse = getNearestHorse(root, island)
-            if lockedHorse then
-                startHover(lockedHorse)
-                lockFailCount = 0
-            end
-        end
-
-        if lockedHorse then
-            idleTime    = 0
-            noHorseTime = 0
-        else
-            idleTime    += 1
-            noHorseTime += 0.4
-
-            if autotravel_enabled and noHorseTime >= STILL_TRAVEL_TIME then
-                local next = getNextFarmIsland(island.Name)
-                if next and next ~= island.Name then
-                    safeTravelTo(next)
-                else
-                    safeRandomTeleport(root)
-                    noHorseTime = 0
-                    idleTime    = 0
-                end
+            if not autofarm_enabled then
+                releaseHorse()
+                idleTime    = 0
+                noHorseTime = 0
                 continue
             end
 
-            if idleTime >= (tonumber(idle_limit) or IDLE_LIMIT) then
-                safeRandomTeleport(root)
-                idleTime = 0
+            if isTravelling then continue end
+
+            local character = player.Character
+            local root = character and character:FindFirstChild("HumanoidRootPart")
+            if not root then continue end
+
+            local island = getCurrentIsland()
+            if not island then continue end
+
+            if autotravel_enabled and not autofarm_islands[island.Name] then
+                local next = getNextFarmIsland(island.Name)
+                if next then safeTravelTo(next) end
+                continue
+            end
+
+            -- Lock validity with grace period
+            if lockedHorse then
+                if isHorseValid(lockedHorse) then
+                    lockFailCount = 0
+                else
+                    lockFailCount += 1
+                    if lockFailCount >= LOCK_GRACE then releaseHorse() end
+                end
+            end
+
+            -- Acquire nearest horse when unlocked
+            if not lockedHorse then
+                local candidate = getNearestHorse(root, island)
+                if candidate then
+                    lockedHorse   = candidate
+                    lockFailCount = 0
+                    startHover(lockedHorse)
+                end
+            end
+
+            if lockedHorse then
+                idleTime    = 0
+                noHorseTime = 0
+            else
+                idleTime    += 1
+                noHorseTime += 0.4
+
+                if autotravel_enabled and noHorseTime >= STILL_TRAVEL_TIME then
+                    local next = getNextFarmIsland(island.Name)
+                    if next and next ~= island.Name then
+                        safeTravelTo(next)
+                    else
+                        safeRandomTeleport(root)
+                        noHorseTime = 0
+                        idleTime    = 0
+                    end
+                    continue
+                end
+
+                if idleTime >= (tonumber(idle_limit) or IDLE_LIMIT) then
+                    safeRandomTeleport(root)
+                    idleTime = 0
                 end
             end
         end
-    end) -- closes task.spawn(function()
-end -- closes do (LOCK_GRACE block)
+    end)
+end
 
 
 end -- end of outer do block
