@@ -6027,6 +6027,7 @@ local ad=a.g()
 
 local ae={
 "mismatchHairColour",
+"summer2026",
 "naturallyDyedHairColour",
 "islandUniqueCoat",
 "islandUniqueHorn",
@@ -7850,7 +7851,7 @@ ah.setDuration(t)
 end
 })
 
-p:AddToggle('Autosell',{
+p:AddToggle('autotravel',{
 Text='Travel',
 Default=false,
 Tooltip='type shit',
@@ -7908,6 +7909,7 @@ local v={
 ["Special Hair"]="specialHair",
 ["Horned"]="horned",
 ["Rare Coat"]="rareCoat",
+["Summer 2026"]="summer2026"
 }
 
 
