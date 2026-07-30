@@ -6799,14 +6799,13 @@ local ae=game:GetService("ReplicatedStorage")
 local af=game:GetService("RunService")
 local ah=game:GetService("Players")
 local ai=ah.LocalPlayer
-local aj=workspace.CurrentCamera
-local ak=game:GetService("VirtualInputManager")
 
-local al=require(ae.References)
-local am=al.Utilities
-local an=require(al.PlayerScripts.Priority.Data)
+local aj=require(ae.References)
+local ak=aj.Utilities
+local al=require(aj.PlayerScripts.Priority.Data)
+local am=require(aj.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
 
-local ao={
+local an={
 CFrame.new(3536.414,20.998,-8541.338,-0.986777,0.000000,0.162083,0.000000,1.000000,-0.000000,-0.162083,-0.000000,-0.986777),
 CFrame.new(3081.965,20.998,-8160.560,0.430185,0.000000,-0.902741,0.000000,1.000000,0.000000,0.902741,-0.000000,0.430185),
 CFrame.new(3040.943,21.278,-7674.188,0.183440,0.000000,-0.983031,0.000000,1.000000,0.000000,0.983031,-0.000000,0.183440),
@@ -6828,17 +6827,17 @@ CFrame.new(3907.742,526.523,-7917.505,-0.471205,-0.000000,-0.882024,-0.000000,1.
 }
 
 
+local ao=false
 local ap=false
 local aq=false
-local ar=false
-local as=0.05
-local at=5
+local ar=0.05
+local as=5
+local at=false
 local b=false
 local c=false
 local d=false
-local e=false
 
-local f={
+local e={
 ["Rock"]=false,
 ["Tin Rock"]=false,
 ["Copper Rock"]=false,
@@ -6863,7 +6862,7 @@ local f={
 ["Erupted Deposit"]=false,
 }
 
-local g={
+local f={
 "Rock","Tin Rock","Copper Rock","Bronze Rock","Iron Rock",
 "Random Crystal","Random Rock","Silver Rock","Gold Rock",
 "Ruby Crystal","Frozen Crystal","Clear Quartz Crystal",
@@ -6872,157 +6871,191 @@ local g={
 "Obsidian Rock","Moonstone Rock","Prismatic Crystal","Erupted Deposit",
 }
 
-local h="itemName"
-local i="health"
+local g="itemName"
+local h="health"
 
-local j=Vector3.zero
-local k=tick()
-
-
-local l=Instance.new("Highlight")
-l.FillColor=Color3.fromRGB(0,255,255)
-l.OutlineColor=Color3.fromRGB(255,255,255)
-l.FillTransparency=0.5
-l.OutlineTransparency=0
-l.Parent=game:GetService("CoreGui")
-l.Enabled=false
+local i=Vector3.zero
+local j=tick()
 
 
-local m=Instance.new("Attachment")
-local n=Instance.new("LinearVelocity")
-n.Attachment0=m
-n.MaxForce=1e6
-n.RelativeTo=Enum.ActuatorRelativeTo.World
-n.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-n.VectorVelocity=Vector3.zero
+local k=Instance.new("Highlight")
+k.FillColor=Color3.fromRGB(0,255,255)
+k.OutlineColor=Color3.fromRGB(255,255,255)
+k.FillTransparency=0.5
+k.OutlineTransparency=0
+k.Parent=game:GetService("CoreGui")
+k.Enabled=false
 
-local o=120
-local p=1.5
 
-local function q(r)
-if m.Parent~=r then
-m.Parent=r
-n.Parent=r
+local l=Instance.new("Attachment")
+local m=Instance.new("LinearVelocity")
+m.Attachment0=l
+m.MaxForce=1e6
+m.RelativeTo=Enum.ActuatorRelativeTo.World
+m.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+m.VectorVelocity=Vector3.zero
+
+local n=120
+local o=1.5
+
+local function p(q)
+if l.Parent~=q then
+l.Parent=q
+m.Parent=q
 end
 end
 
-local function r()
-n.VectorVelocity=Vector3.zero
+local function q()
+m.VectorVelocity=Vector3.zero
+l.Parent=nil
 m.Parent=nil
-n.Parent=nil
 end
 
 
 
 
+local r=nil
+local s=false
 
-local s=nil
+local function t(u,v,w)
+if s then return end
+s=true
 
-local function t()
-local u=ai.Character
-if not u then return end
-for v,w in ipairs(u:GetDescendants())do
-if w:IsA("BasePart")then
-w.CanCollide=false
+local x=200
+local y=3
+local z=12
+
+local A=tick()
+local B=u.Parent and u.Parent:FindFirstChildOfClass("Humanoid")
+if B then B.PlatformStand=true end
+
+p(u)
+
+if r then r:Disconnect()end
+r=af.Heartbeat:Connect(function()
+local C=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+
+if not C or not m.Parent then
+if r then r:Disconnect();r=nil end
+if B then B.PlatformStand=false end
+q()
+s=false
+return
+end
+
+
+if tick()-A>z then
+r:Disconnect();r=nil
+if B then B.PlatformStand=false end
+q()
+s=false
+if w then w()end
+return
+end
+
+local D=v-C.Position
+local E=D.Magnitude
+
+if E<=y then
+m.VectorVelocity=Vector3.zero
+r:Disconnect();r=nil
+if B then B.PlatformStand=false end
+q()
+s=false
+if w then w()end
+else
+m.VectorVelocity=D.Unit*math.min(E*15,x)
+end
+end)
+end
+
+
+local u=nil
+
+local function v()
+local w=ai.Character
+if not w then return end
+for x,y in ipairs(w:GetDescendants())do
+if y:IsA("BasePart")then
+y.CanCollide=false
 end
 end
 end
 
-local function u()
-local v=ai.Character
-if not v then return end
-for w,x in ipairs(v:GetDescendants())do
-if x:IsA("BasePart")then
-x.CanCollide=true
+local function w()
+local x=ai.Character
+if not x then return end
+for y,z in ipairs(x:GetDescendants())do
+if z:IsA("BasePart")then
+z.CanCollide=true
 end
 end
 end
 
-local function v(w)
-e=w
-if w then
-if not s then
-s=af.Stepped:Connect(function()
-if e then
-t()
-end
+local function x(y)
+d=y
+if y then
+if not u then
+u=af.Stepped:Connect(function()
+if d then v()end
 end)
 end
 else
-if s then
-s:Disconnect()
-s=nil
+if u then
+u:Disconnect()
+u=nil
 end
-u()
+w()
 end
 end
-
 
 ai.CharacterAdded:Connect(function()
-if e then
+if d then
 task.wait(0.1)
-t()
+v()
 end
 end)
-
-
-local function w()
-pcall(function()
-if not b then return end
-local x=an.GetLocal({"quickEquipment","Harvester"})
-if not x then return end
-if not c then
-c=true
-am.Network:FireServer("QuickEquipment","Use","Harvester")
-end
-end)
-end
-
-local function x()
-c=false
-task.wait(1.5)
-w()
-end
-
-an.BindLocal({"temporary","equippedEquipment"},function()
-local y=an.GetLocal({"quickEquipment","Harvester"})
-local z=an.GetLocal({"temporary","equippedEquipment"})
-if z~=y then
-c=false
-task.wait(0.1)
-w()
-end
-end,true)
-
-if ai.Character then x()end
-ai.CharacterAdded:Connect(x)
 
 
 local function y()
-local z=workspace:FindFirstChild("Islands")
-if not z then return nil end
-for A,B in ipairs(z:GetChildren())do
-if B:FindFirstChild(ai.Name)then return B end
+pcall(function()
+if not at then return end
+local z=al.GetLocal({"quickEquipment","Harvester"})
+if not z then return end
+if not b then
+b=true
+ak.Network:FireServer("QuickEquipment","Use","Harvester")
+end
+end)
+end
+
+local function z()
+b=false
+task.wait(1.5)
+y()
+end
+
+al.BindLocal({"temporary","equippedEquipment"},function()
+local A=al.GetLocal({"quickEquipment","Harvester"})
+local B=al.GetLocal({"temporary","equippedEquipment"})
+if B~=A then
+b=false
+task.wait(0.1)
+y()
+end
+end,true)
+
+if ai.Character then z()end
+ai.CharacterAdded:Connect(z)
+
+
+local function A()
+local B=workspace:FindFirstChild("Islands")
+if not B then return nil end
+for C,D in ipairs(B:GetChildren())do
+if D:FindFirstChild(ai.Name)then return D end
 end
 return nil
-end
-
-local function z(A)
-local B,C=aj:WorldToViewportPoint(A)
-return B.X,B.Y,C
-end
-
-local function A(B)
-aj.CFrame=CFrame.new(aj.CFrame.Position,B.Position)
-local C,D,E=z(B.Position)
-if not E then return false end
-pcall(function()
-ak:SendMouseMoveEvent(C,D,game)
-ak:SendMouseButtonEvent(C,D,0,true,game,1)
-task.wait(0.05)
-ak:SendMouseButtonEvent(C,D,0,false,game,1)
-end)
-return true
 end
 
 local function B(C)
@@ -7030,9 +7063,9 @@ local D=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
 if not D then return nil end
 local E,F=nil,math.huge
 for G,H in ipairs(C:GetDescendants())do
-local I=H:GetAttribute(h)
-if H:IsA("Model")and f[I]==true then
-local J=H:GetAttribute(i)
+local I=H:GetAttribute(g)
+if H:IsA("Model")and e[I]==true then
+local J=H:GetAttribute(h)
 if J and J>0 then
 local K=H.PrimaryPart or H:FindFirstChildWhichIsA("BasePart")
 if K then
@@ -7049,166 +7082,214 @@ return E
 end
 
 
-task.spawn(function()
-while true do
-task.wait(1)
-if not ap or not ar or d then
-k=tick()
-continue
-end
-local C=ai.Character
-local D=C and C:FindFirstChild("HumanoidRootPart")
-if not D then continue end
-if(D.Position-j).Magnitude>2 then
-j=D.Position
-k=tick()
-elseif tick()-k>at then
-local E=y()
-if E then
-local F=(E.Name=="Volcano Island")
-and ao
-or(ad and ad[E.Name])
-if F and#F>0 then
-local G=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if G then
-G.CFrame=F[math.random(1,#F)]
-end
-end
-end
-k=tick()
-end
-end
-end)
+
 
 
 local C=nil
 
 local function D()
-if C then
-C:Disconnect()
-C=nil
+local E=am.object
+if not E or not E.controller then return false end
+if E.controller._silentAimInstalled then return true end
+
+local F=E.controller.GetTarget
+E.controller.GetTarget=function(G)
+if C and C.Parent then
+local H=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+if H and(H.Position-C:GetPivot().Position).Magnitude<=10 then
+local I=C.PrimaryPart
+or C:FindFirstChildWhichIsA("BasePart")
+return C,{Position=I and I.Position or C:GetPivot().Position}
 end
-r()
-d=false
-l.Enabled=false
+end
+return F(G)
+end
+
+E.controller._silentAimInstalled=true
+return true
+end
+
+local function E(F)
+local G=am.object
+if not G or not G.controller then return false end
+
+C=F
+D()
+
+local H=pcall(function()G:Activate()end)
+return H
+end
+
+
+task.spawn(function()
+while true do
+task.wait(1)
+
+if not ao or not aq or c then
+j=tick()
+continue
+end
+
+local F=ai.Character
+local G=F and F:FindFirstChild("HumanoidRootPart")
+if not G then continue end
+
+if(G.Position-i).Magnitude>2 then
+i=G.Position
+j=tick()
+elseif tick()-j>as then
+local H=A()
+if H then
+local I=(H.Name=="Volcano Island")
+and an
+or(ad and ad[H.Name])
+if I and#I>0 then
+local J=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+if J then
+
+local K=I[math.random(1,#I)]
+t(J,K.Position,nil)
+end
+end
+end
+j=tick()
+end
+end
+end)
+
+
+local F=nil
+
+local function G()
+if F then
+F:Disconnect()
+F=nil
+end
+q()
+c=false
+C=nil
+k.Enabled=false
 end
 
 task.spawn(function()
 while true do
 task.wait(0.3)
 
-if not ap then
-D()
+if not ao then
+G()
 continue
 end
 
-local E=y()
-if not E then continue end
+local H=A()
+if not H then continue end
 
-local F=B(E)
-if not F then
-D()
+local I=B(H)
+if not I then
+G()
 continue
 end
 
-local G=F.PrimaryPart or F:FindFirstChildWhichIsA("BasePart")
-if not G then continue end
+local J=I.PrimaryPart or I:FindFirstChildWhichIsA("BasePart")
+if not J then continue end
 
-if aq then
-l.Adornee=F
-l.Enabled=true
+if ap then
+k.Adornee=I
+k.Enabled=true
 end
 
-local H=F:GetAttribute(h)=="Erupted Deposit"
-local I=H and Vector3.new(0,10,0)or Vector3.new(0,2,2)
+local K=I:GetAttribute(g)=="Erupted Deposit"
+local L=K and Vector3.new(0,10,0)or Vector3.new(0,2,2)
 
-D()
+G()
 
-aj.CFrame=CFrame.new(aj.CFrame.Position,G.Position)
 
-if H then
+
+
+if K then
 task.wait(3)
-if not F.Parent or(F:GetAttribute(i)or 0)<=0 then continue end
+if not I.Parent or(I:GetAttribute(h)or 0)<=0 then continue end
 end
 
-d=true
-C=af.Heartbeat:Connect(function()
-local J=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if not J then D();return end
+c=true
 
-if not F or not F.Parent or(F:GetAttribute(i)or 0)<=0 then
-D()
+
+F=af.Heartbeat:Connect(function()
+local M=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+if not M then G();return end
+
+if not I or not I.Parent or(I:GetAttribute(h)or 0)<=0 then
+G()
 return
 end
 
-local K=G.Position+I
-q(J)
+local N=J.Position+L
+p(M)
 
-local L=K-J.Position
-local M=L.Magnitude
+local O=N-M.Position
+local P=O.Magnitude
 
-if M<=p then
-n.VectorVelocity=Vector3.zero
+if P<=o then
+m.VectorVelocity=Vector3.zero
 else
-n.VectorVelocity=L.Unit*math.min(M*10,o)
+m.VectorVelocity=O.Unit*math.min(P*10,n)
 end
-
-aj.CFrame=CFrame.new(aj.CFrame.Position,G.Position)
 end)
 
-local J=F:GetAttribute(i)
 
-while ap
-and F.Parent
-and(F:GetAttribute(i)or 0)>0
-and f[F:GetAttribute(h)]==true
+local M=I:GetAttribute(h)
+
+while ao
+and I.Parent
+and(I:GetAttribute(h)or 0)>0
+and e[I:GetAttribute(g)]==true
 do
-A(G)
+E(I)
 
-local K=tick()
-while tick()-K<5 do
+
+local N=tick()
+while tick()-N<5 do
 task.wait(0.05)
-if not F.Parent or(F:GetAttribute(i)or 0)<=0 then break end
-local L=F:GetAttribute(i)
-if L~=J then
-J=L
+if not I.Parent or(I:GetAttribute(h)or 0)<=0 then break end
+local O=I:GetAttribute(h)
+if O~=M then
+M=O
 break
 end
 end
 
-if as>0 then
-task.wait(as)
+if ar>0 then
+task.wait(ar)
 end
 end
 
-D()
+G()
 end
 end)
 
 
 return{
-setEnabled=function(E)
-ap=E
-if not E then D()end
+setEnabled=function(H)
+ao=H
+if not H then G()end
 end,
-setPickaxeEnabled=function(E)
-b=E
-if E then w()end
+setPickaxeEnabled=function(H)
+at=H
+if H then y()end
 end,
-isEnabled=function()return ap end,
-setHighlight=function(E)
-aq=E
-if not E then l.Enabled=false end
+isEnabled=function()return ao end,
+setHighlight=function(H)
+ap=H
+if not H then k.Enabled=false end
 end,
-setRandomTeleport=function(E)ar=E end,
-setIdleThreshold=function(E)at=tonumber(E)or 5 end,
-setClickCooldown=function(E)as=tonumber(E)or 0.05 end,
-setOreTarget=function(E,F)
-if f[E]~=nil then f[E]=F end
+setRandomTeleport=function(H)aq=H end,
+setIdleThreshold=function(H)as=tonumber(H)or 5 end,
+setClickCooldown=function(H)ar=tonumber(H)or 0.05 end,
+setOreTarget=function(H,I)
+if e[H]~=nil then e[H]=I end
 end,
-getOreValues=function()return g end,
-setNoclip=function(E)v(E)end,
-isNoclipEnabled=function()return e end,
+getOreValues=function()return f end,
+setNoclip=function(H)x(H)end,
+isNoclipEnabled=function()return d end,
 }
 end
 
