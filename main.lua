@@ -6609,7 +6609,7 @@ local af={
 
 local ah={}
 for ai,aj in ipairs(af)do
-ah[aj]=true
+ah[aj]=false
 end
 
 local ai=0.975
