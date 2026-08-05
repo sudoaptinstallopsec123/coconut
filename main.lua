@@ -9518,51 +9518,124 @@ ay:AddButton("Training Receipts (100)",function()
 az("trainingReceipts","Training Receipts",1)
 end)
 
+local aA=f.Misc:AddRightGroupbox("Teleport")
+
+
+
+
+local aB=game:GetService("ReplicatedStorage")
+local aC=require(aB:WaitForChild("References"))
+local aD=require(aC.PlayerScripts:WaitForChild("Secondary"):WaitForChild("TravelHandler"))
+
+local aE={
+
+"Mainland",
+"Blizzard Island",
+"Forest Island",
+"Royal Island",
+"Desert Island",
+"Glacier Island",
+"Mountain Island",
+"Jungle Island",
+"Lunar Islands",
+"Volcano Island",
+
+"Training Island",
+"Rescue Island",
+}
+
+local aF={
+["Mainland"]=8,
+["Blizzard Island"]=1,
+["Forest Island"]=1,
+["Royal Island"]=1,
+["Desert Island"]=1,
+["Glacier Island"]=1,
+["Mountain Island"]=1,
+["Jungle Island"]=1,
+["Lunar Islands"]=1,
+["Volcano Island"]=1,
+["Training Island"]=1,
+["Rescue Island"]=1,
+
+["Stable Island"]=1,
+["Competition Hub"]=1,
+["Breeding Hub"]=1,
+["Trading Hub"]=1,
+["RP Island"]=1,
+["Wild Island"]=1,
+}
+
+local function aG(aH)
+if not aH then return end
+local _=aF[aH]or 1
+pcall(function()
+aD.Travel(aH,_)
+end)
+end
+
+aA:AddDropdown("IslandTravel",{
+Text="Travel to Island",
+Values=aE,
+Default=1,
+Multi=false,
+Tooltip="Select an island to travel to",
+Callback=function(aH)
+selected_island=aH
+end,
+Disabled=false,
+Visible=true,
+})
+
+aA:AddButton("Travel",function()
+aG(selected_island)
+end)
+
 
 
 ab:SetWatermarkVisibility(true)
 
 
-local aA=tick()
-local aB=0;
-local aC=60;
-local aD=(function()return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())end)
-local aE=pcall(function()return aD()end)
+local aH=tick()
+local _=0;
+local aI=60;
+local aJ=(function()return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())end)
+local aK=pcall(function()return aJ()end)
 
-local aF=game:GetService("RunService").RenderStepped:Connect(function()
-aB+=1;
+local aL=game:GetService("RunService").RenderStepped:Connect(function()
+_+=1;
 
-if(tick()-aA)>=1 then
-aC=aB;
-aA=tick();
-aB=0;
+if(tick()-aH)>=1 then
+aI=_;
+aH=tick();
+_=0;
 end;
 
-if aE then
+if aK then
 ab:SetWatermark(("coconut - [buyer build] | %d fps | %d ms"):format(
-math.floor(aC),
-aD()
+math.floor(aI),
+aJ()
 ));
 else
 ab:SetWatermark(("coconut - [buyer build] | %d fps"):format(
-math.floor(aC)
+math.floor(aI)
 ));
 end
 end);
 
 ab:OnUnload(function()
-aF:Disconnect()
+aL:Disconnect()
 ab.Unloaded=true
 end)
 
 
-local aG=f["UI Settings"]:AddLeftGroupbox("Menu")
+local aM=f["UI Settings"]:AddLeftGroupbox("Menu")
 
-aG:AddToggle("KeybindMenuOpen",{Default=ab.KeybindFrame.Visible,Text="Open Keybind Menu",Callback=function(aH)ab.KeybindFrame.Visible=aH end})
-aG:AddToggle("BlurEnabled",{Default=true,Text="Blur",Callback=function(aH)ab.BlurEffect.Enabled=aH end})
-aG:AddDivider()
-aG:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind",{Default="RightShift",NoUI=true,Text="Menu keybind"})
-aG:AddButton("Unload",function()ab:Unload()end)
+aM:AddToggle("KeybindMenuOpen",{Default=ab.KeybindFrame.Visible,Text="Open Keybind Menu",Callback=function(aN)ab.KeybindFrame.Visible=aN end})
+aM:AddToggle("BlurEnabled",{Default=true,Text="Blur",Callback=function(aN)ab.BlurEffect.Enabled=aN end})
+aM:AddDivider()
+aM:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind",{Default="RightShift",NoUI=true,Text="Menu keybind"})
+aM:AddButton("Unload",function()ab:Unload()end)
 
 ab.ToggleKeybind=au.MenuKeybind
 
