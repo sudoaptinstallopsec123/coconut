@@ -5964,18 +5964,16 @@ setIdleLimit=function(G)ap=G end,
 
 
 
-local ab=a.a()
 
-local ac=game:GetService("ReplicatedStorage")
-local ad=game:GetService("Players")
-local ae=game:GetService("RunService")
+local ab=game:GetService("ReplicatedStorage")
+local ac=game:GetService("Players")
+local ad=game:GetService("RunService")
 
-local af=require(ac:WaitForChild("References"))
-local ah=af.Utilities
-local ai=require(af.PlayerScripts.Priority:WaitForChild("Data"))
-local aj=require(af.PlayerScripts.Priority:WaitForChild("InventoryHandler"))
-local ak=ad.LocalPlayer
-
+local ae=require(ab:WaitForChild("References"))
+local af=ae.Utilities
+local ah=require(ae.PlayerScripts.Priority:WaitForChild("Data"))
+local ai=require(ae.PlayerScripts.Priority:WaitForChild("InventoryHandler"))
+local aj=ac.LocalPlayer
 
 
 
@@ -5983,7 +5981,8 @@ local ak=ad.LocalPlayer
 
 
 
-local al={
+
+local ak={
 
 {id=401,name="Prismatic Lasso",strength=30,craftable=true},
 {id=32,name="Perfect Lasso",strength=25,craftable=false},
@@ -6011,9 +6010,9 @@ local al={
 }
 
 
-local am={}
-for an,ao in ipairs(al)do
-am[ao.id]=an
+local al={}
+for am,an in ipairs(ak)do
+al[an.id]=am
 end
 
 
@@ -6022,7 +6021,7 @@ end
 
 
 
-local an={
+local am={
 [17]={{id=102,qty=1},{id=70,qty=1}},
 [18]={{id=102,qty=1},{id=35,qty=3}},
 [19]={{id=102,qty=1},{id=34,qty=3}},
@@ -6049,7 +6048,7 @@ local an={
 
 
 
-local ao={
+local an={
 [102]={shop="Mainland Shop",slot=1},
 [70]={shop="Mainland Shop",slot=8},
 [33]={shop="Mainland Shop",slot=9},
@@ -6075,7 +6074,7 @@ local ao={
 
 
 
-local ap={
+local ao={
 autoEquipEnabled=false,
 autoCraftEnabled=false,
 selectedLassoId=191,
@@ -6089,51 +6088,51 @@ confirmTimeout=5,
 confirmInterval=0.1,
 }
 
-local aq=250
-local ar=1000
+local ap=250
+local aq=1000
 
 
 
 
+local ar=false
 local as=false
-local at=false
-local au=0
-local b=0.8
-local c=1.2
-local d=0.05
-local e=3
+local at=0
+local au=0.8
+local b=1.2
+local c=0.05
+local d=3
 
 
 
 
-local function f(g)
-local h,i=pcall(aj.GetAmountOf,g)
-return(h and tonumber(i))or 0
+local function e(f)
+local g,h=pcall(ai.GetAmountOf,f)
+return(g and tonumber(h))or 0
+end
+
+local function f()
+return ah.GetLocal({"quickEquipment","Lasso"})
 end
 
 local function g()
-return ai.GetLocal({"quickEquipment","Lasso"})
+return ah.GetLocal({"temporary","equippedEquipment"})
 end
 
 local function h()
-return ai.GetLocal({"temporary","equippedEquipment"})
+local i=f()
+if not i then return false end
+return tostring(g())==tostring(i)
 end
+
+
+
+
+
 
 local function i()
-local j=g()
-if not j then return false end
-return tostring(h())==tostring(j)
-end
-
-
-
-
-
-
-local function j()
-for k,l in ipairs(al)do
-if f(l.id)>0 then
-return l.id
+for j,k in ipairs(ak)do
+if e(k.id)>0 then
+return k.id
 end
 end
 return 1163
@@ -6144,169 +6143,168 @@ end
 
 
 
-local function k()
-ah.Network:FireServer("QuickEquipment","Use","Lasso")
-local l=tick()+c
-while tick()<l do
-task.wait(d)
-if i()then return true end
+local function j()
+af.Network:FireServer("QuickEquipment","Use","Lasso")
+local k=tick()+b
+while tick()<k do
+task.wait(c)
+if h()then return true end
 end
 return false
 end
 
-local function l(m)
+local function k(l)
 
 
-local n=aj.GetGuidsOfItemId(m)
-if not n or#n==0 then return false end
+local m=ai.GetGuidsOfItemId(l)
+if not m or#m==0 then return false end
 
-ah.Network:FireServer("QuickEquipment","Set","Lasso",n[1])
+af.Network:FireServer("QuickEquipment","Set","Lasso",m[1])
 task.wait(0.3)
 return true
 end
 
-local function m()
-if not ap.autoEquipEnabled then return end
-if as then return end
+local function l()
+if not ao.autoEquipEnabled then return end
+if ar then return end
 
-local n=j()
-local o=g()
-
-
-local p=o and aj.GetGuidsOfItemId(n)
-local q=p and table.find(p,o)~=nil
+local m=i()
+local n=f()
 
 
-if i()and q then return end
-
-local r=tick()
-if(r-au)<b then return end
+local o=n and ai.GetGuidsOfItemId(m)
+local p=o and table.find(o,n)~=nil
 
 
-if not q then
-local s=l(n)
-if not s then return end
+if h()and p then return end
+
+local q=tick()
+if(q-at)<au then return end
+
+
+if not p then
+local r=k(m)
+if not r then return end
 end
 
-as=true
-au=tick()
+ar=true
+at=tick()
 
-local s,t=pcall(function()
-for s=1,e do
-if k()then break end
-task.wait(b*s)
+local r,s=pcall(function()
+for r=1,d do
+if j()then break end
+task.wait(au*r)
 end
 end)
 
-if not s then warn("[AutoLasso] Equip error:",t)end
-as=false
+if not r then warn("[AutoLasso] Equip error:",s)end
+ar=false
 end
 
 
 
 
-local function n(o,p)
-local q=tick()+ap.confirmTimeout
-while tick()<q do
-task.wait(ap.confirmInterval)
-if f(o)>p then return true end
+local function m(n,o)
+local p=tick()+ao.confirmTimeout
+while tick()<p do
+task.wait(ao.confirmInterval)
+if e(n)>o then return true end
 end
 return false
 end
 
-local function o(p,q)
-local r=ao[p]
-if not r then
-warn(string.format("[AutoLasso] No shop source for material id=%d",p))
+local function n(o,p)
+local q=an[o]
+if not q then
+warn(string.format("[AutoLasso] No shop source for material id=%d",o))
 return 0
 end
 
-q=math.min(q,ar)
+p=math.min(p,aq)
+if p<=0 then return 0 end
+
+local r=e(o)
+af.Network:FireServer("Shopping","BuyShopItem",q.shop,q.slot,p,nil)
+
+local s=m(o,r)
+if not s then
+warn(string.format("[AutoLasso] Buy timed out id=%d shop=%s slot=%d qty=%d",
+o,q.shop,q.slot,p))
+return 0
+end
+return e(o)-r
+end
+
+local function o(p,q)
+q=math.min(q,ap)
 if q<=0 then return 0 end
 
-local s=f(p)
-ah.Network:FireServer("Shopping","BuyShopItem",r.shop,r.slot,q,nil)
+local r=e(p)
+af.Network:FireServer("Crafting","Craft",{
+id=p,
+variants={},
+amt=q,
+})
 
-local t=n(p,s)
-if not t then
-warn(string.format("[AutoLasso] Buy timed out id=%d shop=%s slot=%d qty=%d",
-p,r.shop,r.slot,q))
+local s=m(p,r)
+if not s then
+warn(string.format("[AutoLasso] Craft timed out id=%d qty=%d",p,q))
 return 0
 end
-return f(p)-s
+return e(p)-r
 end
 
 local function p(q,r)
-r=math.min(r,aq)
-if r<=0 then return 0 end
-
-local s=f(q)
-ah.Network:FireServer("Crafting","Craft",{
-id=q,
-variants={},
-amt=r,
-})
-
-local t=n(q,s)
-if not t then
-warn(string.format("[AutoLasso] Craft timed out id=%d qty=%d",q,r))
-return 0
-end
-return f(q)-s
-end
-
-local function q(r,s)
-local t=an[r]
-if not t then
-warn(string.format("[AutoLasso] No recipe for lasso id=%d",r))
+local s=am[q]
+if not s then
+warn(string.format("[AutoLasso] No recipe for lasso id=%d",q))
 return
 end
 
-s=math.min(s,aq)
+r=math.min(r,ap)
 
 
-for u,v in ipairs(t)do
-local w=v.qty*s
-local x=f(v.id)
-local y=math.max(0,w-x)
-if y>0 then
-local z=o(v.id,y)
-if z<y then
+for t,u in ipairs(s)do
+local v=u.qty*r
+local w=e(u.id)
+local x=math.max(0,v-w)
+if x>0 then
+local y=n(u.id,x)
+if y<x then
 warn(string.format("[AutoLasso] Material short: id=%d needed=%d got=%d",
-v.id,y,z))
+u.id,x,y))
 end
-task.wait(ap.buyCooldown)
+task.wait(ao.buyCooldown)
 end
-end
-
-
-local u=s
-for v,w in ipairs(t)do
-local x=f(w.id)
-local y=math.floor(x/w.qty)
-u=math.min(u,y)
 end
 
-u=math.min(u,aq)
-if u<=0 then
+
+local t=r
+for u,v in ipairs(s)do
+local w=e(v.id)
+local x=math.floor(w/v.qty)
+t=math.min(t,x)
+end
+
+t=math.min(t,ap)
+if t<=0 then
 warn("[AutoLasso] No materials to craft after buying — aborting.")
 return
 end
 
-task.wait(ap.craftCooldown)
+task.wait(ao.craftCooldown)
 
-local v=p(r,u)
-if v>0 then
-library:Notify("Crafted %d lasso (id=%d)",v,2)
+local u=o(q,t)
+if u>0 then
 
 
-local w=j()
-local x=am[r]or 999
-local y=am[w]or 999
-if x<=y then
-l(r)
+local v=i()
+local w=al[q]or 999
+local x=al[v]or 999
+if w<=x then
+k(q)
 task.wait(0.3)
-ah.Network:FireServer("QuickEquipment","Use","Lasso")
+af.Network:FireServer("QuickEquipment","Use","Lasso")
 end
 else
 warn("[AutoLasso] Craft fired but no lassos received.")
@@ -6320,37 +6318,34 @@ end
 
 task.spawn(function()
 while true do
-task.wait(ap.pollInterval)
-m()
+task.wait(ao.pollInterval)
+l()
 end
 end)
 
 
 task.spawn(function()
 while true do
-task.wait(ap.craftPollInterval)
+task.wait(ao.craftPollInterval)
+if not ao.autoCraftEnabled then continue end
+if as then continue end
 
-if not ap.autoCraftEnabled then continue end
-if at then continue end
-
-local r=ap.selectedLassoId
-local s=f(r)
-
-if s<=ap.restockThreshold then
-at=true
-local t,u=pcall(q,r,ap.restockAmount)
-if not t then warn("[AutoLasso] Restock error:",u)end
-at=false
+local q=ao.selectedLassoId
+if e(q)<=ao.restockThreshold then
+as=true
+local r,s=pcall(p,q,ao.restockAmount)
+if not r then warn("[AutoLasso] Restock error:",s)end
+as=false
 end
 end
 end)
 
 
-ak.CharacterAdded:Connect(function()
+aj.CharacterAdded:Connect(function()
 task.wait(1.5)
+ar=false
+at=0
 as=false
-au=0
-at=false
 end)
 
 
@@ -6358,72 +6353,72 @@ end)
 
 return{
 
-setEnabled=function(r)
-ap.autoEquipEnabled=r
-if not r then
-as=false
+setEnabled=function(q)
+ao.autoEquipEnabled=q
+if not q then
+ar=false
 end
 end,
 
 
-setCraftEnabled=function(r)
-ap.autoCraftEnabled=r
-if not r then at=false end
+setCraftEnabled=function(q)
+ao.autoCraftEnabled=q
+if not q then as=false end
 end,
 
 
-setSelectedLasso=function(r)
-ap.selectedLassoId=tonumber(r)or 191
+setSelectedLasso=function(q)
+ao.selectedLassoId=tonumber(q)or 191
 end,
 
 
-setRestockThreshold=function(r)
-ap.restockThreshold=tonumber(r)or 50
+setRestockThreshold=function(q)
+ao.restockThreshold=tonumber(q)or 50
 end,
 
 
-setRestockAmount=function(r)
-ap.restockAmount=math.min(tonumber(r)or 100,aq)
+setRestockAmount=function(q)
+ao.restockAmount=math.min(tonumber(q)or 100,ap)
 end,
 
 
 getCraftableLassos=function()
-local r={}
-for s,t in ipairs(al)do
-if t.craftable then
-table.insert(r,{id=t.id,name=t.name,strength=t.strength})
+local q={}
+for r,s in ipairs(ak)do
+if s.craftable then
+table.insert(q,{id=s.id,name=s.name,strength=s.strength})
 end
 end
-return r
+return q
 end,
 
 
 getStatus=function()
-local r=j()
+local q=i()
 return{
-autoEquipEnabled=ap.autoEquipEnabled,
-autoCraftEnabled=ap.autoCraftEnabled,
-isCycleRunning=at,
-bestLassoId=r,
+autoEquipEnabled=ao.autoEquipEnabled,
+autoCraftEnabled=ao.autoCraftEnabled,
+isCycleRunning=as,
+bestLassoId=q,
 bestLassoName=(function()
-for s,t in ipairs(al)do
-if t.id==r then return t.name end
+for r,s in ipairs(ak)do
+if s.id==q then return s.name end
 end
 return"Unknown"
 end)(),
-selectedCraftId=ap.selectedLassoId,
-selectedCraftCount=f(ap.selectedLassoId),
-threshold=ap.restockThreshold,
+selectedCraftId=ao.selectedLassoId,
+selectedCraftCount=e(ao.selectedLassoId),
+threshold=ao.restockThreshold,
 }
 end,
 
 
 triggerRestock=function()
-if at then return end
-at=true
-local r,s=pcall(q,ap.selectedLassoId,ap.restockAmount)
-if not r then warn("Manual restock error:",s)end
-at=false
+if as then return end
+as=true
+local q,r=pcall(p,ao.selectedLassoId,ao.restockAmount)
+if not q then warn("Manual restock error:",r)end
+as=false
 end,
 }end function a.e():typeof(aa())local ab=a.cache.e if not ab then ab={c=aa()}a.cache.e=ab end return ab.c end end do local function aa()
 local ab=require(game:GetService("ReplicatedStorage").References)
@@ -6895,9 +6890,28 @@ local ar=nil
 local as=nil
 
 for at,au in aq do
-if not au or au.ClassName~="ModuleScript"then continue end
-if au.Name=="Network"then ar=require(au)end
-if au.Name=="InventoryHandler"then as=require(au)end
+if not au then continue end
+local b,c=pcall(function()return au.ClassName=="ModuleScript"end)
+if not b or not c then continue end
+
+if au.Name=="Network"and ar==nil then
+local d,e=pcall(require,au)
+if d then ar=e end
+end
+
+if au.Name=="InventoryHandler"and as==nil then
+local d,e=pcall(require,au)
+if d then as=e end
+end
+
+if ar and as then break end
+end
+
+if not ar then
+warn("[AutoSell] Failed to resolve Network module")
+end
+if not as then
+warn("[AutoSell] Failed to resolve InventoryHandler module")
 end
 
 local at=false
@@ -6912,24 +6926,21 @@ at=(c~=nil)and c or(not at)
 if at then
 if not au then
 au=as.Bind("Added",function(d,e)
-if not at then return end
-
+local f,g=pcall(function()
 local f,g=ap(e)
-
 task.delay(aj,function()
 if not at then return end
-
 if f then
-warn("[AutoSell] Locking:",d,"| Reason:",g)
 ar:FireServer("Inventory","Lock",d)
 ao(d,e,g)
 ae.recordLock(g)
 else
-warn("[AutoSell] Selling:",d)
 ar:FireServer("Shopping","QuickSellItem",d)
 ae.recordSell()
 end
 end)
+end)
+if not f then warn("[AutoSell] Bind callback error:",g)end
 end)
 end
 else
@@ -8686,7 +8697,7 @@ end
 n:AddSlider('CaptureRate',{
 Text='Capture Rate',
 Default=0.1,
-Min=0.05,
+Min=1,
 Max=5,
 Rounding=2,
 Compact=true,
