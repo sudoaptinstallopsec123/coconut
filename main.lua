@@ -5396,23 +5396,24 @@ local i=math.rad(60)
 local j=70
 local k=120
 local l=0.5
-local m=2
-local n=2.0
+local m=0.5
+local n=1.5
 local o=0.6
+local p=4
 
 
 
 
-local p=nil
 local q=nil
 local r=nil
 local s=nil
 local t=nil
+local u=nil
 
-local function u(v,w)
-for x,y in ipairs(v:GetDescendants())do
-if y:IsA("BasePart")then
-y.CanCollide=not w
+local function v(w,x)
+for y,z in ipairs(w:GetDescendants())do
+if z:IsA("BasePart")then
+z.CanCollide=not x
 end
 end
 end
@@ -5420,39 +5421,39 @@ end
 
 
 
-local v=RaycastParams.new()
-v.FilterType=Enum.RaycastFilterType.Exclude
-v.IgnoreWater=true
+local w=RaycastParams.new()
+w.FilterType=Enum.RaycastFilterType.Exclude
+w.IgnoreWater=true
 
 
 
 
-local function w()
-if s then
-local x=s.Parent
-if x then u(x,false)end
+local function x()
+if t then
+local y=t.Parent
+if y then v(y,false)end
 end
 
-if r then r:Disconnect();r=nil end
+if s then s:Disconnect();s=nil end
+if r then r:Destroy();r=nil end
 if q then q:Destroy();q=nil end
-if p then p:Destroy();p=nil end
-if s then
-s.PlatformStand=false
-s=nil
-end
+if t then
+t.PlatformStand=false
 t=nil
 end
+u=nil
+end
 
 
 
 
 
-local function x(y,z,A)
-local B=workspace:Raycast(y,z.Unit*A,v)
-if B and B.Instance then
-local C=B.Instance
-if C:IsA("Terrain")or(C:IsA("BasePart")and C.CanCollide)then
-return true,B.Position
+local function y(z,A,B)
+local C=workspace:Raycast(z,A.Unit*B,w)
+if C and C.Instance then
+local D=C.Instance
+if D:IsA("Terrain")or(D:IsA("BasePart")and D.CanCollide)then
+return true,C.Position
 end
 end
 return false,nil
@@ -5460,174 +5461,216 @@ end
 
 
 
-local function y(z,A,B)
-local C=A.Position+Vector3.new(0,ai,0)
-local D=C-z.Position
-local E=D.Magnitude
+local function z(A,B,C)
+local D=B.Position+Vector3.new(0,ai,0)
+local E=D-A.Position
+local F=E.Magnitude
 
-if E<l then return Vector3.zero,E end
+if F<l then return Vector3.zero,F end
 
-local F=D.Unit
+local G=E.Unit
 
-local G={ae.Character}
-if t then table.insert(G,t)end
-v.FilterDescendantsInstances=G
+local H={ae.Character}
+if u then table.insert(H,u)end
+w.FilterDescendantsInstances=H
 
 
-local H,I=x(z.Position,F,math.min(E,h))
+local I,J=y(A.Position,G,math.min(F,h))
 
-if not H then
-return F*math.min(E*60,k),E
+if not I then
+return G*math.min(F*60,k),F
 end
 
 
-local J=I and I.Y or z.Position.Y
-local K=Vector3.new(C.X,J+g,C.Z)
-local L=(K-z.Position).Unit
+local K=J and J.Y or A.Position.Y
+local L=Vector3.new(D.X,K+g,D.Z)
+local M=(L-A.Position).Unit
 
 
-if B then
-local M=(L+B*0.8).Unit
-return M*math.min(E*60,k),E
+if C then
+local N=(M+C*0.8).Unit
+return N*math.min(F*60,k),F
 end
 
 
-local M=Vector3.new(F.X,0,F.Z)
-if M.Magnitude<0.01 then M=Vector3.new(1,0,0)end
-M=M.Unit
+local N=Vector3.new(G.X,0,G.Z)
+if N.Magnitude<0.01 then N=Vector3.new(1,0,0)end
+N=N.Unit
 
-local N,O=math.cos(i),math.sin(i)
-
-local P=Vector3.new(
-M.X*N-M.Z*(-O),
-0,
-M.X*(-O)+M.Z*N
-).Unit
+local O,P=math.cos(i),math.sin(i)
 
 local Q=Vector3.new(
-M.X*N-M.Z*O,
+N.X*O-N.Z*(-P),
 0,
-M.X*O+M.Z*N
+N.X*(-P)+N.Z*O
 ).Unit
 
-local R=x(z.Position,P,j)
-local S=x(z.Position,Q,j)
+local R=Vector3.new(
+N.X*O-N.Z*P,
+0,
+N.X*P+N.Z*O
+).Unit
 
-local T
-if not R and S then
-T=P
-elseif not S and R then
-T=Q
-elseif not R and not S then
-local U=P:Dot(F)
-local V=Q:Dot(F)
-T=(U>=V)and P or Q
-else
-T=nil
-end
+local S=y(A.Position,Q,j)
+local T=y(A.Position,R,j)
 
 local U
-if T then
-U=(L+T*1.2).Unit
+if not S and T then
+U=Q
+elseif not T and S then
+U=R
+elseif not S and not T then
+local V=Q:Dot(G)
+local W=R:Dot(G)
+U=(V>=W)and Q or R
 else
-U=L
+U=nil
 end
 
-return U*math.min(E*60,k),E
-end
-
-
-
-
-local function z(A)
-w()
-
-local B=ae.Character
-local C=B and B:FindFirstChild("HumanoidRootPart")
-if not C then return end
-
-t=A:FindFirstAncestorOfClass("Model")
-
-local D=B:FindFirstChildOfClass("Humanoid")
-if D then
-D.PlatformStand=true
-s=D
-end
-
-
-u(B,true)
-
-p=Instance.new("Attachment")
-p.Parent=C
-
-q=Instance.new("LinearVelocity")
-q.Attachment0=p
-q.MaxForce=1e6
-q.RelativeTo=Enum.ActuatorRelativeTo.World
-q.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-q.VectorVelocity=Vector3.zero
-q.Parent=C
-
-local E=C.Position
-local F=tick()
-local G=nil
-local H=0
-
-r=ac.Heartbeat:Connect(function()
-if not A or not A.Parent then
-w()
-return
-end
-
-local I=ae.Character and ae.Character:FindFirstChild("HumanoidRootPart")
-if not I or not q then return end
-
-
-
-local J=tick()
-
-local K=(I.Position-E).Magnitude
-if K>m then
-E=I.Position
-F=J
-if J>H then G=nil end
+local V
+if U then
+V=(M+U*1.2).Unit
 else
-local L=J-F
-if L>=n and J>H then
-local M=A.Position-I.Position
-local N=Vector3.new(M.X,0,M.Z)
-if N.Magnitude>0.01 then
-local O=N.Unit:Cross(Vector3.new(0,1,0)).Unit
-G=(math.random(0,1)==0)and O or-O
-H=J+o
-F=J
-end
-end
+V=M
 end
 
-local L=(J<=H)and G or nil
-local M,N=y(I,A,L)
-q.VectorVelocity=M
-end)
+return V*math.min(F*60,k),F
 end
 
 
 
 
 local function A(B)
-if not B then return end
-local C=ar[B]or 1
-pcall(function()ah.Travel(B,C)end)
+x()
+
+local C=ae.Character
+local D=C and C:FindFirstChild("HumanoidRootPart")
+if not D then return end
+
+u=B:FindFirstAncestorOfClass("Model")
+
+local E=C:FindFirstChildOfClass("Humanoid")
+if E then
+E.PlatformStand=true
+t=E
+end
+
+
+v(C,true)
+
+q=Instance.new("Attachment")
+q.Parent=D
+
+r=Instance.new("LinearVelocity")
+r.Attachment0=q
+r.MaxForce=1e6
+r.RelativeTo=Enum.ActuatorRelativeTo.World
+r.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+r.VectorVelocity=Vector3.zero
+r.Parent=D
+
+local F=D.Position
+local G=tick()
+local H=nil
+local I=0
+local J=0
+local K=nil
+
+s=ac.Heartbeat:Connect(function()
+if not B or not B.Parent then
+x()
+return
+end
+
+local L=ae.Character and ae.Character:FindFirstChild("HumanoidRootPart")
+if not L or not r then return end
+
+
+
+local M=tick()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local N=(L.Position-F).Magnitude
+if N>m then
+F=L.Position
+G=M
+J=0
+if M>I then H=nil end
+else
+local O=M-G
+if O>=n and M>I then
+
+if K and(L.Position-K).Magnitude<m then
+J+=1
+end
+K=L.Position
+
+if J>=p then
+
+
+J=0
+H=nil
+x()
+return
+end
+
+local P=B.Position-L.Position
+local Q=Vector3.new(P.X,0,P.Z)
+if Q.Magnitude>0.01 then
+local R=Q.Unit:Cross(Vector3.new(0,1,0)).Unit
+H=(math.random(0,1)==0)and R or-R
+I=M+o
+G=M
+end
+end
+end
+
+local O=(M<=I)and H or nil
+local P,Q=z(L,B,O)
+r.VectorVelocity=P
+end)
 end
 
 
 
 
-local function B()
-local C=workspace:FindFirstChild("Islands")
-if not C then return nil end
-for D,E in ipairs(C:GetChildren())do
-if E:FindFirstChild(ae.Name)then return E end
+local function B(C)
+if not C then return end
+local D=ar[C]or 1
+pcall(function()ah.Travel(C,D)end)
+end
+
+
+
+
+local function C()
+local D=workspace:FindFirstChild("Islands")
+if not D then return nil end
+for E,F in ipairs(D:GetChildren())do
+if F:FindFirstChild(ae.Name)then return F end
 end
 return nil
 end
@@ -5635,156 +5678,156 @@ end
 
 
 
-local function C(D,E)
-if not E then return end
+local function D(E,F)
+if not F then return end
 if e then return end
 
-local F=as[E.Name]
-if not F or#F==0 then return end
+local G=as[F.Name]
+if not G or#G==0 then return end
 
-local G=F[math.random(1,#F)].Position
-local H=ae.Character
-if not H then return end
-local I=H:FindFirstChildOfClass("Humanoid")
+local H=G[math.random(1,#G)].Position
+local I=ae.Character
+if not I then return end
+local J=I:FindFirstChildOfClass("Humanoid")
 
 e=true
 f=tick()
 
-local J=15
+local K=15
 
-local K=q~=nil
-local L,M=q,p
-local N,O=nil,nil
+local L=r~=nil
+local M,N=r,q
+local O,P=nil,nil
 
-if not K then
-if I then I.PlatformStand=true end
-O=Instance.new("Attachment")
-O.Parent=D
-N=Instance.new("LinearVelocity")
-N.Attachment0=O
-N.MaxForce=1e6
-N.RelativeTo=Enum.ActuatorRelativeTo.World
-N.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-N.VectorVelocity=Vector3.zero
-N.Parent=D
-L,M=N,O
+if not L then
+if J then J.PlatformStand=true end
+P=Instance.new("Attachment")
+P.Parent=E
+O=Instance.new("LinearVelocity")
+O.Attachment0=P
+O.MaxForce=1e6
+O.RelativeTo=Enum.ActuatorRelativeTo.World
+O.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+O.VectorVelocity=Vector3.zero
+O.Parent=E
+M,N=O,P
 end
 
-local P=40
-local Q=2
+local Q=40
+local R=2
 
-local function R()
-if N then N:Destroy()end
+local function S()
 if O then O:Destroy()end
-if I and not K then I.PlatformStand=false end
+if P then P:Destroy()end
+if J and not L then J.PlatformStand=false end
 e=false
 end
 
-local S
-S=ac.Heartbeat:Connect(function()
+local T
+T=ac.Heartbeat:Connect(function()
 
-if tick()-f>J then
-S:Disconnect()
-R()
+if tick()-f>K then
+T:Disconnect()
+S()
 return
 end
 
 
-local T=ae.Character
-local U=T and T:FindFirstChild("HumanoidRootPart")
+local U=ae.Character
+local V=U and U:FindFirstChild("HumanoidRootPart")
 
-if not U or not L or not L.Parent then
-S:Disconnect()
-R()
+if not V or not M or not M.Parent then
+T:Disconnect()
+S()
 return
 end
 
-local V=G-U.Position
-local W=V.Magnitude
+local W=H-V.Position
+local X=W.Magnitude
 
-if W<Q then
-L.VectorVelocity=Vector3.zero
-S:Disconnect()
-R()
+if X<R then
+M.VectorVelocity=Vector3.zero
+T:Disconnect()
+S()
 else
-L.VectorVelocity=V.Unit*math.min(W*8,P)
+M.VectorVelocity=W.Unit*math.min(X*8,Q)
 end
 end)
 end
 
-local function D(E,F)
-local G=nil
-local H=math.huge
+local function E(F,G)
+local H=nil
+local I=math.huge
 
 if d then
-for I,J in ipairs(workspace:GetChildren())do
-if J:IsA("Model")then
-local K=J:FindFirstChild("HumanoidRootPart")
-if K then
-local L=(E.Position-K.Position).Magnitude
-if L<H then H=L;G=K end
+for J,K in ipairs(workspace:GetChildren())do
+if K:IsA("Model")then
+local L=K:FindFirstChild("HumanoidRootPart")
+if L then
+local M=(F.Position-L.Position).Magnitude
+if M<I then I=M;H=L end
 end
 end
 end
-if G then return G end
-end
-
-for I,J in ipairs(F:GetDescendants())do
-if J:IsA("Model")then
-local K=J:FindFirstChild("HumanoidRootPart")
-local L=J:FindFirstChild("CaptureProgress",true)
-if K and L then
-local M=(E.Position-K.Position).Magnitude
-if M<H then H=M;G=K end
-end
-end
+if H then return H end
 end
 
-return G
+for J,K in ipairs(G:GetDescendants())do
+if K:IsA("Model")then
+local L=K:FindFirstChild("HumanoidRootPart")
+local M=K:FindFirstChild("CaptureProgress",true)
+if L and M then
+local N=(F.Position-L.Position).Magnitude
+if N<I then I=N;H=L end
+end
+end
 end
 
-local function E(F)
-local G={}
-for H,I in ipairs(aq)do
-if b[I]then table.insert(G,I)end
-end
-if#G==0 then return nil end
-if#G==1 then return G[1]end
-for H,I in ipairs(G)do
-if I==F then return G[(H%#G)+1]end
-end
-return G[1]
+return H
 end
 
+local function F(G)
+local H={}
+for I,J in ipairs(aq)do
+if b[J]then table.insert(H,J)end
+end
+if#H==0 then return nil end
+if#H==1 then return H[1]end
+for I,J in ipairs(H)do
+if J==G then return H[(I%#H)+1]end
+end
+return H[1]
+end
 
 
 
-local function F()
-local G=workspace:FindFirstChild("Islands")
-if not G then return end
-local H=G:FindFirstChild("Volcano Island")
+
+local function G()
+local H=workspace:FindFirstChild("Islands")
 if not H then return end
-local I=H:FindFirstChild("LavaParts")
+local I=H:FindFirstChild("Volcano Island")
 if not I then return end
-for J,K in ipairs(I:GetDescendants())do
-if K:IsA("TouchTransmitter")then K:Destroy()end
+local J=I:FindFirstChild("LavaParts")
+if not J then return end
+for K,L in ipairs(J:GetDescendants())do
+if L:IsA("TouchTransmitter")then L:Destroy()end
 end
 end
 
 do
-local G=nil
+local H=nil
 ac.Heartbeat:Connect(function()
-local H=B()
-local I=H and H.Name or nil
-if I~=G then
-G=I
-if I=="Volcano Island"then
-F()
+local I=C()
+local J=I and I.Name or nil
+if J~=H then
+H=J
+if J=="Volcano Island"then
+G()
 end
 end
 end)
 task.spawn(function()
-while true do F();task.wait(3)end
+while true do G();task.wait(3)end
 end)
 end
 
@@ -5792,24 +5835,24 @@ end
 
 
 do
-local G=require(af.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
+local H=require(af.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
 task.spawn(function()
 while true do
 task.wait(tonumber(ao)or ak)
 if not an then continue end
-local H=G.object
-if not H then continue end
-local I=false
-if H.controller and H.controller.GetTarget then
-local J,K=pcall(H.controller.GetTarget,H)
-I=J and K~=nil
-elseif H.controller and H.controller.GetAnimals then
-local J,K=pcall(H.controller.GetAnimals,H,true,true)
-I=J and K and#K>0
+local I=H.object
+if not I then continue end
+local J=false
+if I.controller and I.controller.GetTarget then
+local K,L=pcall(I.controller.GetTarget,I)
+J=K and L~=nil
+elseif I.controller and I.controller.GetAnimals then
+local K,L=pcall(I.controller.GetAnimals,I,true,true)
+J=K and L and#L>0
 else
-I=true
+J=true
 end
-if I then pcall(function()H:Activate()end)end
+if J then pcall(function()I:Activate()end)end
 end
 end)
 end
@@ -5818,51 +5861,51 @@ end
 
 
 do
-local G=5
+local H=5
 
 task.spawn(function()
-local H=0
-local I=nil
-local J=false
-local K=0
+local I=0
+local J=nil
+local K=false
 local L=0
+local M=0
 
-local function M(N)
-if not N then return false end
-if not N.Parent then return false end
-local O=N:FindFirstAncestorOfClass("Model")
+local function N(O)
 if not O then return false end
 if not O.Parent then return false end
+local P=O:FindFirstAncestorOfClass("Model")
+if not P then return false end
+if not P.Parent then return false end
 return true
 end
 
-local function N()
-w()
-I=nil
-L=0
-end
-
-local function O(P)
-if J then return end
-J=true
-H=0
-K=0
-N()
-A(P)
-local Q=tick()+30
-repeat
-task.wait(1)
-local R=B()
-if R and R.Name==P then break end
-until tick()>Q
-task.wait(2)
-J=false
+local function O()
+x()
+J=nil
+M=0
 end
 
 local function P(Q)
-local R=B()
-if not R then return end
-C(Q,R)
+if K then return end
+K=true
+I=0
+L=0
+O()
+B(Q)
+local R=tick()+30
+repeat
+task.wait(1)
+local S=C()
+if S and S.Name==Q then break end
+until tick()>R
+task.wait(2)
+K=false
+end
+
+local function Q(R)
+local S=C()
+if not S then return end
+D(R,S)
 end
 
 while true do
@@ -5875,69 +5918,69 @@ e=false
 end
 
 if not am then
-N()
-H=0
-K=0
+O()
+I=0
+L=0
 continue
 end
 
-if J then continue end
+if K then continue end
 
-local Q=ae.Character
-local R=Q and Q:FindFirstChild("HumanoidRootPart")
-if not R then continue end
-
-local S=B()
+local R=ae.Character
+local S=R and R:FindFirstChild("HumanoidRootPart")
 if not S then continue end
 
-if c and not b[S.Name]then
-local T=E(S.Name)
-if T then O(T)end
+local T=C()
+if not T then continue end
+
+if c and not b[T.Name]then
+local U=F(T.Name)
+if U then P(U)end
 continue
 end
 
 
-if I then
-if M(I)then
+if J then
+if N(J)then
+M=0
+else
+M+=1
+if M>=H then O()end
+end
+end
+
+
+if not J then
+local U=E(S,T)
+if U then
+J=U
+M=0
+A(J)
+end
+end
+
+if J then
+I=0
 L=0
 else
-L+=1
-if L>=G then N()end
-end
-end
+I+=1
+L+=0.4
 
-
-if not I then
-local T=D(R,S)
-if T then
-I=T
+if c and L>=al then
+local U=F(T.Name)
+if U and U~=T.Name then
+P(U)
+else
+Q(S)
 L=0
-z(I)
-end
-end
-
-if I then
-H=0
-K=0
-else
-H+=1
-K+=0.4
-
-if c and K>=al then
-local T=E(S.Name)
-if T and T~=S.Name then
-O(T)
-else
-P(R)
-K=0
-H=0
+I=0
 end
 continue
 end
 
-if H>=(tonumber(ap)or aj)then
-P(R)
-H=0
+if I>=(tonumber(ap)or aj)then
+Q(S)
+I=0
 end
 end
 end
@@ -5952,13 +5995,13 @@ end
 
 return{
 autofarm_islands=b,
-setEnabled=function(G)am=G end,
-setWildherd=function(G)d=G end,
-setAutotravel=function(G)c=G end,
-setIsland=function(G,H)b[G]=H end,
-setAutoclick=function(G)an=G end,
-setClickDuration=function(G)ao=G end,
-setIdleLimit=function(G)ap=G end,
+setEnabled=function(H)am=H end,
+setWildherd=function(H)d=H end,
+setAutotravel=function(H)c=H end,
+setIsland=function(H,I)b[H]=I end,
+setAutoclick=function(H)an=H end,
+setClickDuration=function(H)ao=H end,
+setIdleLimit=function(H)ap=H end,
 }end function a.d():typeof(aa())local ab=a.cache.d if not ab then ab={c=aa()}a.cache.d=ab end return ab.c end end do local function aa()
 
 
