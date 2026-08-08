@@ -1,85 +1,29 @@
-local a={cache={}::any}do do local function b()
+local a={cache={}::any}do do local function b()local c=game:GetService('UserInputService');
+local d=game:GetService('TextService');
+local e=game:GetService('CoreGui');
+local f=game:GetService('Teams');
+local g=game:GetService('Players');
+local h=game:GetService('RunService')
+local i=game:GetService('TweenService');
+local j=game:GetService('Lighting');
+local k=h.RenderStepped;
+local l=g.LocalPlayer;
+local m=l:GetMouse();
 
+local n=protectgui or(syn and syn.protect_gui)or(function()end);
 
+local o=Instance.new('ScreenGui');
+n(o);
+o.ZIndexBehavior=Enum.ZIndexBehavior.Global;
+o.Parent=e;
 
+local p={};
+local q={};
 
+getgenv().Toggles=p;
+getgenv().Options=q;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-writefile(
-"Tahoma.ttf",
-game:HttpGet("https://github.com/sametexe001/luas/raw/refs/heads/main/fonts/windows-xp-tahoma.ttf")
-)
-
-writefile("Tahoma.font",game:GetService("HttpService"):JSONEncode({
-name="Tahoma",
-faces={
-{
-name="Regular",
-weight=400,
-style="normal",
-assetId=getcustomasset("Tahoma.ttf"),
-},
-{
-name="Bold",
-weight=700,
-style="normal",
-assetId=getcustomasset("Tahoma.ttf"),
-},
-},
-}))
-
-
-local c=Font.new("rbxasset://fonts/families/Tahoma.json",Enum.FontWeight.Regular)
-local d=Font.new(getcustomasset("Tahoma.font"),Enum.FontWeight.Regular);
-
-local e=game:GetService('UserInputService');
-local f=game:GetService('TextService');
-local g=game:GetService('CoreGui');
-local h=game:GetService('Teams');
-local i=game:GetService('Players');
-local j=game:GetService('RunService')
-local k=game:GetService('TweenService');
-local l=game:GetService('Lighting');
-local m=j.RenderStepped;
-local n=i.LocalPlayer;
-local o=n:GetMouse();
-
-local p=protectgui or(syn and syn.protect_gui)or(function()end);
-
-local q=Instance.new('ScreenGui');
-p(q);
-q.ZIndexBehavior=Enum.ZIndexBehavior.Global;
-q.Parent=g;
-
-local r={};
-local s={};
-
-getgenv().Toggles=r;
-getgenv().Options=s;
-
-local t={
+local r={
 Registry={};
 RegistryMap={};
 
@@ -89,24 +33,23 @@ FontColor=Color3.fromRGB(255,255,255);
 MainColor=Color3.fromRGB(28,28,28);
 BackgroundColor=Color3.fromRGB(20,20,20);
 AccentColor=Color3.fromRGB(0,85,255);
-SecondAccentColor=Color3.fromRGB(0,82,255);
 OutlineColor=Color3.fromRGB(50,50,50);
 RiskColor=Color3.fromRGB(255,50,50),
 
 Black=Color3.new(0,0,0);
-Font=d,
-BoldFont=Font.new(getcustomasset("Tahoma.font"),Enum.FontWeight.Bold),
-FontSize=11,
+
+Font=Enum.Font.Code,
+FontSize=14,
 
 OpenedFrames={};
 DependencyBoxes={};
 
 Signals={};
-ScreenGui=q;
+ScreenGui=o;
 
 Toggled=false;
 WireframeDrag=true;
-UseBlur=true;
+UseBlur=false;
 BlurSize=15;
 
 KeybindMode='All';
@@ -119,250 +62,237 @@ PositionY=40;
 };
 };
 
-t.KeyPickerList={};
+r.KeyPickerList={};
 
-t.BlurEffect=Instance.new("BlurEffect")
-t.BlurEffect.Name="LinoriaBlur"
-t.BlurEffect.Size=0
-t.BlurEffect.Enabled=false
-pcall(function()t.BlurEffect.Parent=l end)
+r.BlurEffect=Instance.new("BlurEffect")
+r.BlurEffect.Name="LinoriaBlur"
+r.BlurEffect.Size=0
+r.BlurEffect.Enabled=false
+pcall(function()r.BlurEffect.Parent=j end)
 
-function t:UpdateBlur()
-if t.UseBlur and t.Toggled then
-t.BlurEffect.Size=0
-t.BlurEffect.Enabled=true
-
-task.wait()
-
-k:Create(
-t.BlurEffect,
-TweenInfo.new(0.35,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),
-{Size=t.BlurSize}
-):Play()
+function r:UpdateBlur()
+if r.UseBlur then
+if r.Toggled then
+r.BlurEffect.Enabled=true
+i:Create(r.BlurEffect,TweenInfo.new(0.2,Enum.EasingStyle.Linear),{Size=r.BlurSize}):Play()
+end
 else
-local u=k:Create(
-t.BlurEffect,
-TweenInfo.new(0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.In),
-{Size=0}
-)
-u:Play()
-u.Completed:Connect(function()
-if not t.UseBlur or not t.Toggled then
-t.BlurEffect.Enabled=false
+local s=i:Create(r.BlurEffect,TweenInfo.new(0.2,Enum.EasingStyle.Linear),{Size=0})
+s:Play()
+
+task.delay(0.2,function()
+if not r.UseBlur then
+r.BlurEffect.Enabled=false
 end
 end)
 end
 end
 
-function t:SetFontSize(u)
-t.FontSize=u
-for v,w in pairs(q:GetDescendants())do
-if w:IsA("TextLabel")or w:IsA("TextBox")or w:IsA("TextButton")then
-local x=w:GetAttribute("FontSizeOffset")
-if x then
-w.TextSize=u+x
-end
-end
-end
-local v=g:FindFirstChild("LinoriaMobileUI")
+function r:SetFontSize(s)
+r.FontSize=s
+for t,u in pairs(o:GetDescendants())do
+if u:IsA("TextLabel")or u:IsA("TextBox")or u:IsA("TextButton")then
+local v=u:GetAttribute("FontSizeOffset")
 if v then
-for w,x in pairs(v:GetDescendants())do
-if x:IsA("TextLabel")or x:IsA("TextBox")or x:IsA("TextButton")then
-local y=x:GetAttribute("FontSizeOffset")
-if y then
-x.TextSize=u+y
+u.TextSize=s+v
+end
+end
+end
+local t=e:FindFirstChild("LinoriaMobileUI")
+if t then
+for u,v in pairs(t:GetDescendants())do
+if v:IsA("TextLabel")or v:IsA("TextBox")or v:IsA("TextButton")then
+local w=v:GetAttribute("FontSizeOffset")
+if w then
+v.TextSize=s+w
 end
 end
 end
 end
 end
 
-local u=0
-local v=0
+local s=0
+local t=0
 
-table.insert(t.Signals,m:Connect(function(w)
-u=u+w
+table.insert(r.Signals,k:Connect(function(u)
+s=s+u
 
-if u>=(1/60)then
-u=0
+if s>=(1/60)then
+s=0
 
-v=v+(1/400);
-if v>1 then
-v=0;
+t=t+(1/400);
+if t>1 then
+t=0;
 end;
 
-t.CurrentRainbowHue=v;
-t.CurrentRainbowColor=Color3.fromHSV(v,0.8,1);
+r.CurrentRainbowHue=t;
+r.CurrentRainbowColor=Color3.fromHSV(t,0.8,1);
 end
 end))
 
-local function w()
-local x=i:GetPlayers();
-for y=1,#x do
-x[y]=x[y].Name;
+local function u()
+local v=g:GetPlayers();
+for w=1,#v do
+v[w]=v[w].Name;
 end;
-table.sort(x,function(y,z)return y<z end);
+table.sort(v,function(w,x)return w<x end);
 
-return x
+return v
 end;
 
-local function x()
-local y=h:GetTeams();
-for z=1,#y do
-y[z]=y[z].Name;
+local function v()
+local w=f:GetTeams();
+for x=1,#w do
+w[x]=w[x].Name;
 end;
-table.sort(y,function(z,A)return z<A end);
+table.sort(w,function(x,y)return x<y end);
+
+return w
+end;
+
+function r:SafeCallback(w,...)
+if(not w)then
+return
+end;
+if not r.NotifyOnError then
+return w(...)
+end;
+
+local x,y=pcall(w,...);
+if not x then
+local z,A=y:find(":%d+: ");
+if not A then
+return r:Notify(y)
+end;
+return r:Notify(y:sub(A+1),3)
+end;
+end;
+
+function r:AttemptSave()
+if r.SaveManager then
+r.SaveManager:Save();
+end;
+end;
+
+function r:Create(w,x)
+local y=w;
+if type(w)=='string'then
+y=Instance.new(w);
+end;
+for z,A in next,x do
+y[z]=A;
+end;
+
+if y:IsA("TextLabel")or y:IsA("TextBox")or y:IsA("TextButton")then
+if x.TextSize then
+y:SetAttribute("FontSizeOffset",x.TextSize-r.FontSize)
+else
+y:SetAttribute("FontSizeOffset",0)
+end
+end
 
 return y
 end;
 
-function t:SafeCallback(y,...)
-if(not y)then
-return
-end;
-if not t.NotifyOnError then
-return y(...)
-end;
+function r:ApplyTextStroke(w)
+w.TextStrokeTransparency=1;
 
-local z,A=pcall(y,...);
-if not z then
-local B,C=A:find(":%d+: ");
-if not C then
-return t:Notify(A)
-end;
-return t:Notify(A:sub(C+1),3)
-end;
-end;
-
-function t:AttemptSave()
-if t.SaveManager then
-t.SaveManager:Save();
-end;
-end;
-
-function t:Create(y,z)
-local A=y;
-if type(y)=='string'then
-A=Instance.new(y);
-end;
-for B,C in next,z do
-A[B]=C;
-end;
-
-if A:IsA("TextLabel")or A:IsA("TextBox")or A:IsA("TextButton")then
-if z.TextSize then
-A:SetAttribute("FontSizeOffset",z.TextSize-t.FontSize)
-else
-A:SetAttribute("FontSizeOffset",0)
-end
-end
-
-return A
-end;
-
-function t:ApplyTextStroke(y)
-y.TextStrokeTransparency=1;
-
-t:Create('UIStroke',{
+r:Create('UIStroke',{
 Color=Color3.new(0,0,0);
 Thickness=1;
 LineJoinMode=Enum.LineJoinMode.Miter;
-Parent=y;
+Parent=w;
 });
 end;
 
-function t:ApplyGlow(y)
+function r:ApplyGlow(w)
 
 end;
 
-function t:CreateLabel(y,z)
-local A=t:Create('TextLabel',{
+function r:CreateLabel(w,x)
+local y=r:Create('TextLabel',{
 BackgroundTransparency=1;
-FontFace=t.Font;
-TextColor3=t.FontColor;
-TextSize=t.FontSize+2;
-TextStrokeTransparency=1;
+Font=r.Font;
+TextColor3=r.FontColor;
+TextSize=r.FontSize+2;
+TextStrokeTransparency=0;
 });
-t:ApplyTextStroke(A);
+r:ApplyTextStroke(y);
 
-t:AddToRegistry(A,{
+r:AddToRegistry(y,{
 TextColor3='FontColor';
-},z);
-return t:Create(A,y)
+},x);
+return r:Create(y,w)
 end;
 
-function t:MakeDraggable(y,z,A)
-y.Active=true;
-y.InputBegan:Connect(function(B)
-if B.UserInputType==Enum.UserInputType.MouseButton1 or B.UserInputType==Enum.UserInputType.Touch then
-local C=y.Position
-local D=B.Position
+function r:MakeDraggable(w,x,y)
+w.Active=true;
+w.InputBegan:Connect(function(z)
+if z.UserInputType==Enum.UserInputType.MouseButton1 or z.UserInputType==Enum.UserInputType.Touch then
+local A=w.Position
+local B=z.Position
 
-if(D.Y-y.AbsolutePosition.Y)>(z or 40)then
+if(B.Y-w.AbsolutePosition.Y)>(x or 40)then
 return
 end
 
-local E=true
-local F=false
-local G=nil
-local H,I
+local C=true
+local D=false
+local E=nil
+local F,G
 
-H=e.InputChanged:Connect(function(J)
-if J.UserInputType==Enum.UserInputType.MouseMovement or J==B then
-local K=J.Position-D
+F=c.InputChanged:Connect(function(H)
+if H.UserInputType==Enum.UserInputType.MouseMovement or H==z then
+local I=H.Position-B
 
-if A and t.WireframeDrag then
-if not F and K.Magnitude>2 then
-F=true
+if y and r.WireframeDrag then
+if not D and I.Magnitude>2 then
+D=true
 
-G=t:Create("Frame",{
-Size=y.Size,
-Position=y.Position,
-AnchorPoint=y.AnchorPoint,
+E=r:Create("Frame",{
+Size=w.Size,
+Position=w.Position,
+AnchorPoint=w.AnchorPoint,
 BackgroundTransparency=1,
 Active=false,
 ZIndex=100000,
-Parent=q
+Parent=o
 })
 
-
-
-
-
-t:Create("UIStroke",{
-Color=t.AccentColor,
+r:Create("UIStroke",{
+Color=Color3.fromRGB(255,255,255),
 Thickness=1,
 ApplyStrokeMode=Enum.ApplyStrokeMode.Border,
-Parent=G
+Parent=E
 })
 end
 
-if F and G then
-G.Position=UDim2.new(
-C.X.Scale,C.X.Offset+K.X,
-C.Y.Scale,C.Y.Offset+K.Y
+if D and E then
+E.Position=UDim2.new(
+A.X.Scale,A.X.Offset+I.X,
+A.Y.Scale,A.Y.Offset+I.Y
 )
 end
 else
-y.Position=UDim2.new(
-C.X.Scale,C.X.Offset+K.X,
-C.Y.Scale,C.Y.Offset+K.Y
+w.Position=UDim2.new(
+A.X.Scale,A.X.Offset+I.X,
+A.Y.Scale,A.Y.Offset+I.Y
 )
 end
 end
 end)
 
-I=e.InputEnded:Connect(function(J)
-if J==B or J.UserInputType==Enum.UserInputType.Touch then
-E=false
-H:Disconnect()
-I:Disconnect()
+G=c.InputEnded:Connect(function(H)
+if H==z or H.UserInputType==Enum.UserInputType.Touch then
+C=false
+F:Disconnect()
+G:Disconnect()
 
-if A and t.WireframeDrag and F and G then
-y.Position=G.Position
+if y and r.WireframeDrag and D and E then
+w.Position=E.Position
 
-G:Destroy()
-G=nil
+E:Destroy()
+E=nil
 end
 end
 end)
@@ -370,11 +300,11 @@ end
 end)
 end;
 
-function t:MakeResizable(y,z,A)
-z=z or Vector2.new(400,300)
-A=A or Vector2.new(1400,1000)
+function r:MakeResizable(w,x,y)
+x=x or Vector2.new(400,300)
+y=y or Vector2.new(1400,1000)
 
-local B=t:Create('TextButton',{
+local z=r:Create('TextButton',{
 Name='ResizeGrip',
 Text='',
 AutoButtonColor=false,
@@ -383,925 +313,911 @@ Size=UDim2.fromOffset(16,16),
 Position=UDim2.new(1,-4,1,-4),
 AnchorPoint=Vector2.new(1,1),
 ZIndex=25,
-Parent=y,
+Parent=w,
 })
 
-local C=t:CreateLabel({
+local A=r:CreateLabel({
 BackgroundTransparency=1,
 Size=UDim2.fromOffset(16,16),
 Position=UDim2.new(1,0,1,0),
 AnchorPoint=Vector2.new(1,1),
-Text='◢',
-TextColor3=t.OutlineColor,
-TextSize=t.FontSize+2,
+Text='*',
+TextColor3=r.OutlineColor,
+TextSize=r.FontSize+2,
 ZIndex=26,
-Parent=B,
+Parent=z,
 })
-t:AddToRegistry(C,{
+r:AddToRegistry(A,{
 TextColor3='OutlineColor',
 })
 
-B.InputBegan:Connect(function(D)
-if D.UserInputType~=Enum.UserInputType.MouseButton1
-and D.UserInputType~=Enum.UserInputType.Touch then
+z.InputBegan:Connect(function(B)
+if B.UserInputType~=Enum.UserInputType.MouseButton1
+and B.UserInputType~=Enum.UserInputType.Touch then
 return
 end
 
-local E=y.Size
-local F=D.Position
-local G=false
-local H=nil
-local I,J
+local C=w.Size
+local D=B.Position
+local E=false
+local F=nil
+local G,H
 
-I=e.InputChanged:Connect(function(K)
-if K.UserInputType~=Enum.UserInputType.MouseMovement and K~=D then
+G=c.InputChanged:Connect(function(I)
+if I.UserInputType~=Enum.UserInputType.MouseMovement and I~=B then
 return
 end
 
-local L=K.Position-F
-if L.Magnitude<=2 then return end
-G=true
+local J=I.Position-D
+if J.Magnitude<=2 then return end
+E=true
 
-local M=math.clamp(E.X.Offset+L.X,z.X,A.X)
-local N=math.clamp(E.Y.Offset+L.Y,z.Y,A.Y)
-local O=UDim2.fromOffset(M,N)
+local K=math.clamp(C.X.Offset+J.X,x.X,y.X)
+local L=math.clamp(C.Y.Offset+J.Y,x.Y,y.Y)
+local M=UDim2.fromOffset(K,L)
 
-if t.WireframeDrag then
-if not H then
-H=t:Create('Frame',{
-Size=y.Size,
-Position=y.Position,
-AnchorPoint=y.AnchorPoint,
+if r.WireframeDrag then
+if not F then
+F=r:Create('Frame',{
+Size=w.Size,
+Position=w.Position,
+AnchorPoint=w.AnchorPoint,
 BackgroundTransparency=1,
 Active=false,
 ZIndex=100000,
-Parent=q,
+Parent=o,
 })
-t:Create('UIStroke',{
+r:Create('UIStroke',{
 Color=Color3.fromRGB(255,255,255),
 Thickness=1,
 ApplyStrokeMode=Enum.ApplyStrokeMode.Border,
-Parent=H,
+Parent=F,
 })
 end
-H.Size=O
-H.Position=y.Position
+F.Size=M
+F.Position=w.Position
 else
-y.Size=O
+w.Size=M
 end
 end)
 
-J=e.InputEnded:Connect(function(K)
-if K~=D and K.UserInputType~=Enum.UserInputType.Touch then
+H=c.InputEnded:Connect(function(I)
+if I~=B and I.UserInputType~=Enum.UserInputType.Touch then
 return
 end
 
-I:Disconnect()
-J:Disconnect()
+G:Disconnect()
+H:Disconnect()
 
-if t.WireframeDrag and G and H then
-y.Size=H.Size
-H:Destroy()
+if r.WireframeDrag and E and F then
+w.Size=F.Size
+F:Destroy()
 end
 end)
 end)
 end;
 
-function t:AddToolTip(y,z)
-local A,B=t:GetTextBounds(y,t.Font,t.FontSize);
-local C=t:Create('Frame',{
-BackgroundColor3=t.MainColor,
-BorderColor3=t.OutlineColor,
+function r:AddToolTip(w,x)
+local y,z=r:GetTextBounds(w,r.Font,r.FontSize);
+local A=r:Create('Frame',{
+BackgroundColor3=r.MainColor,
+BorderColor3=r.OutlineColor,
 
-Size=UDim2.fromOffset(A+5,B+4),
+Size=UDim2.fromOffset(y+5,z+4),
 ZIndex=100,
-Parent=t.ScreenGui,
+Parent=r.ScreenGui,
 
 Visible=false,
 })
 
-local D=t:CreateLabel({
+local B=r:CreateLabel({
 Position=UDim2.fromOffset(3,1),
-Size=UDim2.fromOffset(A,B);
-TextSize=t.FontSize;
-Text=y,
-TextColor3=t.FontColor,
+Size=UDim2.fromOffset(y,z);
+TextSize=r.FontSize;
+Text=w,
+TextColor3=r.FontColor,
 TextXAlignment=Enum.TextXAlignment.Left;
-ZIndex=C.ZIndex+1,
+ZIndex=A.ZIndex+1,
 
-Parent=C;
+Parent=A;
 });
-t:AddToRegistry(C,{
+r:AddToRegistry(A,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-t:AddToRegistry(D,{
+r:AddToRegistry(B,{
 TextColor3='FontColor',
 });
-local E=false
+local C=false
 
-z.MouseEnter:Connect(function()
-if t:MouseIsOverOpenedFrame()then
+x.MouseEnter:Connect(function()
+if r:MouseIsOverOpenedFrame()then
 return
 end
 
-E=true
+C=true
 
-C.Position=UDim2.fromOffset(o.X+15,o.Y+12)
-C.Visible=true
+A.Position=UDim2.fromOffset(m.X+15,m.Y+12)
+A.Visible=true
 
-while E do
-j.Heartbeat:Wait()
-C.Position=UDim2.fromOffset(o.X+15,o.Y+12)
+while C do
+h.Heartbeat:Wait()
+A.Position=UDim2.fromOffset(m.X+15,m.Y+12)
 end
 end)
 
-z.MouseLeave:Connect(function()
-E=false
-C.Visible=false
+x.MouseLeave:Connect(function()
+C=false
+A.Visible=false
 end)
 end
 
-function t:OnHighlight(y,z,A,B)
-y.MouseEnter:Connect(function()
-local C=t.RegistryMap[z];
+function r:OnHighlight(w,x,y,z)
+w.MouseEnter:Connect(function()
+local A=r.RegistryMap[x];
 
-for D,E in next,A do
-z[D]=t[E]or E;
+for B,C in next,y do
+x[B]=r[C]or C;
 
-if C and C.Properties[D]then
-C.Properties[D]=E;
+if A and A.Properties[B]then
+A.Properties[B]=C;
 end;
 end;
 end)
 
-y.MouseLeave:Connect(function()
-local C=t.RegistryMap[z];
+w.MouseLeave:Connect(function()
+local A=r.RegistryMap[x];
 
-for D,E in next,B do
-z[D]=t[E]or E;
+for B,C in next,z do
+x[B]=r[C]or C;
 
-if C and C.Properties[D]then
-C.Properties[D]=E;
+if A and A.Properties[B]then
+A.Properties[B]=C;
 end;
 end;
 end)
 end;
 
-function t:MouseIsOverOpenedFrame()
-for y,z in next,t.OpenedFrames do
-local A,B=y.AbsolutePosition,y.AbsoluteSize;
-if o.X>=A.X and o.X<=A.X+B.X
-and o.Y>=A.Y and o.Y<=A.Y+B.Y then
+function r:MouseIsOverOpenedFrame()
+for w,x in next,r.OpenedFrames do
+local y,z=w.AbsolutePosition,w.AbsoluteSize;
+if m.X>=y.X and m.X<=y.X+z.X
+and m.Y>=y.Y and m.Y<=y.Y+z.Y then
 
 return true
 end;
 end;
 end;
 
-function t:IsMouseOverFrame(y)
-local z,A=y.AbsolutePosition,y.AbsoluteSize;
-if o.X>=z.X and o.X<=z.X+A.X
-and o.Y>=z.Y and o.Y<=z.Y+A.Y then
+function r:IsMouseOverFrame(w)
+local x,y=w.AbsolutePosition,w.AbsoluteSize;
+if m.X>=x.X and m.X<=x.X+y.X
+and m.Y>=x.Y and m.Y<=x.Y+y.Y then
 
 return true
 end;
 end;
 
-function t:UpdateDependencyBoxes()
-for y,z in next,t.DependencyBoxes do
-z:Update();
+function r:UpdateDependencyBoxes()
+for w,x in next,r.DependencyBoxes do
+x:Update();
 end;
 end;
 
-function t:MapValue(y,z,A,B,C)
-return(1-((y-z)/(A-z)))*B+((y-z)/(A-z))*C
+function r:MapValue(w,x,y,z,A)
+return(1-((w-x)/(y-x)))*z+((w-x)/(y-x))*A
 end;
 
-function t:GetTextBounds(y,z,A,B)
-local C=Instance.new("GetTextBoundsParams")
-C.Text=y
-C.Font=z
-C.Size=A
-C.Width=math.huge
-
-local D=f:GetTextBoundsAsync(C)
-return D.X,D.Y
-end
-
-function t:GetDarkerColor(y)
-local z,A,B=Color3.toHSV(y);
-return Color3.fromHSV(z,A,B/1.5)
+function r:GetTextBounds(w,x,y,z)
+local A=d:GetTextSize(w,y,x,z or Vector2.new(1920,1080))
+return A.X,A.Y
 end;
 
-t.AccentColorDark=t:GetDarkerColor(t.AccentColor);
+function r:GetDarkerColor(w)
+local x,y,z=Color3.toHSV(w);
+return Color3.fromHSV(x,y,z/1.5)
+end;
 
-function t:AddToRegistry(y,z,A)
-local B=#t.Registry+1;
-local C={
-Instance=y;
-Properties=z;
-Idx=B;
+r.AccentColorDark=r:GetDarkerColor(r.AccentColor);
+
+function r:AddToRegistry(w,x,y)
+local z=#r.Registry+1;
+local A={
+Instance=w;
+Properties=x;
+Idx=z;
 };
 
-table.insert(t.Registry,C);
-t.RegistryMap[y]=C;
+table.insert(r.Registry,A);
+r.RegistryMap[w]=A;
 
-if A then
-table.insert(t.HudRegistry,C);
-end;
-end;
-
-function t:RemoveFromRegistry(y)
-local z=t.RegistryMap[y];
-
-if z then
-for A=#t.Registry,1,-1 do
-if t.Registry[A]==z then
-table.remove(t.Registry,A);
+if y then
+table.insert(r.HudRegistry,A);
 end;
 end;
 
-for A=#t.HudRegistry,1,-1 do
-if t.HudRegistry[A]==z then
-table.remove(t.HudRegistry,A);
+function r:RemoveFromRegistry(w)
+local x=r.RegistryMap[w];
+
+if x then
+for y=#r.Registry,1,-1 do
+if r.Registry[y]==x then
+table.remove(r.Registry,y);
 end;
 end;
 
-t.RegistryMap[y]=nil;
+for y=#r.HudRegistry,1,-1 do
+if r.HudRegistry[y]==x then
+table.remove(r.HudRegistry,y);
 end;
 end;
 
-function t:UpdateColorsUsingRegistry()
-for y,z in next,t.Registry do
-for A,B in next,z.Properties do
-if type(B)=='string'then
-z.Instance[A]=t[B];
-elseif type(B)=='function'then
-z.Instance[A]=B()
+r.RegistryMap[w]=nil;
+end;
+end;
+
+function r:UpdateColorsUsingRegistry()
+for w,x in next,r.Registry do
+for y,z in next,x.Properties do
+if type(z)=='string'then
+x.Instance[y]=r[z];
+elseif type(z)=='function'then
+x.Instance[y]=z()
 end
 end;
 end;
 end;
 
-function t:GiveSignal(y)
-table.insert(t.Signals,y)
+function r:GiveSignal(w)
+table.insert(r.Signals,w)
 end
 
-function t:Unload()
-for y=#t.Signals,1,-1 do
-local z=table.remove(t.Signals,y)
-z:Disconnect()
+function r:Unload()
+for w=#r.Signals,1,-1 do
+local x=table.remove(r.Signals,w)
+x:Disconnect()
 end
 
-if t.OnUnload then
-t.OnUnload()
+if r.OnUnload then
+r.OnUnload()
 end
 
-if t.BlurEffect then
-t.BlurEffect:Destroy()
+if r.BlurEffect then
+r.BlurEffect:Destroy()
 end
 
-q:Destroy()
+o:Destroy()
 end
 
-function t:OnUnload(y)
-t.OnUnload=y
+function r:OnUnload(w)
+r.OnUnload=w
 end
 
-t:GiveSignal(q.DescendantRemoving:Connect(function(y)
-if t.RegistryMap[y]then
-t:RemoveFromRegistry(y);
+r:GiveSignal(o.DescendantRemoving:Connect(function(w)
+if r.RegistryMap[w]then
+r:RemoveFromRegistry(w);
 end;
 end))
 
-local y={};
+local w={};
 do
-local z={};
+local x={};
 
-function z:AddColorPicker(A,B)
-local C=self.TextLabel;
-assert(B.Default,'AddColorPicker: Missing default value.');
+function x:AddColorPicker(y,z)
+local A=self.TextLabel;
+assert(z.Default,'AddColorPicker: Missing default value.');
 
-local D={
-Value=B.Default;
-Transparency=B.Transparency or 0;
+local B={
+Value=z.Default;
+Transparency=z.Transparency or 0;
 Type='ColorPicker';
-Title=type(B.Title)=='string'and B.Title or'Color picker',
-Callback=B.Callback or function(D)end;
+Title=type(z.Title)=='string'and z.Title or'Color picker',
+Callback=z.Callback or function(B)end;
 };
 
-function D:SetHSVFromRGB(E)
-local F,G,H=Color3.toHSV(E);
-D.Hue=F;
-D.Sat=G;
-D.Vib=H;
+function B:SetHSVFromRGB(C)
+local D,E,F=Color3.toHSV(C);
+B.Hue=D;
+B.Sat=E;
+B.Vib=F;
 end;
 
-D:SetHSVFromRGB(D.Value);
-local E=t:Create('Frame',{
-BackgroundColor3=D.Value;
-BorderColor3=t:GetDarkerColor(D.Value);
+B:SetHSVFromRGB(B.Value);
+local C=r:Create('Frame',{
+BackgroundColor3=B.Value;
+BorderColor3=r:GetDarkerColor(B.Value);
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(0,28,0,14);
 ZIndex=6;
-Parent=C;
+Parent=A;
 });
-local F=t:Create("UIGradient",{
-Rotation=90,
-Parent=E,
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(1,t.MainColor),
-}),
-});
-local G=t:Create('ImageLabel',{
+local D=r:Create('ImageLabel',{
 BorderSizePixel=0;
 Size=UDim2.new(0,27,0,13);
 ZIndex=5;
 Image='http://www.roblox.com/asset/?id=12977615774';
-Visible=not not B.Transparency;
-Parent=E;
+Visible=not not z.Transparency;
+Parent=C;
 });
 
-local H=t:Create('Frame',{
+local E=r:Create('Frame',{
 Name='Color';
 BackgroundColor3=Color3.new(1,1,1);
 BorderColor3=Color3.new(0,0,0);
-Position=UDim2.fromOffset(E.AbsolutePosition.X,E.AbsolutePosition.Y+18),
-Size=UDim2.fromOffset(230,B.Transparency and 271 or 253);
+Position=UDim2.fromOffset(C.AbsolutePosition.X,C.AbsolutePosition.Y+18),
+Size=UDim2.fromOffset(230,z.Transparency and 271 or 253);
 Visible=false;
 ZIndex=15;
-Parent=q,
+Parent=o,
 });
-E:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
-H.Position=UDim2.fromOffset(E.AbsolutePosition.X,E.AbsolutePosition.Y+18);
+C:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
+E.Position=UDim2.fromOffset(C.AbsolutePosition.X,C.AbsolutePosition.Y+18);
 end)
 
-local I=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
+local F=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=16;
-Parent=H;
+Parent=E;
 });
-local J=t:Create('Frame',{
-BackgroundColor3=t.AccentColor;
+local G=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
 BorderSizePixel=0;
 Size=UDim2.new(1,0,0,2);
 ZIndex=17;
-Parent=I;
+Parent=F;
 });
-local K=t:Create('Frame',{
+local H=r:Create('Frame',{
 BorderColor3=Color3.new(0,0,0);
 Position=UDim2.new(0,4,0,25);
 Size=UDim2.new(0,200,0,200);
 ZIndex=17;
-Parent=I;
+Parent=F;
 });
-local L=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
+local I=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=18;
-Parent=K;
+Parent=H;
 });
-local M=t:Create('ImageLabel',{
+local J=r:Create('ImageLabel',{
 BorderSizePixel=0;
 Size=UDim2.new(1,0,1,0);
 ZIndex=18;
 Image='rbxassetid://4155801252';
-Parent=L;
+Parent=I;
 });
-local N=t:Create('ImageLabel',{
+local K=r:Create('ImageLabel',{
 AnchorPoint=Vector2.new(0.5,0.5);
 Size=UDim2.new(0,6,0,6);
 BackgroundTransparency=1;
 Image='http://www.roblox.com/asset/?id=9619665977';
 ImageColor3=Color3.new(0,0,0);
 ZIndex=19;
-Parent=M;
+Parent=J;
 });
-local O=t:Create('ImageLabel',{
-Size=UDim2.new(0,N.Size.X.Offset-2,0,N.Size.Y.Offset-2);
+local L=r:Create('ImageLabel',{
+Size=UDim2.new(0,K.Size.X.Offset-2,0,K.Size.Y.Offset-2);
 Position=UDim2.new(0,1,0,1);
 BackgroundTransparency=1;
 Image='http://www.roblox.com/asset/?id=9619665977';
 ZIndex=20;
-Parent=N;
+Parent=K;
 })
 
-local P=t:Create('Frame',{
+local M=r:Create('Frame',{
 BorderColor3=Color3.new(0,0,0);
 Position=UDim2.new(0,208,0,25);
 Size=UDim2.new(0,15,0,200);
 ZIndex=17;
-Parent=I;
+Parent=F;
 });
 
-local Q=t:Create('Frame',{
+local N=r:Create('Frame',{
 BackgroundColor3=Color3.new(1,1,1);
 BorderSizePixel=0;
 Size=UDim2.new(1,0,1,0);
 ZIndex=18;
-Parent=P;
+Parent=M;
 });
-local R=t:Create('Frame',{
+local O=r:Create('Frame',{
 BackgroundColor3=Color3.new(1,1,1);
 AnchorPoint=Vector2.new(0,0.5);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(1,0,0,1);
 ZIndex=18;
-Parent=Q;
+Parent=N;
 });
 
-local S=t:Create('Frame',{
+local P=r:Create('Frame',{
 BorderColor3=Color3.new(0,0,0);
 Position=UDim2.fromOffset(4,228),
 Size=UDim2.new(0.5,-6,0,20),
 ZIndex=18,
-Parent=I;
+Parent=F;
 });
-local T=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local Q=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=18,
-Parent=S;
+Parent=P;
 });
-t:Create('UIGradient',{
+r:Create('UIGradient',{
 Color=ColorSequence.new({
 ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),
 ColorSequenceKeypoint.new(1,Color3.fromRGB(212,212,212))
 });
 Rotation=90;
-Parent=T;
+Parent=Q;
 });
 
-local U=t:Create('TextBox',{
+local R=r:Create('TextBox',{
 BackgroundTransparency=1;
 Position=UDim2.new(0,5,0,0);
 Size=UDim2.new(1,-5,1,0);
-FontFace=t.Font;
+Font=r.Font;
 PlaceholderColor3=Color3.fromRGB(190,190,190);
 PlaceholderText='Hex color',
 Text='#FFFFFF',
-TextColor3=t.FontColor;
-TextSize=t.FontSize;
+TextColor3=r.FontColor;
+TextSize=r.FontSize;
 TextStrokeTransparency=0;
 TextXAlignment=Enum.TextXAlignment.Left;
 ZIndex=20,
-Parent=T;
+Parent=Q;
 });
 
-t:ApplyTextStroke(U);
+r:ApplyTextStroke(R);
 
-local V=t:Create(S:Clone(),{
+local S=r:Create(P:Clone(),{
 Position=UDim2.new(0.5,2,0,228),
 Size=UDim2.new(0.5,-6,0,20),
-Parent=I
+Parent=F
 });
-local W=t:Create(V.Frame:FindFirstChild('TextBox'),{
+local T=r:Create(S.Frame:FindFirstChild('TextBox'),{
 Text='255, 255, 255',
 PlaceholderText='RGB color',
-TextColor3=t.FontColor
+TextColor3=r.FontColor
 });
-local X,Y,Z;
+local U,V,W;
 
-if B.Transparency then
-X=t:Create('Frame',{
+if z.Transparency then
+U=r:Create('Frame',{
 BorderColor3=Color3.new(0,0,0);
 Position=UDim2.fromOffset(4,251);
 Size=UDim2.new(1,-8,0,15);
 ZIndex=19;
-Parent=I;
+Parent=F;
 });
-Y=t:Create('Frame',{
-BackgroundColor3=D.Value;
-BorderColor3=t.OutlineColor;
+V=r:Create('Frame',{
+BackgroundColor3=B.Value;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=19;
-Parent=X;
+Parent=U;
 });
-t:AddToRegistry(Y,{BorderColor3='OutlineColor'});
+r:AddToRegistry(V,{BorderColor3='OutlineColor'});
 
-t:Create('ImageLabel',{
+r:Create('ImageLabel',{
 BackgroundTransparency=1;
 Size=UDim2.new(1,0,1,0);
 Image='http://www.roblox.com/asset/?id=12978095818';
 ZIndex=20;
-Parent=Y;
+Parent=V;
 });
-Z=t:Create('Frame',{
+W=r:Create('Frame',{
 BackgroundColor3=Color3.new(1,1,1);
 AnchorPoint=Vector2.new(0.5,0);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(0,1,1,0);
 ZIndex=21;
-Parent=Y;
+Parent=V;
 });
 end;
 
-local _=t:CreateLabel({
+local X=r:CreateLabel({
 Size=UDim2.new(1,0,0,14);
 Position=UDim2.fromOffset(5,5);
 TextXAlignment=Enum.TextXAlignment.Left;
-TextSize=t.FontSize;
-Text=D.Title,
+TextSize=r.FontSize;
+Text=B.Title,
 TextWrapped=false;
 ZIndex=16;
-Parent=I;
+Parent=F;
 });
-local aa={}
+local Y={}
 do
-aa.Options={}
-aa.Container=t:Create('Frame',{
+Y.Options={}
+Y.Container=r:Create('Frame',{
 BorderColor3=Color3.new(),
 ZIndex=14,
 Visible=false,
-Parent=q
+Parent=o
 })
 
-aa.Inner=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
+Y.Inner=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.fromScale(1,1);
 ZIndex=15;
-Parent=aa.Container;
+Parent=Y.Container;
 });
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 Name='Layout',
 FillDirection=Enum.FillDirection.Vertical;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=aa.Inner;
+Parent=Y.Inner;
 });
-t:Create('UIPadding',{
+r:Create('UIPadding',{
 Name='Padding',
 PaddingLeft=UDim.new(0,4),
-Parent=aa.Inner,
+Parent=Y.Inner,
 });
-local function ab()
-aa.Container.Position=UDim2.fromOffset(
-(E.AbsolutePosition.X+E.AbsoluteSize.X)+4,
-E.AbsolutePosition.Y+1
+local function Z()
+Y.Container.Position=UDim2.fromOffset(
+(C.AbsolutePosition.X+C.AbsoluteSize.X)+4,
+C.AbsolutePosition.Y+1
 )
 end
 
-local function ac()
-local ad=60
-for ae,af in next,aa.Inner:GetChildren()do
-if af:IsA('TextLabel')then
-ad=math.max(ad,af.TextBounds.X)
+local function _()
+local aa=60
+for ab,ac in next,Y.Inner:GetChildren()do
+if ac:IsA('TextLabel')then
+aa=math.max(aa,ac.TextBounds.X)
 end
 end
 
-aa.Container.Size=UDim2.fromOffset(
-ad+8,
-aa.Inner.Layout.AbsoluteContentSize.Y+4
+Y.Container.Size=UDim2.fromOffset(
+aa+8,
+Y.Inner.Layout.AbsoluteContentSize.Y+4
 )
 end
 
-E:GetPropertyChangedSignal('AbsolutePosition'):Connect(ab)
-aa.Inner.Layout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(ac)
+C:GetPropertyChangedSignal('AbsolutePosition'):Connect(Z)
+Y.Inner.Layout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(_)
 
-task.spawn(ab)
-task.spawn(ac)
+task.spawn(Z)
+task.spawn(_)
 
-t:AddToRegistry(aa.Inner,{
+r:AddToRegistry(Y.Inner,{
 BackgroundColor3='BackgroundColor';
 BorderColor3='OutlineColor';
 });
 
-function aa:Show()
+function Y:Show()
 self.Container.Visible=true
 end
 
-function aa:Hide()
+function Y:Hide()
 self.Container.Visible=false
 end
 
-function aa:AddOption(ad,ae)
-if type(ae)~='function'then
-ae=function()end
+function Y:AddOption(aa,ab)
+if type(ab)~='function'then
+ab=function()end
 end
 
-local af=t:CreateLabel({
+local ac=r:CreateLabel({
 Active=false;
 Size=UDim2.new(1,0,0,15);
-TextSize=t.FontSize-1;
-Text=ad;
+TextSize=r.FontSize-1;
+Text=aa;
 ZIndex=16;
 Parent=self.Inner;
 TextXAlignment=Enum.TextXAlignment.Left,
 });
-t:OnHighlight(af,af,
+r:OnHighlight(ac,ac,
 {TextColor3='AccentColor'},
 {TextColor3='FontColor'}
 );
-af.InputBegan:Connect(function(ag)
-if ag.UserInputType~=Enum.UserInputType.MouseButton1 and ag.UserInputType~=Enum.UserInputType.Touch then
+ac.InputBegan:Connect(function(ad)
+if ad.UserInputType~=Enum.UserInputType.MouseButton1 and ad.UserInputType~=Enum.UserInputType.Touch then
 return
 end
 
-ae()
+ab()
 end)
 end
 
-aa:AddOption('Copy color',function()
-t.ColorClipboard=D.Value
-t:Notify('Copied color!',2)
+Y:AddOption('Copy color',function()
+r.ColorClipboard=B.Value
+r:Notify('Copied color!',2)
 end)
 
-aa:AddOption('Paste color',function()
-if not t.ColorClipboard then
-return t:Notify('You have not copied a color!',2)
+Y:AddOption('Paste color',function()
+if not r.ColorClipboard then
+return r:Notify('You have not copied a color!',2)
 end
-D:SetValueRGB(t.ColorClipboard)
+B:SetValueRGB(r.ColorClipboard)
 end)
 
 
-aa:AddOption('Copy HEX',function()
-pcall(setclipboard,D.Value:ToHex())
-t:Notify('Copied hex code to clipboard!',2)
+Y:AddOption('Copy HEX',function()
+pcall(setclipboard,B.Value:ToHex())
+r:Notify('Copied hex code to clipboard!',2)
 end)
 
-aa:AddOption('Copy RGB',function()
-pcall(setclipboard,table.concat({math.floor(D.Value.R*255),math.floor(D.Value.G*255),math.floor(D.Value.B*255)},', '))
-t:Notify('Copied RGB values to clipboard!',2)
+Y:AddOption('Copy RGB',function()
+pcall(setclipboard,table.concat({math.floor(B.Value.R*255),math.floor(B.Value.G*255),math.floor(B.Value.B*255)},', '))
+r:Notify('Copied RGB values to clipboard!',2)
 end)
 
 end
 
-t:AddToRegistry(I,{BackgroundColor3='BackgroundColor';BorderColor3='OutlineColor';});
-t:AddToRegistry(J,{BackgroundColor3='AccentColor';});
-t:AddToRegistry(L,{BackgroundColor3='BackgroundColor';BorderColor3='OutlineColor';});
-t:AddToRegistry(T,{BackgroundColor3='MainColor';BorderColor3='OutlineColor';});
-t:AddToRegistry(V.Frame,{BackgroundColor3='MainColor';BorderColor3='OutlineColor';});
-t:AddToRegistry(W,{TextColor3='FontColor',});
-t:AddToRegistry(U,{TextColor3='FontColor',});
+r:AddToRegistry(F,{BackgroundColor3='BackgroundColor';BorderColor3='OutlineColor';});
+r:AddToRegistry(G,{BackgroundColor3='AccentColor';});
+r:AddToRegistry(I,{BackgroundColor3='BackgroundColor';BorderColor3='OutlineColor';});
+r:AddToRegistry(Q,{BackgroundColor3='MainColor';BorderColor3='OutlineColor';});
+r:AddToRegistry(S.Frame,{BackgroundColor3='MainColor';BorderColor3='OutlineColor';});
+r:AddToRegistry(T,{TextColor3='FontColor',});
+r:AddToRegistry(R,{TextColor3='FontColor',});
 
-local ab={};
-for ac=0,1,0.1 do
-table.insert(ab,ColorSequenceKeypoint.new(ac,Color3.fromHSV(ac,1,1)));
+local aa={};
+for ab=0,1,0.1 do
+table.insert(aa,ColorSequenceKeypoint.new(ab,Color3.fromHSV(ab,1,1)));
 end;
 
-local ac=t:Create('UIGradient',{
-Color=ColorSequence.new(ab);
+local ab=r:Create('UIGradient',{
+Color=ColorSequence.new(aa);
 Rotation=90;
-Parent=Q;
+Parent=N;
 });
-U.FocusLost:Connect(function(ad)
-if ad then
-local ae,af=pcall(Color3.fromHex,U.Text)
-if ae and typeof(af)=='Color3'then
-D.Hue,D.Sat,D.Vib=Color3.toHSV(af)
+R.FocusLost:Connect(function(ac)
+if ac then
+local ad,Z=pcall(Color3.fromHex,R.Text)
+if ad and typeof(Z)=='Color3'then
+B.Hue,B.Sat,B.Vib=Color3.toHSV(Z)
 end
 end
 
-D:Display()
+B:Display()
 end)
 
-W.FocusLost:Connect(function(ad)
-if ad then
-local ae,af,ag=W.Text:match('(%d+),%s*(%d+),%s*(%d+)')
-if ae and af and ag then
-D.Hue,D.Sat,D.Vib=Color3.toHSV(Color3.fromRGB(ae,af,ag))
+T.FocusLost:Connect(function(ac)
+if ac then
+local ad,Z,_=T.Text:match('(%d+),%s*(%d+),%s*(%d+)')
+if ad and Z and _ then
+B.Hue,B.Sat,B.Vib=Color3.toHSV(Color3.fromRGB(ad,Z,_))
 end
 end
 
-D:Display()
+B:Display()
 end)
 
-function D:Display()
-D.Value=Color3.fromHSV(D.Hue,D.Sat,D.Vib);
-M.BackgroundColor3=Color3.fromHSV(D.Hue,1,1);
+function B:Display()
+B.Value=Color3.fromHSV(B.Hue,B.Sat,B.Vib);
+J.BackgroundColor3=Color3.fromHSV(B.Hue,1,1);
 
-t:Create(E,{
-BackgroundColor3=D.Value;
-BackgroundTransparency=D.Transparency;
-BorderColor3=t:GetDarkerColor(D.Value);
+r:Create(C,{
+BackgroundColor3=B.Value;
+BackgroundTransparency=B.Transparency;
+BorderColor3=r:GetDarkerColor(B.Value);
 });
-if Y then
-Y.BackgroundColor3=D.Value;
-Z.Position=UDim2.new(1-D.Transparency,0,0,0);
+if V then
+V.BackgroundColor3=B.Value;
+W.Position=UDim2.new(1-B.Transparency,0,0,0);
 end;
 
-N.Position=UDim2.new(D.Sat,0,1-D.Vib,0);
-R.Position=UDim2.new(0,0,D.Hue,0);
+K.Position=UDim2.new(B.Sat,0,1-B.Vib,0);
+O.Position=UDim2.new(0,0,B.Hue,0);
 
-U.Text='#'..D.Value:ToHex()
-W.Text=table.concat({math.floor(D.Value.R*255),math.floor(D.Value.G*255),math.floor(D.Value.B*255)},', ')
+R.Text='#'..B.Value:ToHex()
+T.Text=table.concat({math.floor(B.Value.R*255),math.floor(B.Value.G*255),math.floor(B.Value.B*255)},', ')
 
-t:SafeCallback(D.Callback,D.Value);
-t:SafeCallback(D.Changed,D.Value);
+r:SafeCallback(B.Callback,B.Value);
+r:SafeCallback(B.Changed,B.Value);
 end;
 
-function D:OnChanged(ad)
-D.Changed=ad;
-ad(D.Value)
+function B:OnChanged(ac)
+B.Changed=ac;
+ac(B.Value)
 end;
 
-function D:Show()
-for ad,ae in next,t.OpenedFrames do
-if ad.Name=='Color'then
-ad.Visible=false;
-t.OpenedFrames[ad]=nil;
+function B:Show()
+for ac,ad in next,r.OpenedFrames do
+if ac.Name=='Color'then
+ac.Visible=false;
+r.OpenedFrames[ac]=nil;
 end;
 end;
 
-H.Visible=true;
-t.OpenedFrames[H]=true;
+E.Visible=true;
+r.OpenedFrames[E]=true;
 end;
-function D:Hide()
-H.Visible=false;
-t.OpenedFrames[H]=nil;
+function B:Hide()
+E.Visible=false;
+r.OpenedFrames[E]=nil;
 end;
-function D:SetValue(ad,ae)
-local af=Color3.fromHSV(ad[1],ad[2],ad[3]);
-D.Transparency=ae or 0;
-D:SetHSVFromRGB(af);
-D:Display();
-end;
-
-function D:SetValueRGB(ad,ae)
-D.Transparency=ae or 0;
-D:SetHSVFromRGB(ad);
-D:Display();
+function B:SetValue(ac,ad)
+local Z=Color3.fromHSV(ac[1],ac[2],ac[3]);
+B.Transparency=ad or 0;
+B:SetHSVFromRGB(Z);
+B:Display();
 end;
 
-M.InputBegan:Connect(function(ad)
-if ad.UserInputType==Enum.UserInputType.MouseButton1 or ad.UserInputType==Enum.UserInputType.Touch then
-local function ae(af,ag)
-local ah=M.AbsolutePosition.X;
-local ai=ah+M.AbsoluteSize.X;
-local aj=math.clamp(af,ah,ai);
+function B:SetValueRGB(ac,ad)
+B.Transparency=ad or 0;
+B:SetHSVFromRGB(ac);
+B:Display();
+end;
 
-local ak=M.AbsolutePosition.Y;
-local al=ak+M.AbsoluteSize.Y;
-local am=math.clamp(ag,ak,al);
+J.InputBegan:Connect(function(ac)
+if ac.UserInputType==Enum.UserInputType.MouseButton1 or ac.UserInputType==Enum.UserInputType.Touch then
+local function ad(Z,_)
+local ae=J.AbsolutePosition.X;
+local af=ae+J.AbsoluteSize.X;
+local ag=math.clamp(Z,ae,af);
 
-D.Sat=(aj-ah)/(ai-ah);
-D.Vib=1-((am-ak)/(al-ak));
-D:Display();
+local ah=J.AbsolutePosition.Y;
+local ai=ah+J.AbsoluteSize.Y;
+local aj=math.clamp(_,ah,ai);
+
+B.Sat=(ag-ae)/(af-ae);
+B.Vib=1-((aj-ah)/(ai-ah));
+B:Display();
 end
 
-ae(ad.Position.X,ad.Position.Y)
+ad(ac.Position.X,ac.Position.Y)
 
-local af=e.InputChanged:Connect(function(af)
-if af.UserInputType==Enum.UserInputType.MouseMovement or af==ad then
-ae(af.Position.X,af.Position.Y)
+local ae=c.InputChanged:Connect(function(ae)
+if ae.UserInputType==Enum.UserInputType.MouseMovement or ae==ac then
+ad(ae.Position.X,ae.Position.Y)
 end
 end)
 
-local ag
-ag=e.InputEnded:Connect(function(ah)
-if ah==ad or ah.UserInputType==Enum.UserInputType.Touch then
+local af
+af=c.InputEnded:Connect(function(ag)
+if ag==ac or ag.UserInputType==Enum.UserInputType.Touch then
+ae:Disconnect()
 af:Disconnect()
-ag:Disconnect()
-t:AttemptSave()
+r:AttemptSave()
 end
 end)
 end
 end);
-Q.InputBegan:Connect(function(ad)
-if ad.UserInputType==Enum.UserInputType.MouseButton1 or ad.UserInputType==Enum.UserInputType.Touch then
-local function ae(af)
-local ag=Q.AbsolutePosition.Y;
-local ah=ag+Q.AbsoluteSize.Y;
-local ai=math.clamp(af,ag,ah);
+N.InputBegan:Connect(function(ac)
+if ac.UserInputType==Enum.UserInputType.MouseButton1 or ac.UserInputType==Enum.UserInputType.Touch then
+local function ad(ae)
+local af=N.AbsolutePosition.Y;
+local ag=af+N.AbsoluteSize.Y;
+local ah=math.clamp(ae,af,ag);
 
-D.Hue=((ai-ag)/(ah-ag));
-D:Display();
+B.Hue=((ah-af)/(ag-af));
+B:Display();
 end
 
-ae(ad.Position.Y)
+ad(ac.Position.Y)
 
-local af=e.InputChanged:Connect(function(af)
-if af.UserInputType==Enum.UserInputType.MouseMovement or af==ad then
-ae(af.Position.Y)
+local ae=c.InputChanged:Connect(function(ae)
+if ae.UserInputType==Enum.UserInputType.MouseMovement or ae==ac then
+ad(ae.Position.Y)
 end
 end)
 
-local ag
-ag=e.InputEnded:Connect(function(ah)
-if ah==ad or ah.UserInputType==Enum.UserInputType.Touch then
+local af
+af=c.InputEnded:Connect(function(ag)
+if ag==ac or ag.UserInputType==Enum.UserInputType.Touch then
+ae:Disconnect()
 af:Disconnect()
-ag:Disconnect()
-t:AttemptSave()
+r:AttemptSave()
 end
 end)
 end
 end);
-E.InputBegan:Connect(function(ad)
-if(ad.UserInputType==Enum.UserInputType.MouseButton1 or ad.UserInputType==Enum.UserInputType.Touch)and not t:MouseIsOverOpenedFrame()then
-if H.Visible then
-D:Hide()
+C.InputBegan:Connect(function(ac)
+if(ac.UserInputType==Enum.UserInputType.MouseButton1 or ac.UserInputType==Enum.UserInputType.Touch)and not r:MouseIsOverOpenedFrame()then
+if E.Visible then
+B:Hide()
 else
-aa:Hide()
-D:Show()
+Y:Hide()
+B:Show()
 end;
-elseif ad.UserInputType==Enum.UserInputType.MouseButton2 and not t:MouseIsOverOpenedFrame()then
-aa:Show()
-D:Hide()
+elseif ac.UserInputType==Enum.UserInputType.MouseButton2 and not r:MouseIsOverOpenedFrame()then
+Y:Show()
+B:Hide()
 end
 end);
 
-if Y then
-Y.InputBegan:Connect(function(ad)
-if ad.UserInputType==Enum.UserInputType.MouseButton1 or ad.UserInputType==Enum.UserInputType.Touch then
-local function ae(af)
-local ag=Y.AbsolutePosition.X;
-local ah=ag+Y.AbsoluteSize.X;
-local ai=math.clamp(af,ag,ah);
+if V then
+V.InputBegan:Connect(function(ac)
+if ac.UserInputType==Enum.UserInputType.MouseButton1 or ac.UserInputType==Enum.UserInputType.Touch then
+local function ad(ae)
+local af=V.AbsolutePosition.X;
+local ag=af+V.AbsoluteSize.X;
+local ah=math.clamp(ae,af,ag);
 
-D.Transparency=1-((ai-ag)/(ah-ag));
-D:Display();
+B.Transparency=1-((ah-af)/(ag-af));
+B:Display();
 end
 
-ae(ad.Position.X)
+ad(ac.Position.X)
 
-local af=e.InputChanged:Connect(function(af)
-if af.UserInputType==Enum.UserInputType.MouseMovement or af==ad then
-ae(af.Position.X)
+local ae=c.InputChanged:Connect(function(ae)
+if ae.UserInputType==Enum.UserInputType.MouseMovement or ae==ac then
+ad(ae.Position.X)
 end
 end)
 
-local ag
-ag=e.InputEnded:Connect(function(ah)
-if ah==ad or ah.UserInputType==Enum.UserInputType.Touch then
+local af
+af=c.InputEnded:Connect(function(ag)
+if ag==ac or ag.UserInputType==Enum.UserInputType.Touch then
+ae:Disconnect()
 af:Disconnect()
-ag:Disconnect()
-t:AttemptSave()
+r:AttemptSave()
 end
 end)
 end
 end);
 end;
 
-t:GiveSignal(e.InputBegan:Connect(function(ad)
-if(ad.UserInputType==Enum.UserInputType.MouseButton1 or ad.UserInputType==Enum.UserInputType.Touch)then
-local ae,af=H.AbsolutePosition,H.AbsoluteSize;
-local ag=E.AbsolutePosition;
-local ah=E.AbsoluteSize;
+r:GiveSignal(c.InputBegan:Connect(function(ac)
+if(ac.UserInputType==Enum.UserInputType.MouseButton1 or ac.UserInputType==Enum.UserInputType.Touch)then
+local ad,ae=E.AbsolutePosition,E.AbsoluteSize;
+local af=C.AbsolutePosition;
+local ag=C.AbsoluteSize;
 
-if o.X<ae.X or o.X>ae.X+af.X
-or o.Y<ag.Y or o.Y>ae.Y+af.Y then
+if m.X<ad.X or m.X>ad.X+ae.X
+or m.Y<af.Y or m.Y>ad.Y+ae.Y then
 
-if not(o.X>=ag.X and o.X<=ag.X+ah.X
-and o.Y>=ag.Y and o.Y<=ag.Y+ah.Y)then
-D:Hide();
+if not(m.X>=af.X and m.X<=af.X+ag.X
+and m.Y>=af.Y and m.Y<=af.Y+ag.Y)then
+B:Hide();
 end
 end;
 
-if not t:IsMouseOverFrame(aa.Container)then
-aa:Hide()
+if not r:IsMouseOverFrame(Y.Container)then
+Y:Hide()
 end
 end;
 
-if ad.UserInputType==Enum.UserInputType.MouseButton2 and aa.Container.Visible then
-if not t:IsMouseOverFrame(aa.Container)and not t:IsMouseOverFrame(E)then
-aa:Hide()
+if ac.UserInputType==Enum.UserInputType.MouseButton2 and Y.Container.Visible then
+if not r:IsMouseOverFrame(Y.Container)and not r:IsMouseOverFrame(C)then
+Y:Hide()
 end
 end
 end))
 
-function D:GetTransparency()
-return D.Transparency
+function B:GetTransparency()
+return B.Transparency
 end;
 
-function D:OnTransparencyChanged(ad)
-D.TransparencyChanged=ad;
-ad(D.Transparency);
+function B:OnTransparencyChanged(ac)
+B.TransparencyChanged=ac;
+ac(B.Transparency);
 end;
 
-local ad=D.Display;
-D.Display=function(ae)
-ad(ae);
-t:SafeCallback(D.TransparencyChanged,D.Transparency);
+local ac=B.Display;
+B.Display=function(ad)
+ac(ad);
+r:SafeCallback(B.TransparencyChanged,B.Transparency);
 end;
 
-D:Display();
-D.DisplayFrame=E
+B:Display();
+B.DisplayFrame=C
 
-s[A]=D;
+q[y]=B;
 
 return self
 end;
 
-function z:AddColorPickerAlpha(aa,ab)
+function x:AddColorPickerAlpha(aa,ab)
 ab=ab or{};
 if ab.Transparency==nil then
 ab.Transparency=0;
 end;
-return z.AddColorPicker(self,aa,ab)
+return x.AddColorPicker(self,aa,ab)
 end;
 
-function z:AddKeyPicker(aa,ab)
+function x:AddKeyPicker(aa,ab)
 local ac=self;
 local ad=self.TextLabel;
 local ae=self.Container;
@@ -1323,121 +1239,120 @@ ab.Modes={'Toggle'}
 ab.Mode='Toggle'
 end
 
-local ag=t:Create('Frame',{
+local ag=r:Create('Frame',{
 BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(0,28,0,15);
 ZIndex=6;
 Parent=ad;
 });
-local ah=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
+local ah=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=7;
 Parent=ag;
 });
-t:AddToRegistry(ah,{
+r:AddToRegistry(ah,{
 BackgroundColor3='BackgroundColor';
 BorderColor3='OutlineColor';
 });
-local ai=t:CreateLabel({
+local ai=r:CreateLabel({
 Size=UDim2.new(1,0,1,0);
-TextSize=t.FontSize-1;
+TextSize=r.FontSize-1;
 Text=ab.Default;
 TextWrapped=true;
 ZIndex=8;
 Parent=ah;
 });
-local aj=t:Create('Frame',{
+local aj=r:Create('Frame',{
 BorderColor3=Color3.new(0,0,0);
 Position=UDim2.fromOffset(ad.AbsolutePosition.X+ad.AbsoluteSize.X+4,ad.AbsolutePosition.Y+1);
 Size=UDim2.new(0,60,0,45+2);
 Visible=false;
 ZIndex=14;
-Parent=q;
+Parent=o;
 });
 ad:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
 aj.Position=UDim2.fromOffset(ad.AbsolutePosition.X+ad.AbsoluteSize.X+4,ad.AbsolutePosition.Y+1);
 end);
-local ak=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
+local y=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=15;
 Parent=aj;
 });
-t:AddToRegistry(ak,{
+r:AddToRegistry(y,{
 BackgroundColor3='BackgroundColor';
 BorderColor3='OutlineColor';
 });
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 FillDirection=Enum.FillDirection.Vertical;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=ak;
+Parent=y;
 });
-local al=t:Create('Frame',{
+local z=r:Create('Frame',{
 BackgroundTransparency=1,
 Size=UDim2.new(1,0,0,18),
 Visible=false,
 ZIndex=110,
-Parent=t.KeybindContainer,
+Parent=r.KeybindContainer,
 })
 
-local am=t:CreateLabel({
+local A=r:CreateLabel({
 Position=UDim2.new(0,2,0,0),
 Size=UDim2.new(1,-4,1,0),
-TextSize=12,
-FontFace=Font.new("rbxasset://fonts/families/SourceSansPro.json",Enum.FontWeight.Bold,Enum.FontStyle.Normal),
+TextSize=r.FontSize-1,
 TextXAlignment=Enum.TextXAlignment.Left,
 ZIndex=111,
-Parent=al,
+Parent=z,
 },true)
 
-local A=ab.Modes or{'Always','Toggle','Hold'};
-local B={};
+local B=ab.Modes or{'Always','Toggle','Hold'};
+local C={};
 
-for C,D in next,A do
-local E={};
-local F=t:CreateLabel({
+for D,E in next,B do
+local F={};
+local G=r:CreateLabel({
 Active=false;
 Size=UDim2.new(1,0,0,15);
-TextSize=t.FontSize-1;
-Text=D;
+TextSize=r.FontSize-1;
+Text=E;
 ZIndex=16;
-Parent=ak;
+Parent=y;
 });
-function E:Select()
-for G,H in next,B do
-H:Deselect();
+function F:Select()
+for H,I in next,C do
+I:Deselect();
 end;
 
-af.Mode=D;
+af.Mode=E;
 
-F.TextColor3=t.AccentColor;
-t.RegistryMap[F].Properties.TextColor3='AccentColor';
+G.TextColor3=r.AccentColor;
+r.RegistryMap[G].Properties.TextColor3='AccentColor';
 
 aj.Visible=false;
 end;
-function E:Deselect()
+function F:Deselect()
 af.Mode=nil;
-F.TextColor3=t.FontColor;
-t.RegistryMap[F].Properties.TextColor3='FontColor';
+G.TextColor3=r.FontColor;
+r.RegistryMap[G].Properties.TextColor3='FontColor';
 end;
 
-F.InputBegan:Connect(function(G)
-if(G.UserInputType==Enum.UserInputType.MouseButton1 or G.UserInputType==Enum.UserInputType.Touch)then
-E:Select();
-t:AttemptSave();
+G.InputBegan:Connect(function(H)
+if(H.UserInputType==Enum.UserInputType.MouseButton1 or H.UserInputType==Enum.UserInputType.Touch)then
+F:Select();
+r:AttemptSave();
 end;
 end);
-if D==af.Mode then
-E:Select();
+if E==af.Mode then
+F:Select();
 end;
 
-B[D]=E;
+C[E]=F;
 end;
 
 function af:Update()
@@ -1445,44 +1360,44 @@ if ab.NoUI then
 return
 end;
 
-local C=af:GetState();
+local D=af:GetState();
 
-local D=(af.Value=='None')and'...'or af.Value
-am.Text=string.format('[ %s ] %s',af.Mode or'None',ab.Text);
-local E=t.KeybindMode or'All'
-if E=='Active'then
-al.Visible=C==true
-elseif E=='Toggled'then
-local F=false
+local E=(af.Value=='None')and'...'or af.Value
+A.Text=string.format('[%s] %s (%s)',E,ab.Text,af.Mode);
+local F=r.KeybindMode or'All'
+if F=='Active'then
+z.Visible=D==true
+elseif F=='Toggled'then
+local G=false
 if ac and ac.Type=='Toggle'then
-F=ac.Value==true
+G=ac.Value==true
 elseif af.SyncToggleState and ac then
-F=ac.Value==true
+G=ac.Value==true
 else
-F=true
+G=true
 end
-al.Visible=F
+z.Visible=G
 else
-al.Visible=true
+z.Visible=true
 end
 
-am.TextColor3=C and t.AccentColor or t.FontColor;
-t.RegistryMap[am].Properties.TextColor3=C and'AccentColor'or'FontColor';
+A.TextColor3=D and r.AccentColor or r.FontColor;
+r.RegistryMap[A].Properties.TextColor3=D and'AccentColor'or'FontColor';
 
-local F=0
 local G=0
+local H=0
 
-for H,I in next,t.KeybindContainer:GetChildren()do
-if I:IsA('Frame')and I.Visible then
-F=F+18;
-local J=I:FindFirstChildOfClass('TextLabel')
-if J and(J.TextBounds.X+20>G)then
-G=J.TextBounds.X+20
+for I,J in next,r.KeybindContainer:GetChildren()do
+if J:IsA('Frame')and J.Visible then
+G=G+18;
+local K=J:FindFirstChildOfClass('TextLabel')
+if K and(K.TextBounds.X+20>H)then
+H=K.TextBounds.X+20
 end
 end;
 end;
 
-t.KeybindFrame.Size=UDim2.new(0,math.max(G+10+15,210),0,F+25)
+r.KeybindFrame.Size=UDim2.new(0,math.max(H+10+15,210),0,G+23)
 end;
 function af:GetState()
 if af.Mode=='Always'then
@@ -1492,39 +1407,39 @@ if af.Value=='None'then
 return false
 end
 
-local C=af.Value;
-if C=='MB1'or C=='MB2'or C=='Touch'then
-return C=='MB1'and e:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-or C=='MB2'and e:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
-or C=='Touch'and true
+local D=af.Value;
+if D=='MB1'or D=='MB2'or D=='Touch'then
+return D=='MB1'and c:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+or D=='MB2'and c:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
+or D=='Touch'and true
 else
-return e:IsKeyDown(Enum.KeyCode[af.Value])
+return c:IsKeyDown(Enum.KeyCode[af.Value])
 end;
 else
 return af.Toggled
 end;
 end;
 
-function af:SetValue(C)
-local D,E=C[1],C[2];
-ai.Text=D;
-af.Value=D;
-B[E]:Select();
+function af:SetValue(D)
+local E,F=D[1],D[2];
+ai.Text=E;
+af.Value=E;
+C[F]:Select();
 af:Update();
 end;
 
-function af:OnClick(C)
-af.Clicked=C
+function af:OnClick(D)
+af.Clicked=D
 end
 
-function af:OnChanged(C)
-af.Changed=C
-C(af.Value)
+function af:OnChanged(D)
+af.Changed=D
+D(af.Value)
 end
 
 if ac.Addons then
 table.insert(ac.Addons,af)
-table.insert(t.KeyPickerList,af)
+table.insert(r.KeyPickerList,af)
 end
 
 function af:DoClick()
@@ -1532,28 +1447,28 @@ if ac.Type=='Toggle'and af.SyncToggleState then
 ac:SetValue(not ac.Value)
 end
 
-t:SafeCallback(af.Callback,af.Toggled)
-t:SafeCallback(af.Clicked,af.Toggled)
+r:SafeCallback(af.Callback,af.Toggled)
+r:SafeCallback(af.Clicked,af.Toggled)
 end
 
-local C=false;
-ag.InputBegan:Connect(function(D)
-if(D.UserInputType==Enum.UserInputType.MouseButton1 or D.UserInputType==Enum.UserInputType.Touch)and not t:MouseIsOverOpenedFrame()then
-C=true;
+local D=false;
+ag.InputBegan:Connect(function(E)
+if(E.UserInputType==Enum.UserInputType.MouseButton1 or E.UserInputType==Enum.UserInputType.Touch)and not r:MouseIsOverOpenedFrame()then
+D=true;
 
 ai.Text='';
 
-local E;
-local F='';
+local F;
+local G='';
 
 task.spawn(function()
-while(not E)do
-if F=='...'then
-F='';
+while(not F)do
+if G=='...'then
+G='';
 end;
 
-F=F..'.';
-ai.Text=F;
+G=G..'.';
+ai.Text=G;
 
 wait(0.4);
 end;
@@ -1561,50 +1476,50 @@ end);
 
 wait(0.2);
 
-local G;
-G=e.InputBegan:Connect(function(H)
-local I;
+local H;
+H=c.InputBegan:Connect(function(I)
+local J;
 
-if H.UserInputType==Enum.UserInputType.Keyboard then
-I=H.KeyCode.Name;
-elseif H.UserInputType==Enum.UserInputType.MouseButton1 then
-I='MB1';
-elseif H.UserInputType==Enum.UserInputType.MouseButton2 then
-I='MB2';
-elseif H.UserInputType==Enum.UserInputType.Touch then
-I='Touch';
+if I.UserInputType==Enum.UserInputType.Keyboard then
+J=I.KeyCode.Name;
+elseif I.UserInputType==Enum.UserInputType.MouseButton1 then
+J='MB1';
+elseif I.UserInputType==Enum.UserInputType.MouseButton2 then
+J='MB2';
+elseif I.UserInputType==Enum.UserInputType.Touch then
+J='Touch';
 end;
 
-E=true;
-C=false;
+F=true;
+D=false;
 
-ai.Text=I;
-af.Value=I;
-t:SafeCallback(af.ChangedCallback,H.KeyCode or H.UserInputType)
-t:SafeCallback(af.Changed,H.KeyCode or H.UserInputType)
+ai.Text=J;
+af.Value=J;
+r:SafeCallback(af.ChangedCallback,I.KeyCode or I.UserInputType)
+r:SafeCallback(af.Changed,I.KeyCode or I.UserInputType)
 
-t:AttemptSave();
-G:Disconnect();
+r:AttemptSave();
+H:Disconnect();
 end);
-elseif D.UserInputType==Enum.UserInputType.MouseButton2 and not t:MouseIsOverOpenedFrame()then
+elseif E.UserInputType==Enum.UserInputType.MouseButton2 and not r:MouseIsOverOpenedFrame()then
 aj.Visible=true;
 end;
 end);
 
-t:GiveSignal(e.InputBegan:Connect(function(D)
-if(not C)then
+r:GiveSignal(c.InputBegan:Connect(function(E)
+if(not D)then
 if af.Mode=='Toggle'then
-local E=af.Value;
+local F=af.Value;
 
-if E=='MB1'or E=='MB2'or E=='Touch'then
-if E=='MB1'and D.UserInputType==Enum.UserInputType.MouseButton1
-or E=='MB2'and D.UserInputType==Enum.UserInputType.MouseButton2
-or E=='Touch'and D.UserInputType==Enum.UserInputType.Touch then
+if F=='MB1'or F=='MB2'or F=='Touch'then
+if F=='MB1'and E.UserInputType==Enum.UserInputType.MouseButton1
+or F=='MB2'and E.UserInputType==Enum.UserInputType.MouseButton2
+or F=='Touch'and E.UserInputType==Enum.UserInputType.Touch then
 af.Toggled=not af.Toggled
 af:DoClick()
 end;
-elseif D.UserInputType==Enum.UserInputType.Keyboard then
-if D.KeyCode.Name==E then
+elseif E.UserInputType==Enum.UserInputType.Keyboard then
+if E.KeyCode.Name==F then
 af.Toggled=not af.Toggled;
 af:DoClick()
 end;
@@ -1613,31 +1528,31 @@ end;
 
 af:Update();
 end;
-if(D.UserInputType==Enum.UserInputType.MouseButton1 or D.UserInputType==Enum.UserInputType.Touch)then
-local E,F=aj.AbsolutePosition,aj.AbsoluteSize;
-if o.X<E.X or o.X>E.X+F.X
-or o.Y<(E.Y-20-1)or o.Y>E.Y+F.Y then
+if(E.UserInputType==Enum.UserInputType.MouseButton1 or E.UserInputType==Enum.UserInputType.Touch)then
+local F,G=aj.AbsolutePosition,aj.AbsoluteSize;
+if m.X<F.X or m.X>F.X+G.X
+or m.Y<(F.Y-20-1)or m.Y>F.Y+G.Y then
 
 aj.Visible=false;
 end;
 end;
 end))
 
-t:GiveSignal(e.InputEnded:Connect(function(D)
-if(not C)then
+r:GiveSignal(c.InputEnded:Connect(function(E)
+if(not D)then
 af:Update();
 end;
 end))
 
 af:Update();
-s[aa]=af;
+q[aa]=af;
 
 return self
 end;
 
-y.__index=z;
-y.__namecall=function(aa,ab,...)
-return z[ab](...)
+w.__index=x;
+w.__namecall=function(aa,ab,...)
+return x[ab](...)
 end;
 end;
 
@@ -1648,7 +1563,7 @@ local ab={};
 function ab:AddBlank(ac)
 local ad=self;
 local ae=ad.Container;
-t:Create('Frame',{
+r:Create('Frame',{
 BackgroundTransparency=1;
 Size=UDim2.new(1,0,0,ac);
 ZIndex=1;
@@ -1662,14 +1577,14 @@ local ae=ad.Container
 
 local af=type(ac)=='number'and math.max(1,ac)or 2
 
-local ag=t:Create('Frame',{
+local ag=r:Create('Frame',{
 BackgroundTransparency=1,
 Size=UDim2.new(1,0,0,0),
 ZIndex=1,
 Parent=ae
 })
 
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 FillDirection=Enum.FillDirection.Horizontal,
 SortOrder=Enum.SortOrder.LayoutOrder,
 Padding=UDim.new(0,8),
@@ -1681,40 +1596,40 @@ local ah={}
 for ai=1,af do
 local aj={Type='Groupbox'}
 
-local ak=t:Create('Frame',{
+local x=r:Create('Frame',{
 BackgroundTransparency=1,
 Size=UDim2.new(1/af,-((af-1)*8)/af,1,0),
 ZIndex=1,
 Parent=ag
 })
 
-local al=t:Create('UIListLayout',{
+local y=r:Create('UIListLayout',{
 FillDirection=Enum.FillDirection.Vertical,
 SortOrder=Enum.SortOrder.LayoutOrder,
 Padding=UDim.new(0,4),
-Parent=ak
+Parent=x
 })
 
-aj.Container=ak
+aj.Container=x
 setmetatable(aj,aa)
 
 function aj:Resize()
-local am=0
-for z,A in next,ag:GetChildren()do
-if A:IsA('Frame')then
-local B=A:FindFirstChildOfClass('UIListLayout')
-if B and B.AbsoluteContentSize.Y>am then
-am=B.AbsoluteContentSize.Y
+local z=0
+for A,B in next,ag:GetChildren()do
+if B:IsA('Frame')then
+local C=B:FindFirstChildOfClass('UIListLayout')
+if C and C.AbsoluteContentSize.Y>z then
+z=C.AbsoluteContentSize.Y
 end
 end
 end
-ag.Size=UDim2.new(1,0,0,am)
+ag.Size=UDim2.new(1,0,0,z)
 if ad.Resize then
 ad:Resize()
 end
 end
 
-al:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+y:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
 aj:Resize()
 end)
 
@@ -1732,20 +1647,21 @@ local ae={};
 local af=self;
 local ag=af.Container;
 
-local ah=t:CreateLabel({
+local ah=r:CreateLabel({
 Size=UDim2.new(1,-4,0,15);
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 Text=ac;
+RichText=true;
 TextWrapped=ad or false,
 TextXAlignment=Enum.TextXAlignment.Left;
 ZIndex=5;
 Parent=ag;
 });
 if ad then
-local ai=select(2,t:GetTextBounds(ac,t.Font,t.FontSize,Vector2.new(ah.AbsoluteSize.X,math.huge)))
+local ai=select(2,r:GetTextBounds(ac,r.Font,r.FontSize,Vector2.new(ah.AbsoluteSize.X,math.huge)))
 ah.Size=UDim2.new(1,-4,0,ai)
 else
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 Padding=UDim.new(0,4);
 FillDirection=Enum.FillDirection.Horizontal;
 HorizontalAlignment=Enum.HorizontalAlignment.Right;
@@ -1760,7 +1676,7 @@ function ae:SetText(ai)
 ah.Text=ai
 
 if ad then
-local aj=select(2,t:GetTextBounds(ai,t.Font,t.FontSize,Vector2.new(ah.AbsoluteSize.X,math.huge)))
+local aj=select(2,r:GetTextBounds(ai,r.Font,r.FontSize,Vector2.new(ah.AbsoluteSize.X,math.huge)))
 ah.Size=UDim2.new(1,-4,0,aj)
 end
 
@@ -1768,7 +1684,7 @@ af:Resize();
 end
 
 if(not ad)then
-setmetatable(ae,y);
+setmetatable(ae,w);
 end
 
 af:AddBlank(5);
@@ -1799,29 +1715,29 @@ local ae=self;
 local af=ae.Container;
 
 local function ag(ah)
-local ai=t:Create('Frame',{
+local ai=r:Create('Frame',{
 BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(1,-4,0,20);
 ZIndex=5;
 });
-local aj=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local aj=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=6;
 Parent=ai;
 });
-local ak=t:CreateLabel({
+local x=r:CreateLabel({
 Size=UDim2.new(1,0,1,0);
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 Text=ah.Text;
 ZIndex=6;
 Parent=aj;
 });
 
-t:Create('UIGradient',{
+r:Create('UIGradient',{
 Color=ColorSequence.new({
 ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),
 ColorSequenceKeypoint.new(1,Color3.fromRGB(212,212,212))
@@ -1829,88 +1745,80 @@ ColorSequenceKeypoint.new(1,Color3.fromRGB(212,212,212))
 Rotation=90;
 Parent=aj;
 });
-t:AddToRegistry(ai,{
+r:AddToRegistry(ai,{
 BorderColor3='Black';
 });
-t:AddToRegistry(aj,{
+r:AddToRegistry(aj,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-
-local al=TweenInfo.new(0.15,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
-
-ai.MouseEnter:Connect(function()
-k:Create(ai,al,{BorderColor3=t.AccentColor}):Play()
-k:Create(aj,al,{BackgroundColor3=t.AccentColor}):Play()
-end)
-
-ai.MouseLeave:Connect(function()
-k:Create(ai,al,{BorderColor3=Color3.new(0,0,0)}):Play()
-k:Create(aj,al,{BackgroundColor3=t.MainColor}):Play()
-end)
-return ai,aj,ak
+r:OnHighlight(ai,ai,
+{BorderColor3='AccentColor'},
+{BorderColor3='Black'}
+);
+return ai,aj,x
 end
 
 local function ah(ai)
-local function aj(ak,al,am)
-local z=Instance.new('BindableEvent')
-local A=ak:Once(function(...)
+local function aj(x,y,z)
+local A=Instance.new('BindableEvent')
+local B=x:Once(function(...)
 
-if type(am)=='function'and am(...)then
-z:Fire(true)
+if type(z)=='function'and z(...)then
+A:Fire(true)
 else
-z:Fire(false)
+A:Fire(false)
 end
 end)
-task.delay(al,function()
-A:disconnect()
-z:Fire(false)
+task.delay(y,function()
+B:disconnect()
+A:Fire(false)
 end)
-return z.Event:Wait()
+return A.Event:Wait()
 end
 
-local function ak(al)
-if t:MouseIsOverOpenedFrame()then
+local function x(y)
+if r:MouseIsOverOpenedFrame()then
 return false
 end
 
-if al.UserInputType~=Enum.UserInputType.MouseButton1 and al.UserInputType~=Enum.UserInputType.Touch then
+if y.UserInputType~=Enum.UserInputType.MouseButton1 and y.UserInputType~=Enum.UserInputType.Touch then
 return false
 end
 
 return true
 end
 
-ai.Outer.InputBegan:Connect(function(al)
-if not ak(al)then return end
+ai.Outer.InputBegan:Connect(function(y)
+if not x(y)then return end
 
 if ai.Locked then return end
 
 if ai.DoubleClick then
-t:RemoveFromRegistry(ai.Label)
-t:AddToRegistry(ai.Label,{TextColor3='AccentColor'})
+r:RemoveFromRegistry(ai.Label)
+r:AddToRegistry(ai.Label,{TextColor3='AccentColor'})
 
-ai.Label.TextColor3=t.AccentColor
+ai.Label.TextColor3=r.AccentColor
 ai.Label.Text='Are you sure?'
 ai.Locked=true
 
-local am=aj(ai.Outer.InputBegan,0.5,ak)
+local z=aj(ai.Outer.InputBegan,0.5,x)
 
-t:RemoveFromRegistry(ai.Label)
-t:AddToRegistry(ai.Label,{TextColor3='FontColor'})
+r:RemoveFromRegistry(ai.Label)
+r:AddToRegistry(ai.Label,{TextColor3='FontColor'})
 
-ai.Label.TextColor3=t.FontColor
+ai.Label.TextColor3=r.FontColor
 ai.Label.Text=ai.Text
 task.defer(rawset,ai,'Locked',false)
 
-if am then
-t:SafeCallback(ai.Func)
+if z then
+r:SafeCallback(ai.Func)
 end
 
 return
 end
 
-t:SafeCallback(ai.Func);
+r:SafeCallback(ai.Func);
 end)
 end
 
@@ -1921,7 +1829,7 @@ ah(ac)
 
 function ac:AddTooltip(ai)
 if type(ai)=='string'then
-t:AddToolTip(ai,self.Outer)
+r:AddToolTip(ai,self.Outer)
 end
 return self
 end
@@ -1941,7 +1849,7 @@ ai.Outer.Parent=self.Outer
 
 function ai:AddTooltip(aj)
 if type(aj)=='string'then
-t:AddToolTip(aj,self.Outer)
+r:AddToolTip(aj,self.Outer)
 end
 return ai
 end
@@ -1973,25 +1881,25 @@ Type='Divider',
 }
 
 ac:AddBlank(2);
-local af=t:Create('Frame',{
+local af=r:Create('Frame',{
 BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(1,-4,0,5);
 ZIndex=5;
 Parent=ad;
 });
-local ag=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local ag=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=6;
 Parent=af;
 });
-t:AddToRegistry(af,{
+r:AddToRegistry(af,{
 BorderColor3='Black';
 });
-t:AddToRegistry(ag,{
+r:AddToRegistry(ag,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
@@ -2012,9 +1920,9 @@ Callback=ad.Callback or function(ae)end;
 local af=self;
 local ag=af.Container;
 
-local ah=t:CreateLabel({
+local ah=r:CreateLabel({
 Size=UDim2.new(1,0,0,15);
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 Text=ad.Text;
 TextXAlignment=Enum.TextXAlignment.Left;
 ZIndex=5;
@@ -2023,34 +1931,34 @@ Parent=ag;
 
 af:AddBlank(1);
 
-local ai=t:Create('Frame',{
+local ai=r:Create('Frame',{
 BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(1,-4,0,20);
 ZIndex=5;
 Parent=ag;
 });
-local aj=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local aj=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=6;
 Parent=ai;
 });
-t:AddToRegistry(aj,{
+r:AddToRegistry(aj,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-t:OnHighlight(ai,ai,
+r:OnHighlight(ai,ai,
 {BorderColor3='AccentColor'},
 {BorderColor3='Black'}
 );
 if type(ad.Tooltip)=='string'then
-t:AddToolTip(ad.Tooltip,ai)
+r:AddToolTip(ad.Tooltip,ai)
 end
 
-t:Create('UIGradient',{
+r:Create('UIGradient',{
 Color=ColorSequence.new({
 ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),
 ColorSequenceKeypoint.new(1,Color3.fromRGB(212,212,212))
@@ -2058,7 +1966,7 @@ ColorSequenceKeypoint.new(1,Color3.fromRGB(212,212,212))
 Rotation=90;
 Parent=aj;
 });
-local ak=t:Create('Frame',{
+local x=r:Create('Frame',{
 BackgroundTransparency=1;
 ClipsDescendants=true;
 
@@ -2069,101 +1977,102 @@ ZIndex=7;
 Parent=aj;
 })
 
-local al=t:Create('TextBox',{
+local y=r:Create('TextBox',{
 BackgroundTransparency=1;
 
 Position=UDim2.fromOffset(0,0),
 Size=UDim2.fromScale(5,1),
 
-FontFace=t.Font;
+Font=r.Font;
 PlaceholderColor3=Color3.fromRGB(190,190,190);
 PlaceholderText=ad.Placeholder or'';
 
 Text=ad.Default or'';
-TextColor3=t.FontColor;
-TextSize=t.FontSize;
+TextColor3=r.FontColor;
+TextSize=r.FontSize;
 TextStrokeTransparency=0;
 TextXAlignment=Enum.TextXAlignment.Left;
 
 ZIndex=7;
-Parent=ak;
+Parent=x;
 });
 
-t:ApplyTextStroke(al);
-function ae:SetValue(am)
-if ad.MaxLength and#am>ad.MaxLength then
-am=am:sub(1,ad.MaxLength);
+r:ApplyTextStroke(y);
+function ae:SetValue(z)
+if ad.MaxLength and#z>ad.MaxLength then
+z=z:sub(1,ad.MaxLength);
 end;
 
 if ae.Numeric then
-if(not tonumber(am))and am:len()>0 then
-am=ae.Value
+if(not tonumber(z))and z:len()>0 then
+z=ae.Value
 end
 end
 
-ae.Value=am;
-al.Text=am;
+ae.Value=z;
+y.Text=z;
 
-t:SafeCallback(ae.Callback,ae.Value);
-t:SafeCallback(ae.Changed,ae.Value);
+r:SafeCallback(ae.Callback,ae.Value);
+r:SafeCallback(ae.Changed,ae.Value);
 end;
 
 if ae.Finished then
-al.FocusLost:Connect(function(am)
-if not am then return end
+y.FocusLost:Connect(function(z)
+if not z then return end
 
-ae:SetValue(al.Text);
-t:AttemptSave();
+ae:SetValue(y.Text);
+r:AttemptSave();
 end)
 else
-al:GetPropertyChangedSignal('Text'):Connect(function()
-ae:SetValue(al.Text);
-t:AttemptSave();
+y:GetPropertyChangedSignal('Text'):Connect(function()
+ae:SetValue(y.Text);
+r:AttemptSave();
 end);
 end
 
-local function am()
-local z=2
-local A=ak.AbsoluteSize.X
+local function z()
+local A=2
+local B=x.AbsoluteSize.X
 
-if not al:IsFocused()or al.TextBounds.X<=A-2*z then
-al.Position=UDim2.new(0,z,0,0)
+if not y:IsFocused()or y.TextBounds.X<=B-2*A then
+y.Position=UDim2.new(0,A,0,0)
 else
-local B=al.CursorPosition
-if B~=-1 then
-local C=string.sub(al.Text,1,B-1)
-local D=f:GetTextSize(C,al.TextSize,Enum.Font.Gotham,Vector2.new(math.huge,math.huge)).X
-local E=al.Position.X.Offset+D
+local C=y.CursorPosition
+if C~=-1 then
+local D=string.sub(y.Text,1,C-1)
+local E=d:GetTextSize(D,y.TextSize,y.Font,Vector2.new(math.huge,math.huge)).X
 
-if E<z then
-al.Position=UDim2.fromOffset(z-D,0)
-elseif E>A-z-1 then
-al.Position=UDim2.fromOffset(A-D-z-1,0)
+local F=y.Position.X.Offset+E
+
+if F<A then
+y.Position=UDim2.fromOffset(A-E,0)
+elseif F>B-A-1 then
+y.Position=UDim2.fromOffset(B-E-A-1,0)
 end
 end
 end
 end
 
-task.spawn(am)
+task.spawn(z)
 
-al:GetPropertyChangedSignal('Text'):Connect(am)
-al:GetPropertyChangedSignal('CursorPosition'):Connect(am)
-al.FocusLost:Connect(am)
-al.Focused:Connect(am)
+y:GetPropertyChangedSignal('Text'):Connect(z)
+y:GetPropertyChangedSignal('CursorPosition'):Connect(z)
+y.FocusLost:Connect(z)
+y.Focused:Connect(z)
 
-t:AddToRegistry(al,{
+r:AddToRegistry(y,{
 TextColor3='FontColor';
 });
 
-function ae:OnChanged(z)
-ae.Changed=z;
-z(ae.Value);
+function ae:OnChanged(A)
+ae.Changed=A;
+A(ae.Value);
 end;
 
 af:AddBlank(5);
 af:Resize();
 
-s[ac]=ae;
+q[ac]=ae;
 
 return ae
 end;
@@ -2174,160 +2083,157 @@ assert(ad.Text,'AddInput: Missing `Text` string.')
 local ae={
 Value=ad.Default or false;
 Type='Toggle';
+
 Callback=ad.Callback or function(ae)end;
-Addons={};
-Risky=ad.Risky;
+Addons={},
+Risky=ad.Risky,
 };
 local af=self;
 local ah=af.Container;
 
-local ai=TweenInfo.new(0.15,Enum.EasingStyle.Quad,Enum.EasingDirection.Out);
-
-local aj=t:Create('Frame',{
+local ai=r:Create('Frame',{
 BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(0,13,0,13);
 ZIndex=5;
 Parent=ah;
 });
-t:AddToRegistry(aj,{
+r:AddToRegistry(ai,{
 BorderColor3='Black';
 });
-
-local ak=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local aj=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=6;
-Parent=aj;
+Parent=ai;
 });
-t:AddToRegistry(ak,{
+r:AddToRegistry(aj,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-
-t:Create('UIGradient',{
-Rotation=90;
-Parent=ak;
+local x=r:Create("UIGradient",{
+Rotation=90,
+Parent=aj,
 Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255));
-ColorSequenceKeypoint.new(1,Color3.fromRGB(185,185,185));
-});
-});
+ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
+ColorSequenceKeypoint.new(1,Color3.fromRGB(185,185,185)),
+}),
+})
 
-
-
-local al=t:Create('ImageLabel',{
-AnchorPoint=Vector2.new(0.5,0.5);
-Position=UDim2.new(0.5,0,0.5,0);
-BackgroundTransparency=1;
-ImageTransparency=1;
-Size=UDim2.new(0,9,0,9);
-Image='http://www.roblox.com/asset/?id=18926561620';
-ZIndex=9;
-Parent=aj;
-});
-
-local am=t:CreateLabel({
+r:AddToRegistry(aj,{
+BackgroundColor3="MainColor",
+BorderColor3="OutlineColor",
+})
+local y=r:CreateLabel({
 Size=UDim2.new(0,216,1,0);
 Position=UDim2.new(1,6,0,0);
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 Text=ad.Text;
 TextXAlignment=Enum.TextXAlignment.Left;
 ZIndex=6;
-Parent=ak;
+Parent=aj;
 });
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 Padding=UDim.new(0,4);
 FillDirection=Enum.FillDirection.Horizontal;
 HorizontalAlignment=Enum.HorizontalAlignment.Right;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=am;
+Parent=y;
 });
-
-local z=t:Create('Frame',{
+local z=r:Create('Frame',{
 BackgroundTransparency=1;
 Size=UDim2.new(0,170,1,0);
 ZIndex=8;
-Parent=aj;
+Parent=ai;
 });
-t:OnHighlight(z,aj,
+r:OnHighlight(z,ai,
 {BorderColor3='AccentColor'},
 {BorderColor3='Black'}
 );
-
-if type(ad.Tooltip)=='string'then
-t:AddToolTip(ad.Tooltip,z)
-end
-
 function ae:UpdateColors()
 ae:Display();
 end;
+if type(ad.Tooltip)=='string'then
+r:AddToolTip(ad.Tooltip,z)
+end
+
+local A
 
 function ae:Display()
-local A=ae.Value and t.AccentColor or t.MainColor;
-local B=ae.Value and t.AccentColorDark or t.OutlineColor;
+local B,C,D
 
-k:Create(ak,ai,{
-BackgroundColor3=A;
-BorderColor3=B;
-}):Play();
+if ae.Disabled then
+y.TextColor3=r.DisabledTextColor
+B=ae.Value and r.DisabledAccentColor or r.MainColor
+C=r.DisabledOutlineColor
+r.RegistryMap[aj].Properties.BackgroundColor3=ae.Value and"DisabledAccentColor"or"MainColor"
+r.RegistryMap[aj].Properties.BorderColor3="DisabledOutlineColor"
+r.RegistryMap[y].Properties.TextColor3="DisabledTextColor"
+else
+D=ae.Risky and r.RiskColor or Color3.new(1,1,1)
+y.TextColor3=D
+B=ae.Value and r.AccentColor or r.MainColor
+C=ae.Value and r.AccentColorDark or r.OutlineColor
+r.RegistryMap[aj].Properties.BackgroundColor3=ae.Value and"AccentColor"or"MainColor"
+r.RegistryMap[aj].Properties.BorderColor3=ae.Value and"AccentColorDark"or"OutlineColor"
+r.RegistryMap[y].Properties.TextColor3=ae.Risky and"RiskColor"or nil
+end
 
-k:Create(al,ai,{
-ImageTransparency=ae.Value and 0 or 1;
-}):Play();
+if A then A:Cancel()end
+A=i:Create(
+aj,
+TweenInfo.new(0.25,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
+{BackgroundColor3=B,BorderColor3=C}
+)
+A:Play()
+end
 
-t.RegistryMap[ak].Properties.BackgroundColor3=ae.Value and'AccentColor'or'MainColor';
-t.RegistryMap[ak].Properties.BorderColor3=ae.Value and'AccentColorDark'or'OutlineColor';
+function ae:OnChanged(B)
+ae.Changed=B;
+B(ae.Value);
 end;
 
-function ae:OnChanged(A)
-ae.Changed=A;
-A(ae.Value);
-end;
-
-function ae:SetValue(A)
-A=(not not A);
-ae.Value=A;
+function ae:SetValue(B)
+B=(not not B);
+ae.Value=B;
 ae:Display();
 
-for B,C in next,ae.Addons do
-if C.Type=='KeyPicker'and C.SyncToggleState then
-C.Toggled=A;
-C:Update();
-end;
-end;
+for C,D in next,ae.Addons do
+if D.Type=='KeyPicker'and D.SyncToggleState then
+D.Toggled=B
+D:Update()
+end
+end
 
-t:SafeCallback(ae.Callback,ae.Value);
-t:SafeCallback(ae.Changed,ae.Value);
-t:UpdateDependencyBoxes();
+r:SafeCallback(ae.Callback,ae.Value);
+r:SafeCallback(ae.Changed,ae.Value);
+r:UpdateDependencyBoxes();
 end;
-
-z.InputBegan:Connect(function(A)
-if(A.UserInputType==Enum.UserInputType.MouseButton1 or A.UserInputType==Enum.UserInputType.Touch)and not t:MouseIsOverOpenedFrame()then
-ae:SetValue(not ae.Value);
-t:AttemptSave();
+z.InputBegan:Connect(function(B)
+if(B.UserInputType==Enum.UserInputType.MouseButton1 or B.UserInputType==Enum.UserInputType.Touch)and not r:MouseIsOverOpenedFrame()then
+ae:SetValue(not ae.Value)
+r:AttemptSave();
 end;
 end);
-
 if ae.Risky then
-t:RemoveFromRegistry(am);
-am.TextColor3=t.RiskColor;
-t:AddToRegistry(am,{TextColor3='RiskColor'});
-end;
+r:RemoveFromRegistry(y)
+y.TextColor3=r.RiskColor
+r:AddToRegistry(y,{TextColor3='RiskColor'})
+end
 
 ae:Display();
 af:AddBlank(ad.BlankSize or 5+2);
 af:Resize();
 
-ae.TextLabel=am;
+ae.TextLabel=y;
 ae.Container=ah;
-setmetatable(ae,y);
+setmetatable(ae,w);
 
-r[ac]=ae;
+p[ac]=ae;
 
-t:UpdateDependencyBoxes();
+r:UpdateDependencyBoxes();
 
 return ae
 end;
@@ -2351,9 +2257,9 @@ Callback=ad.Callback or function(ae)end;
 local af=self;
 local ah=af.Container;
 if not ad.Compact then
-t:CreateLabel({
+r:CreateLabel({
 Size=UDim2.new(1,0,0,10);
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 Text=ad.Text;
 TextXAlignment=Enum.TextXAlignment.Left;
 TextYAlignment=Enum.TextYAlignment.Bottom;
@@ -2363,47 +2269,47 @@ Parent=ah;
 af:AddBlank(3);
 end
 
-local ai=t:Create('Frame',{
+local ai=r:Create('Frame',{
 BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(1,-4,0,13);
 ZIndex=5;
 Parent=ah;
 });
-t:AddToRegistry(ai,{
+r:AddToRegistry(ai,{
 BorderColor3='Black';
 });
-local aj=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local aj=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=6;
 Parent=ai;
 });
-t:AddToRegistry(aj,{
+r:AddToRegistry(aj,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
 
-local ak=t:Create("UIGradient",{
+local x=r:Create("UIGradient",{
 Rotation=90,
 Parent=aj,
 Color=ColorSequence.new({
 ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(1,t.MainColor),
+ColorSequenceKeypoint.new(1,r.MainColor),
 }),
 });
-t:AddToRegistry(ak,{
+r:AddToRegistry(x,{
 Color=function()
 return ColorSequence.new({
 ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(1,t.MainColor),
+ColorSequenceKeypoint.new(1,r.MainColor),
 })
 end
 });
 
-local al=t:Create("UIGradient",{
+local y=r:Create("UIGradient",{
 Rotation=90,
 Parent=aj,
 Color=ColorSequence.new({
@@ -2412,165 +2318,177 @@ ColorSequenceKeypoint.new(1,Color3.fromRGB(185,185,185)),
 }),
 })
 
-t:AddToRegistry(aj,{
+r:AddToRegistry(aj,{
 BackgroundColor3="MainColor",
 BorderColor3="OutlineColor",
 })
 
 
-local am=t:Create('Frame',{
-BackgroundColor3=t.AccentColor;
-BorderColor3=t.AccentColorDark;
+local z=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
+BorderColor3=r.AccentColorDark;
 Size=UDim2.new(0,0,1,0);
 ZIndex=7;
 Parent=aj;
 });
-t:AddToRegistry(am,{
+r:AddToRegistry(z,{
 BackgroundColor3='AccentColor';
 BorderColor3='AccentColorDark';
 });
 
-local z=t:Create("UIGradient",{
+local A=r:Create("UIGradient",{
 Rotation=90,
-Parent=am,
+Parent=z,
 Color=ColorSequence.new({
 ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(1,t.AccentColor),
+ColorSequenceKeypoint.new(1,r.AccentColor),
 }),
 });
-t:AddToRegistry(z,{
+r:AddToRegistry(A,{
 Color=function()
 return ColorSequence.new({
 ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(1,t.AccentColor),
+ColorSequenceKeypoint.new(1,r.AccentColor),
 })
 end
 });
 
-local A=t:Create('Frame',{
-BackgroundColor3=t.AccentColor;
+local B=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
 BorderSizePixel=0;
 BackgroundTransparency=1;
 Position=UDim2.new(1,0,0,0);
 Size=UDim2.new(0,1,1,0);
 ZIndex=8;
-Parent=am;
+Parent=z;
 });
 
-t:AddToRegistry(am,{
+local C=r:Create("UIGradient",{
+Rotation=90,
+Parent=z,
+Color=ColorSequence.new({
+ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
+ColorSequenceKeypoint.new(1,Color3.fromRGB(185,185,185)),
+}),
+})
+
+r:AddToRegistry(z,{
 BackgroundColor3="AccentColor",
 BorderColor3="AccentColorDark",
 })
 
-local B=t:CreateLabel({
+local D=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
+BorderSizePixel=0;
+Position=UDim2.new(1,0,0,0);
+Size=UDim2.new(0,1,1,0);
+ZIndex=8;
+Parent=z;
+});
+
+r:AddToRegistry(D,{
+BackgroundColor3='AccentColor';
+});
+local E=r:CreateLabel({
 Size=UDim2.new(1,0,1,0);
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 Text='Infinite';
 ZIndex=9;
 Parent=aj;
 });
-t:OnHighlight(ai,ai,
+r:OnHighlight(ai,ai,
 {BorderColor3='AccentColor'},
 {BorderColor3='Black'}
 );
 if type(ad.Tooltip)=='string'then
-t:AddToolTip(ad.Tooltip,ai)
+r:AddToolTip(ad.Tooltip,ai)
 end
 
 function ae:UpdateColors()
-am.BackgroundColor3=t.AccentColor;
-am.BorderColor3=t.AccentColorDark;
+z.BackgroundColor3=r.AccentColor;
+z.BorderColor3=r.AccentColorDark;
 end;
-
-local C=TweenInfo.new(0.1,Enum.EasingStyle.Quad,Enum.EasingDirection.Out);
 
 function ae:Display()
-local D=ad.Suffix or'';
+local F=ad.Suffix or'';
 if ad.Compact then
-B.Text=ad.Text..': '..ae.Value..D
+E.Text=ad.Text..': '..ae.Value..F
 elseif ad.HideMax then
-B.Text=string.format('%s',ae.Value..D)
+E.Text=string.format('%s',ae.Value..F)
 else
-B.Text=string.format('%s/%s',ae.Value..D,ae.Max..D);
+E.Text=string.format('%s/%s',ae.Value..F,ae.Max..F);
 end
 
-ae.MaxSize=aj.AbsoluteSize.X;
-local E=math.ceil(t:MapValue(ae.Value,ae.Min,ae.Max,0,ae.MaxSize));
+local G=math.ceil(r:MapValue(ae.Value,ae.Min,ae.Max,0,ae.MaxSize));
+z.Size=UDim2.new(0,G,1,0);
 
-
-k:Create(am,C,{
-Size=UDim2.new(0,E,1,0);
-}):Play();
-
-A.Visible=not(E==ae.MaxSize or E==0);
+D.Visible=not(G==ae.MaxSize or G==0);
 end;
-function ae:OnChanged(D)
-ae.Changed=D;
-D(ae.Value);
+function ae:OnChanged(F)
+ae.Changed=F;
+F(ae.Value);
 end;
-local function D(E)
+local function F(G)
 if ae.Rounding==0 then
-return math.floor(E)
+return math.floor(G)
 end;
 
 
-return tonumber(string.format('%.'..ae.Rounding..'f',E))
+return tonumber(string.format('%.'..ae.Rounding..'f',G))
 end;
-function ae:GetValueFromXOffset(E)
-return D(t:MapValue(E,0,ae.MaxSize,ae.Min,ae.Max))
+function ae:GetValueFromXOffset(G)
+return F(r:MapValue(G,0,ae.MaxSize,ae.Min,ae.Max))
 end;
-function ae:SetValue(E)
-local F=tonumber(E);
-if(not F)then
+function ae:SetValue(G)
+local H=tonumber(G);
+if(not H)then
 return
 end;
 
-F=math.clamp(F,ae.Min,ae.Max);
+H=math.clamp(H,ae.Min,ae.Max);
 
-ae.Value=F;
+ae.Value=H;
 ae:Display();
 
-t:SafeCallback(ae.Callback,ae.Value);
-t:SafeCallback(ae.Changed,ae.Value);
+r:SafeCallback(ae.Callback,ae.Value);
+r:SafeCallback(ae.Changed,ae.Value);
 end;
-aj.InputBegan:Connect(function(E)
-if(E.UserInputType==Enum.UserInputType.MouseButton1 or E.UserInputType==Enum.UserInputType.Touch)and not t:MouseIsOverOpenedFrame()then
+aj.InputBegan:Connect(function(G)
+if(G.UserInputType==Enum.UserInputType.MouseButton1 or G.UserInputType==Enum.UserInputType.Touch)and not r:MouseIsOverOpenedFrame()then
 
-local function F(G)
-local H=am.AbsolutePosition.X
+local function H(I)
+local J=z.AbsolutePosition.X
 
-ae.MaxSize=aj.AbsoluteSize.X
+local K=I-J
+local L=math.clamp(K,0,ae.MaxSize)
 
-local I=G-H
-local J=math.clamp(I,0,ae.MaxSize)
+local M=ae:GetValueFromXOffset(L);
+local N=ae.Value;
 
-local K=ae:GetValueFromXOffset(J);
-local L=ae.Value;
-
-ae.Value=K;
+ae.Value=M;
 
 ae:Display();
 
-if K~=L then
-t:SafeCallback(ae.Callback,ae.Value);
-t:SafeCallback(ae.Changed,ae.Value);
+if M~=N then
+r:SafeCallback(ae.Callback,ae.Value);
+r:SafeCallback(ae.Changed,ae.Value);
 end;
 end
 
-F(E.Position.X)
+H(G.Position.X)
 
-local G=e.InputChanged:Connect(function(G)
-if G.UserInputType==Enum.UserInputType.MouseMovement or G==E then
-F(G.Position.X)
+local I=c.InputChanged:Connect(function(I)
+if I.UserInputType==Enum.UserInputType.MouseMovement or I==G then
+H(I.Position.X)
 end
 end)
 
-local H
-H=e.InputEnded:Connect(function(I)
-if I==E or I.UserInputType==Enum.UserInputType.Touch then
-G:Disconnect()
-H:Disconnect()
-t:AttemptSave()
+local J
+J=c.InputEnded:Connect(function(K)
+if K==G or K.UserInputType==Enum.UserInputType.Touch then
+I:Disconnect()
+J:Disconnect()
+r:AttemptSave()
 end
 end)
 end;
@@ -2580,16 +2498,16 @@ ae:Display();
 af:AddBlank(ad.BlankSize or 6);
 af:Resize();
 
-s[ac]=ae;
+q[ac]=ae;
 
 return ae
 end;
 function ab:AddDropdown(ac,ad)
 if ad.SpecialType=='Player'then
-ad.Values=w();
+ad.Values=u();
 ad.AllowNull=true;
 elseif ad.SpecialType=='Team'then
-ad.Values=x();
+ad.Values=v();
 ad.AllowNull=true;
 end;
 
@@ -2614,9 +2532,9 @@ local ah=af.Container;
 
 local ai=0;
 if not ad.Compact then
-local aj=t:CreateLabel({
+local aj=r:CreateLabel({
 Size=UDim2.new(1,0,0,10);
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 Text=ad.Text;
 TextXAlignment=Enum.TextXAlignment.Left;
 TextYAlignment=Enum.TextYAlignment.Bottom;
@@ -2626,334 +2544,334 @@ Parent=ah;
 af:AddBlank(3);
 end
 
-for aj,ak in next,ah:GetChildren()do
-if not ak:IsA('UIListLayout')then
-ai=ai+ak.Size.Y.Offset;
+for aj,x in next,ah:GetChildren()do
+if not x:IsA('UIListLayout')then
+ai=ai+x.Size.Y.Offset;
 end;
 end;
 
-local aj=t:Create('Frame',{
+local aj=r:Create('Frame',{
 BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 Size=UDim2.new(1,-4,0,20);
 ZIndex=5;
 Parent=ah;
 });
-t:AddToRegistry(aj,{
+r:AddToRegistry(aj,{
 BorderColor3='Black';
 });
-local ak=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local x=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=6;
 Parent=aj;
 });
-t:AddToRegistry(ak,{
+r:AddToRegistry(x,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-t:Create('UIGradient',{
+r:Create('UIGradient',{
 Color=ColorSequence.new({
 ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),
 ColorSequenceKeypoint.new(1,Color3.fromRGB(212,212,212))
 });
 Rotation=90;
-Parent=ak;
+Parent=x;
 });
 
-local al=t:Create('ImageLabel',{
+local z=r:Create('ImageLabel',{
 AnchorPoint=Vector2.new(0,0.5);
 BackgroundTransparency=1;
 Position=UDim2.new(1,-16,0.5,0);
 Size=UDim2.new(0,12,0,12);
 Image='http://www.roblox.com/asset/?id=6282522798';
 ZIndex=8;
-Parent=ak;
+Parent=x;
 });
-local am=t:CreateLabel({
+local A=r:CreateLabel({
 Position=UDim2.new(0,5,0,0);
 Size=UDim2.new(1,-5,1,0);
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 Text='--';
 TextXAlignment=Enum.TextXAlignment.Left;
 TextWrapped=true;
 ZIndex=7;
-Parent=ak;
+Parent=x;
 });
-t:OnHighlight(aj,aj,
+r:OnHighlight(aj,aj,
 {BorderColor3='AccentColor'},
 {BorderColor3='Black'}
 );
 if type(ad.Tooltip)=='string'then
-t:AddToolTip(ad.Tooltip,aj)
+r:AddToolTip(ad.Tooltip,aj)
 end
 
-local z=8;
-local A=t:Create('Frame',{
+local C=8;
+local D=r:Create('Frame',{
 BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 ZIndex=20;
 Visible=false;
-Parent=q;
+Parent=o;
 });
-local function B()
-A.Position=UDim2.fromOffset(aj.AbsolutePosition.X,aj.AbsolutePosition.Y+aj.Size.Y.Offset+1);
+local function E()
+D.Position=UDim2.fromOffset(aj.AbsolutePosition.X,aj.AbsolutePosition.Y+aj.Size.Y.Offset+1);
 end;
 
-local function C(D)
-A.Size=UDim2.fromOffset(aj.AbsoluteSize.X,D or(z*20+2))
+local function F(G)
+D.Size=UDim2.fromOffset(aj.AbsoluteSize.X,G or(C*20+2))
 end;
-B();
-C();
+E();
+F();
 
-aj:GetPropertyChangedSignal('AbsolutePosition'):Connect(B);
+aj:GetPropertyChangedSignal('AbsolutePosition'):Connect(E);
 
-local D=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local G=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 BorderSizePixel=0;
 Size=UDim2.new(1,0,1,0);
 ZIndex=21;
-Parent=A;
+Parent=D;
 });
-t:AddToRegistry(D,{
+r:AddToRegistry(G,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-local E=t:Create('ScrollingFrame',{
+local H=r:Create('ScrollingFrame',{
 BackgroundTransparency=1;
 BorderSizePixel=0;
 CanvasSize=UDim2.new(0,0,0,0);
 Size=UDim2.new(1,0,1,0);
 ZIndex=21;
-Parent=D;
+Parent=G;
 
 TopImage='rbxasset://textures/ui/Scroll/scroll-middle.png',
 BottomImage='rbxasset://textures/ui/Scroll/scroll-middle.png',
 
 ScrollBarThickness=3,
-ScrollBarImageColor3=t.AccentColor,
+ScrollBarImageColor3=r.AccentColor,
 });
-t:AddToRegistry(E,{
+r:AddToRegistry(H,{
 ScrollBarImageColor3='AccentColor'
 })
 
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 Padding=UDim.new(0,0);
 FillDirection=Enum.FillDirection.Vertical;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=E;
+Parent=H;
 });
 function ae:Display()
-local F=ae.Values;
-local G='';
+local I=ae.Values;
+local J='';
 
 if ad.Multi then
-for H,I in next,F do
-if ae.Value[I]then
-G=G..I..', ';
+for K,L in next,I do
+if ae.Value[L]then
+J=J..L..', ';
 end;
 end;
 
-G=G:sub(1,#G-2);
+J=J:sub(1,#J-2);
 else
-G=ae.Value or'';
+J=ae.Value or'';
 end;
 
-am.Text=(G==''and'--'or G);
+A.Text=(J==''and'--'or J);
 end;
 function ae:GetActiveValues()
 if ad.Multi then
-local F={};
-for G,H in next,ae.Value do
-table.insert(F,G);
+local I={};
+for J,K in next,ae.Value do
+table.insert(I,J);
 end;
 
-return F
+return I
 else
 return ae.Value and 1 or 0
 end;
 end;
 
 function ae:BuildDropdownList()
-local F=ae.Values;
-local G={};
+local I=ae.Values;
+local J={};
 
-for H,I in next,E:GetChildren()do
-if not I:IsA('UIListLayout')then
-I:Destroy();
+for K,L in next,H:GetChildren()do
+if not L:IsA('UIListLayout')then
+L:Destroy();
 end;
 end;
 
-local H=0;
+local K=0;
 
-for I,J in next,F do
-local K={};
-H=H+1;
+for L,M in next,I do
+local N={};
+K=K+1;
 
-local L=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local O=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Middle;
 Size=UDim2.new(1,-1,0,20);
 ZIndex=23;
 Active=true,
-Parent=E;
+Parent=H;
 });
-t:AddToRegistry(L,{
+r:AddToRegistry(O,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-local M=t:CreateLabel({
+local P=r:CreateLabel({
 Active=false;
 Size=UDim2.new(1,-6,1,0);
 Position=UDim2.new(0,6,0,0);
-TextSize=t.FontSize;
-Text=J;
+TextSize=r.FontSize;
+Text=M;
 TextXAlignment=Enum.TextXAlignment.Left;
 ZIndex=25;
-Parent=L;
+Parent=O;
 });
 
-t:OnHighlight(L,L,
+r:OnHighlight(O,O,
 {BorderColor3='AccentColor',ZIndex=24},
 {BorderColor3='OutlineColor',ZIndex=23}
 );
-local N;
+local Q;
 
 if ad.Multi then
-N=ae.Value[J];
+Q=ae.Value[M];
 else
-N=ae.Value==J;
+Q=ae.Value==M;
 end;
 
-function K:UpdateButton()
+function N:UpdateButton()
 if ad.Multi then
-N=ae.Value[J];
+Q=ae.Value[M];
 else
-N=ae.Value==J;
+Q=ae.Value==M;
 end;
 
-M.TextColor3=N and t.AccentColor or t.FontColor;
-t.RegistryMap[M].Properties.TextColor3=N and'AccentColor'or'FontColor';
+P.TextColor3=Q and r.AccentColor or r.FontColor;
+r.RegistryMap[P].Properties.TextColor3=Q and'AccentColor'or'FontColor';
 end;
-M.InputBegan:Connect(function(O)
-if(O.UserInputType==Enum.UserInputType.MouseButton1 or O.UserInputType==Enum.UserInputType.Touch)then
-local P=not N;
+P.InputBegan:Connect(function(R)
+if(R.UserInputType==Enum.UserInputType.MouseButton1 or R.UserInputType==Enum.UserInputType.Touch)then
+local S=not Q;
 
-if ae:GetActiveValues()==1 and(not P)and(not ad.AllowNull)then
+if ae:GetActiveValues()==1 and(not S)and(not ad.AllowNull)then
 else
 if ad.Multi then
-N=P;
+Q=S;
 
-if N then
-ae.Value[J]=true;
+if Q then
+ae.Value[M]=true;
 else
-ae.Value[J]=nil;
+ae.Value[M]=nil;
 end;
 else
-N=P;
+Q=S;
 
-if N then
-ae.Value=J;
+if Q then
+ae.Value=M;
 else
 ae.Value=nil;
 end;
 
-for Q,R in next,G do
-R:UpdateButton();
+for T,U in next,J do
+U:UpdateButton();
 end;
 end;
 
-K:UpdateButton();
+N:UpdateButton();
 ae:Display();
 
-t:SafeCallback(ae.Callback,ae.Value);
-t:SafeCallback(ae.Changed,ae.Value);
+r:SafeCallback(ae.Callback,ae.Value);
+r:SafeCallback(ae.Changed,ae.Value);
 
-t:AttemptSave();
+r:AttemptSave();
 end;
 end;
 end);
 
-K:UpdateButton();
+N:UpdateButton();
 ae:Display();
 
-G[L]=K;
+J[O]=N;
 end;
-E.CanvasSize=UDim2.fromOffset(0,(H*20)+1);
+H.CanvasSize=UDim2.fromOffset(0,(K*20)+1);
 
-local I=math.clamp(H*20,0,z*20)+1;
-C(I);
+local L=math.clamp(K*20,0,C*20)+1;
+F(L);
 end;
 
-function ae:SetValues(F)
-if F then
-ae.Values=F;
+function ae:SetValues(I)
+if I then
+ae.Values=I;
 end;
 
 ae:BuildDropdownList();
 end;
 
 function ae:OpenDropdown()
-A.Visible=true;
-t.OpenedFrames[A]=true;
-al.Rotation=180;
+D.Visible=true;
+r.OpenedFrames[D]=true;
+z.Rotation=180;
 end;
 
 function ae:CloseDropdown()
-A.Visible=false;
-t.OpenedFrames[A]=nil;
-al.Rotation=0;
+D.Visible=false;
+r.OpenedFrames[D]=nil;
+z.Rotation=0;
 end;
 
-function ae:OnChanged(F)
-ae.Changed=F;
-F(ae.Value);
+function ae:OnChanged(I)
+ae.Changed=I;
+I(ae.Value);
 end;
 
-function ae:SetValue(F)
+function ae:SetValue(I)
 if ae.Multi then
-local G={};
-for H,I in next,F do
-if table.find(ae.Values,H)then
-G[H]=true
+local J={};
+for K,L in next,I do
+if table.find(ae.Values,K)then
+J[K]=true
 end;
 end;
 
-ae.Value=G;
+ae.Value=J;
 else
-if(not F)then
+if(not I)then
 ae.Value=nil;
-elseif table.find(ae.Values,F)then
-ae.Value=F;
+elseif table.find(ae.Values,I)then
+ae.Value=I;
 end;
 end;
 
 ae:BuildDropdownList();
 
-t:SafeCallback(ae.Callback,ae.Value);
-t:SafeCallback(ae.Changed,ae.Value);
+r:SafeCallback(ae.Callback,ae.Value);
+r:SafeCallback(ae.Changed,ae.Value);
 end;
 
-aj.InputBegan:Connect(function(F)
-if(F.UserInputType==Enum.UserInputType.MouseButton1 or F.UserInputType==Enum.UserInputType.Touch)and not t:MouseIsOverOpenedFrame()then
-if A.Visible then
+aj.InputBegan:Connect(function(I)
+if(I.UserInputType==Enum.UserInputType.MouseButton1 or I.UserInputType==Enum.UserInputType.Touch)and not r:MouseIsOverOpenedFrame()then
+if D.Visible then
 ae:CloseDropdown();
 else
 ae:OpenDropdown();
 end;
 end;
 end);
-e.InputBegan:Connect(function(F)
-if(F.UserInputType==Enum.UserInputType.MouseButton1 or F.UserInputType==Enum.UserInputType.Touch)then
-local G,H=A.AbsolutePosition,A.AbsoluteSize;
+c.InputBegan:Connect(function(I)
+if(I.UserInputType==Enum.UserInputType.MouseButton1 or I.UserInputType==Enum.UserInputType.Touch)then
+local J,K=D.AbsolutePosition,D.AbsoluteSize;
 
-if o.X<G.X or o.X>G.X+H.X
-or o.Y<(G.Y-20-1)or o.Y>G.Y+H.Y then
+if m.X<J.X or m.X>J.X+K.X
+or m.Y<(J.Y-20-1)or m.Y>J.Y+K.Y then
 
 ae:CloseDropdown();
 end;
@@ -2962,31 +2880,31 @@ end);
 ae:BuildDropdownList();
 ae:Display();
 
-local F={}
+local I={}
 
 if type(ad.Default)=='string'then
-local G=table.find(ae.Values,ad.Default)
-if G then
-table.insert(F,G)
+local J=table.find(ae.Values,ad.Default)
+if J then
+table.insert(I,J)
 end
 elseif type(ad.Default)=='table'then
-for G,H in next,ad.Default do
-local I=table.find(ae.Values,H)
-if I then
-table.insert(F,I)
+for J,K in next,ad.Default do
+local L=table.find(ae.Values,K)
+if L then
+table.insert(I,L)
 end
 end
 elseif type(ad.Default)=='number'and ae.Values[ad.Default]~=nil then
-table.insert(F,ad.Default)
+table.insert(I,ad.Default)
 end
 
-if next(F)then
-for G=1,#F do
-local H=F[G]
+if next(I)then
+for J=1,#I do
+local K=I[J]
 if ad.Multi then
-ae.Value[ae.Values[H] ]=true
+ae.Value[ae.Values[K] ]=true
 else
-ae.Value=ae.Values[H];
+ae.Value=ae.Values[K];
 end
 
 if(not ad.Multi)then break end
@@ -2999,7 +2917,7 @@ end
 af:AddBlank(ad.BlankSize or 5);
 af:Resize();
 
-s[ac]=ae;
+q[ac]=ae;
 
 return ae
 end;
@@ -3011,19 +2929,19 @@ Dependencies={};
 local ad=self;
 local ae=ad.Container;
 
-local af=t:Create('Frame',{
+local af=r:Create('Frame',{
 BackgroundTransparency=1;
 Size=UDim2.new(1,0,0,0);
 Visible=false;
 Parent=ae;
 });
-local ah=t:Create('Frame',{
+local ah=r:Create('Frame',{
 BackgroundTransparency=1;
 Size=UDim2.new(1,0,1,0);
 Visible=true;
 Parent=af;
 });
-local ai=t:Create('UIListLayout',{
+local ai=r:Create('UIListLayout',{
 FillDirection=Enum.FillDirection.Vertical;
 SortOrder=Enum.SortOrder.LayoutOrder;
 Parent=ah;
@@ -3040,11 +2958,11 @@ af:GetPropertyChangedSignal('Visible'):Connect(function()
 ac:Resize();
 end);
 function ac:Update()
-for aj,ak in next,ac.Dependencies do
-local al=ak[1];
-local am=ak[2];
+for aj,x in next,ac.Dependencies do
+local z=x[1];
+local A=x[2];
 
-if al.Type=='Toggle'and al.Value~=am then
+if z.Type=='Toggle'and z.Value~=A then
 af.Visible=false;
 ac:Resize();
 return
@@ -3056,10 +2974,10 @@ ac:Resize();
 end;
 
 function ac:SetupDependencies(aj)
-for ak,al in next,aj do
-assert(type(al)=='table','SetupDependencies: Dependency is not of type `table`.');
-assert(al[1],'SetupDependencies: Dependency is missing element argument.');
-assert(al[2]~=nil,'SetupDependencies: Dependency is missing value argument.');
+for x,z in next,aj do
+assert(type(z)=='table','SetupDependencies: Dependency is not of type `table`.');
+assert(z[1],'SetupDependencies: Dependency is missing element argument.');
+assert(z[2]~=nil,'SetupDependencies: Dependency is missing value argument.');
 end;
 
 ac.Dependencies=aj;
@@ -3070,7 +2988,7 @@ ac.Container=ah;
 
 setmetatable(ac,aa);
 
-table.insert(t.DependencyBoxes,ac);
+table.insert(r.DependencyBoxes,ac);
 
 return ac
 end;
@@ -3081,23 +2999,23 @@ return ab[ad](...)
 end;
 end;
 do
-t.NotificationArea=t:Create('Frame',{
+r.NotificationArea=r:Create('Frame',{
 BackgroundTransparency=1;
-Position=UDim2.new(0,t.NotifyConfig.PositionX,0,t.NotifyConfig.PositionY);
-Size=UDim2.new(0,300,1,-t.NotifyConfig.PositionY);
+Position=UDim2.new(0,r.NotifyConfig.PositionX,0,r.NotifyConfig.PositionY);
+Size=UDim2.new(0,300,1,-r.NotifyConfig.PositionY);
 ZIndex=100;
-Parent=q;
+Parent=o;
 });
-t.NotifLayout=t:Create('UIListLayout',{
+r.NotifLayout=r:Create('UIListLayout',{
 Padding=UDim.new(0,4);
 FillDirection=Enum.FillDirection.Vertical;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=t.NotificationArea;
+Parent=r.NotificationArea;
 });
 local function ab()
-local ac=t.NotifyConfig
-local ad=t.NotificationArea
-local ae=t.NotifLayout
+local ac=r.NotifyConfig
+local ad=r.NotificationArea
+local ae=r.NotifLayout
 
 ad.Position=UDim2.new(0,ac.PositionX,0,ac.PositionY)
 ad.Size=UDim2.new(0,300,1,-ac.PositionY)
@@ -3114,216 +3032,252 @@ ae.HorizontalAlignment=Enum.HorizontalAlignment.Center
 ad.AnchorPoint=Vector2.new(0,0)
 end
 end
-t.UpdateNotifAlignment=ab
+r.UpdateNotifAlignment=ab
 ab()
 
-local ac=t:Create('Frame',{
+local ac=r:Create('Frame',{
 AnchorPoint=Vector2.new(0.5,0);
 BorderColor3=Color3.new(0,0,0);
 Position=UDim2.new(0.5,0,0,8);
 Size=UDim2.new(0,213,0,20);
 ZIndex=200;
 Visible=false;
-Parent=q;
+Parent=o;
 });
 
-local ad=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.AccentColor;
+local ad=r:Create("ImageLabel",{
+Parent=ac,
+ImageColor3=r.AccentColor,
+ScaleType=Enum.ScaleType.Slice,
+BorderColor3=Color3.fromRGB(0,0,0),
+BackgroundColor3=Color3.fromRGB(255,255,255),
+Image="http://www.roblox.com/asset/?id=18245826428",
+BackgroundTransparency=1,
+ImageTransparency=0.8,
+Position=UDim2.new(0,-20,0,-20),
+Size=UDim2.new(1,40,1,40),
+ZIndex=1,
+BorderSizePixel=0,
+SliceCenter=Rect.new(Vector2.new(21,21),Vector2.new(79,79)),
+})
+
+r:AddToRegistry(ad,{
+ImageColor3="AccentColor",
+})
+
+local ae=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.AccentColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=201;
 Parent=ac;
 });
-t:AddToRegistry(ad,{
+r:AddToRegistry(ae,{
 BorderColor3='AccentColor';
 });
-local ae=t:Create('Frame',{
+local af=r:Create('Frame',{
 BackgroundColor3=Color3.new(1,1,1);
 BorderSizePixel=0;
 Position=UDim2.new(0,1,0,1);
 Size=UDim2.new(1,-2,1,-2);
 ZIndex=202;
-Parent=ad;
-});
-local af=t:Create('UIGradient',{
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,t:GetDarkerColor(t.MainColor)),
-ColorSequenceKeypoint.new(1,t.MainColor),
-});
-Rotation=-90;
 Parent=ae;
 });
-t:AddToRegistry(af,{
+local ah=r:Create('UIGradient',{
+Color=ColorSequence.new({
+ColorSequenceKeypoint.new(0,r:GetDarkerColor(r.MainColor)),
+ColorSequenceKeypoint.new(1,r.MainColor),
+});
+Rotation=-90;
+Parent=af;
+});
+r:AddToRegistry(ah,{
 Color=function()
 return ColorSequence.new({
-ColorSequenceKeypoint.new(0,t:GetDarkerColor(t.MainColor)),
-ColorSequenceKeypoint.new(1,t.MainColor),
+ColorSequenceKeypoint.new(0,r:GetDarkerColor(r.MainColor)),
+ColorSequenceKeypoint.new(1,r.MainColor),
 })
 end
 });
-local ah=t:CreateLabel({
+local ai=r:CreateLabel({
 Position=UDim2.new(0,5,0,0);
 Size=UDim2.new(1,-4,1,0);
-TextSize=t.FontSize;
-FontFace=Font.new("rbxasset://fonts/families/Tahoma.json",Enum.FontWeight.Bold);
+TextSize=r.FontSize;
 TextXAlignment=Enum.TextXAlignment.Left;
 ZIndex=203;
-Parent=ae;
+Parent=af;
 });
-t.Watermark=ac;
-t.WatermarkText=ah;
-t:MakeDraggable(t.Watermark);
+r.Watermark=ac;
+r.WatermarkText=ai;
+r:MakeDraggable(r.Watermark);
 
-local ai=t:Create('Frame',{
+local aj=r:Create('Frame',{
 AnchorPoint=Vector2.new(0,0.5);
-BackgroundColor3=Color3.new(0,0,0);
 BorderColor3=Color3.new(0,0,0);
 Position=UDim2.new(0,10,0.5,0);
-Size=UDim2.new(0,210,0,20);
+Size=UDim2.new(0,210,0,100);
 Visible=false;
 ZIndex=100;
-Parent=q;
+Parent=o;
 });
-t:ApplyGlow(ai);
+r:ApplyGlow(aj);
 
-local aj=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local x=r:Create("ImageLabel",{
+Parent=aj,
+ImageColor3=r.AccentColor,
+ScaleType=Enum.ScaleType.Slice,
+BorderColor3=Color3.fromRGB(0,0,0),
+BackgroundColor3=Color3.fromRGB(255,255,255),
+Image="http://www.roblox.com/asset/?id=18245826428",
+BackgroundTransparency=1,
+ImageTransparency=0.8,
+Position=UDim2.new(0,-20,0,-20),
+Size=UDim2.new(1,40,1,40),
+ZIndex=1,
+BorderSizePixel=0,
+SliceCenter=Rect.new(Vector2.new(21,21),Vector2.new(79,79)),
+})
+
+r:AddToRegistry(x,{
+ImageColor3="AccentColor",
+})
+
+local z=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=101;
-Parent=ai;
+Parent=aj;
 });
-t:AddToRegistry(aj,{
+r:AddToRegistry(z,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 },true);
-
-
-local ak=t:Create('Frame',{
-BackgroundColor3=t.AccentColor;
+local A=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
 BorderSizePixel=0;
-Position=UDim2.new(0,0,0,0);
-Size=UDim2.new(1,0,0,21);
+Position=UDim2.new(0,0,0,15);
+Size=UDim2.new(1,0,0,2);
 ZIndex=102;
-Parent=aj;
+Parent=z;
 });
-t:AddToRegistry(ak,{BackgroundColor3='AccentColor'},true);
-
-
-local al=t:Create("UIGradient",{
-Rotation=90,
-Parent=ak,
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(1,t.MainColor),
-}),
-});
-t:AddToRegistry(al,{
-Color=function()
-return ColorSequence.new({
-ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(1,t.MainColor),
-})
-end
-});
-
-
-local am=t:CreateLabel({
-Size=UDim2.new(1,0,1,0);
-FontFace=Font.new("rbxasset://fonts/families/Tahoma.json",Enum.FontWeight.Bold),
-TextSize=15,
-TextXAlignment=Enum.TextXAlignment.Center;
-Text='[ Keybinds ]';
-ZIndex=104;
-Parent=ak;
+r:AddToRegistry(A,{
+BackgroundColor3='AccentColor';
 },true);
+local C=r:Create("ImageLabel",{
+Parent=A,
+ImageColor3=r.AccentColor,
+ScaleType=Enum.ScaleType.Slice,
+BorderColor3=Color3.fromRGB(0,0,0),
+BackgroundColor3=Color3.fromRGB(255,255,255),
+Image="http://www.roblox.com/asset/?id=18245826428",
+BackgroundTransparency=1,
+ImageTransparency=0.8,
+Position=UDim2.new(0,0,0,-2),
+Size=UDim2.new(1,0,0,8),
+ZIndex=101,
+BorderSizePixel=0,
+SliceCenter=Rect.new(Vector2.new(21,21),Vector2.new(79,79)),
+})
 
+r:AddToRegistry(C,{
+ImageColor3="AccentColor",
+})
 
-local z=t:Create('Frame',{
-BackgroundTransparency=1;
-Position=UDim2.new(0,0,0,22);
-Size=UDim2.new(1,0,1,-22);
-ZIndex=101;
-Parent=aj;
+local D=r:CreateLabel({
+Size=UDim2.new(1,0,0,20);
+Position=UDim2.fromOffset(69,-3),
+TextXAlignment=Enum.TextXAlignment.Left,
+
+Text='Keybinds';
+ZIndex=104;
+Parent=z;
 });
-t:Create('UIListLayout',{
+local E=r:Create('Frame',{
+BackgroundTransparency=1;
+Size=UDim2.new(1,0,1,-20);
+Position=UDim2.new(0,0,0,20);
+ZIndex=998;
+Parent=z;
+});
+r:Create('UIListLayout',{
 FillDirection=Enum.FillDirection.Vertical;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=z;
+Parent=E;
 });
-t:Create('UIPadding',{
-PaddingLeft=UDim.new(0,5);
-Parent=z;
-});
+r:Create('UIPadding',{
+PaddingLeft=UDim.new(0,5),
+Parent=E,
+})
 
-t.KeybindFrame=ai;
-t.KeybindContainer=z;
-t:MakeDraggable(ai);
+r.KeybindFrame=aj;
+r.KeybindContainer=E;
+r:MakeDraggable(aj);
 end;
 
-function t:SetKeybindMode(ab)
+function r:SetKeybindMode(ab)
 assert(ab=='All'or ab=='Active'or ab=='Toggled',
 "SetKeybindMode: Mode must be 'All', 'Active', or 'Toggled'")
-t.KeybindMode=ab
-t:RefreshKeybinds()
+r.KeybindMode=ab
+r:RefreshKeybinds()
 end
 
-function t:RefreshKeybinds()
-for ab,ac in ipairs(t.KeyPickerList)do
+function r:RefreshKeybinds()
+for ab,ac in ipairs(r.KeyPickerList)do
 if not ac.NoUI then
 pcall(function()ac:Update()end)
 end
 end
 end
 
-function t:SetWatermarkVisibility(ab)
-t.Watermark.Visible=ab;
+function r:SetWatermarkVisibility(ab)
+r.Watermark.Visible=ab;
 end;
 
-function t:SetWatermark(ab)
-local ac,ad=t:GetTextBounds(ab,t.Font,t.FontSize);
-local ae=t.Watermark.Position.Y
-t.Watermark.AnchorPoint=Vector2.new(0.5,0)
-t.Watermark.Size=UDim2.new(0,ac+15,0,(ad*1.5)+3);
-t.Watermark.Position=UDim2.new(0.5,0,ae.Scale,ae.Offset)
-t:SetWatermarkVisibility(true)
+function r:SetWatermark(ab)
+local ac,ad=r:GetTextBounds(ab,r.Font,r.FontSize);
+local ae=r.Watermark.Position.Y
+r.Watermark.AnchorPoint=Vector2.new(0.5,0)
+r.Watermark.Size=UDim2.new(0,ac+15,0,(ad*1.5)+3);
+r.Watermark.Position=UDim2.new(0.5,0,ae.Scale,ae.Offset)
+r:SetWatermarkVisibility(true)
 
-t.WatermarkText.Text=ab;
+r.WatermarkText.Text=ab;
 end;
-function t:Notify(ab,ac)
-local ad=t.NotifyConfig
+function r:Notify(ab,ac)
+local ad=r.NotifyConfig
 local ae=ad.BarSide or'Left'
 local af=ad.Alignment or'Left'
 
-local ah,ai=t:GetTextBounds(ab,t.Font,t.FontSize)
+local ah,ai=r:GetTextBounds(ab,r.Font,r.FontSize)
 ai=ai+7
 
 local aj=3
-local ak=3
+local x=3
 
-local al=(ae=='Left')and 1 or 1
-local am=(ae=='Top')and ak or 1
-local z=(ae=='Left'or ae=='Right')and-2 or-2
-local A=(ae=='Top'or ae=='Bottom')and-(ak+1)or-2
+local z=(ae=='Left')and 1 or 1
+local A=(ae=='Top')and x or 1
+local C=(ae=='Left'or ae=='Right')and-2 or-2
+local D=(ae=='Top'or ae=='Bottom')and-(x+1)or-2
 
-local B=(ae=='Left')and aj+2 or 4
-local C=(ae=='Left'or ae=='Right')and-(aj+4)or-4
+local E=(ae=='Left')and aj+2 or 4
+local F=(ae=='Left'or ae=='Right')and-(aj+4)or-4
 
-local D=Vector2.new(0,0)
-local E=0
+local G=Vector2.new(0,0)
+local H=0
 if af=='Center'then
-D=Vector2.new(0.5,0)
-E=0
+G=Vector2.new(0.5,0)
+H=0
 elseif af=='Right'then
-D=Vector2.new(1,0)
-E=0
+G=Vector2.new(1,0)
+H=0
 end
 
-local F=t:Create('Frame',{
+local I=r:Create('Frame',{
 BackgroundTransparency=1;
-AnchorPoint=D;
+AnchorPoint=G;
 BorderColor3=Color3.new(0,0,0);
 Position=(af=='Center')
 and UDim2.new(0.5,0,0,0)
@@ -3331,94 +3285,94 @@ or(af=='Right'and UDim2.new(1,0,0,0)or UDim2.new(0,0,0,0));
 Size=UDim2.new(0,0,0,ai);
 ClipsDescendants=true;
 ZIndex=100;
-Parent=t.NotificationArea;
+Parent=r.NotificationArea;
 });
-local G=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local J=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=101;
-Parent=F;
+Parent=I;
 });
-t:AddToRegistry(G,{
+r:AddToRegistry(J,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 },true);
-local H=t:Create('Frame',{
+local K=r:Create('Frame',{
 BackgroundColor3=Color3.new(1,1,1);
 BorderSizePixel=0;
-Position=UDim2.new(0,al,0,am);
-Size=UDim2.new(1,z,1,A);
+Position=UDim2.new(0,z,0,A);
+Size=UDim2.new(1,C,1,D);
 ZIndex=102;
-Parent=G;
+Parent=J;
 });
-local I=t:Create('UIGradient',{
+local L=r:Create('UIGradient',{
 Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,t:GetDarkerColor(t.MainColor)),
-ColorSequenceKeypoint.new(1,t.MainColor),
+ColorSequenceKeypoint.new(0,r:GetDarkerColor(r.MainColor)),
+ColorSequenceKeypoint.new(1,r.MainColor),
 });
 Rotation=-90;
-Parent=H;
+Parent=K;
 });
-t:AddToRegistry(I,{
+r:AddToRegistry(L,{
 Color=function()
 return ColorSequence.new({
-ColorSequenceKeypoint.new(0,t:GetDarkerColor(t.MainColor)),
-ColorSequenceKeypoint.new(1,t.MainColor),
+ColorSequenceKeypoint.new(0,r:GetDarkerColor(r.MainColor)),
+ColorSequenceKeypoint.new(1,r.MainColor),
 })
 end
 });
-local J=t:CreateLabel({
-Position=UDim2.new(0,B,0,0);
-Size=UDim2.new(1,C,1,0);
+local M=r:CreateLabel({
+Position=UDim2.new(0,E,0,0);
+Size=UDim2.new(1,F,1,0);
 Text=ab;
 TextXAlignment=(af=='Center')
 and Enum.TextXAlignment.Center
 or Enum.TextXAlignment.Left;
-TextSize=t.FontSize;
+TextSize=r.FontSize;
 ZIndex=103;
-Parent=H;
+Parent=K;
 });
-local K=t:Create('Frame',{
-BackgroundColor3=t.AccentColor;
+local N=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
 BorderSizePixel=0;
 ZIndex=104;
-Parent=F;
+Parent=I;
 });
 if ae=='Left'then
-K.Position=UDim2.new(0,-1,0,-1)
-K.Size=UDim2.new(0,aj,1,2)
+N.Position=UDim2.new(0,-1,0,-1)
+N.Size=UDim2.new(0,aj,1,2)
 elseif ae=='Right'then
-K.Position=UDim2.new(1,-aj+1,0,-1)
-K.Size=UDim2.new(0,aj,1,2)
+N.Position=UDim2.new(1,-aj+1,0,-1)
+N.Size=UDim2.new(0,aj,1,2)
 elseif ae=='Top'then
-K.Position=UDim2.new(0,-1,0,-1)
-K.Size=UDim2.new(1,2,0,ak)
+N.Position=UDim2.new(0,-1,0,-1)
+N.Size=UDim2.new(1,2,0,x)
 elseif ae=='Bottom'then
-K.Position=UDim2.new(0,-1,1,-ak+1)
-K.Size=UDim2.new(1,2,0,ak)
+N.Position=UDim2.new(0,-1,1,-x+1)
+N.Size=UDim2.new(1,2,0,x)
 end
 
-t:AddToRegistry(K,{
+r:AddToRegistry(N,{
 BackgroundColor3='AccentColor';
 },true);
-local L=ah+8+4
+local O=ah+8+4
 if ae=='Left'or ae=='Right'then
-L=L+aj
+O=O+aj
 end
-pcall(F.TweenSize,F,
-UDim2.new(0,L,0,ai),'Out','Quad',0.4,true);
+pcall(I.TweenSize,I,
+UDim2.new(0,O,0,ai),'Out','Quad',0.4,true);
 task.spawn(function()
 wait(ac or 5);
-pcall(F.TweenSize,F,
+pcall(I.TweenSize,I,
 UDim2.new(0,0,0,ai),'Out','Quad',0.4,true);
 wait(0.4);
-F:Destroy();
+I:Destroy();
 end);
 end;
 
-function t:CreateWindow(...)
+function r:CreateWindow(...)
 local ab={...}
 local ac={AnchorPoint=Vector2.zero}
 
@@ -3430,13 +3384,13 @@ ac.AutoShow=ab[2]or false;
 end
 
 if type(ac.Title)~='string'then ac.Title='No title'end
-if type(ac.TabPadding)~='number'then ac.TabPadding=2 end
+if type(ac.TabPadding)~='number'then ac.TabPadding=0 end
 if type(ac.MenuFadeTime)~='number'then ac.MenuFadeTime=0.2 end
 
 if typeof(ac.Size)~='UDim2'then ac.Size=UDim2.fromOffset(550,600)end
 if typeof(ac.Position)~='UDim2'then ac.Position=UDim2.fromOffset(175,50)end
 
-if e.TouchEnabled then
+if c.TouchEnabled then
 local ad=workspace.CurrentCamera.ViewportSize
 local ae=math.min(ac.Size.X.Offset,ad.X-20)
 
@@ -3450,14 +3404,14 @@ ac.Position=UDim2.fromScale(0.5,0.5)
 end
 
 if ac.WireframeDrag~=nil then
-t.WireframeDrag=ac.WireframeDrag
+r.WireframeDrag=ac.WireframeDrag
 end
 
 local ad={
 Tabs={};
 };
 
-local ae=t:Create('Frame',{
+local ae=r:Create('Frame',{
 AnchorPoint=ac.AnchorPoint,
 BackgroundTransparency=1,
 BorderSizePixel=0;
@@ -3465,278 +3419,226 @@ Position=ac.Position,
 Size=ac.Size,
 Visible=false;
 ZIndex=1;
-Parent=q;
+Parent=o;
 });
-t:MakeDraggable(ae,25,true);
+r:MakeDraggable(ae,25,true);
+
+local af=r:Create("ImageLabel",{
+Parent=ae,
+ImageColor3=r.AccentColor,
+ScaleType=Enum.ScaleType.Slice,
+BorderColor3=Color3.fromRGB(0,0,0),
+BackgroundColor3=Color3.fromRGB(255,255,255),
+Image="http://www.roblox.com/asset/?id=18245826428",
+BackgroundTransparency=1,
+ImageTransparency=0.8,
+Position=UDim2.new(0,-20,0,-20),
+Size=UDim2.new(1,40,1,40),
+ZIndex=1,
+BorderSizePixel=0,
+SliceCenter=Rect.new(Vector2.new(21,21),Vector2.new(79,79)),
+})
+
+r:AddToRegistry(af,{
+ImageColor3="AccentColor",
+})
 
 if ac.Resizable then
-t:MakeResizable(ae,ac.MinSize,ac.MaxSize)
+r:MakeResizable(ae,ac.MinSize,ac.MaxSize)
 end
 
-local af=t:Create('Frame',{
+local ah=r:Create('Frame',{
 Name="Inner",
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Position=UDim2.new(0,1,0,1);
 Size=UDim2.new(1,-2,1,-2);
 ZIndex=1;
 Parent=ae;
 });
-t:AddToRegistry(af,{
+r:AddToRegistry(ah,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-local ah=t:Create('Frame',{
-Name="TempFrame",
-BackgroundColor3=Color3.new(1,1,1),
-BorderColor3=t.OutlineColor;
-BorderMode=Enum.BorderMode.Inset;
-Position=UDim2.new(0,1,0,1);
-Size=UDim2.new(1,-2,0,26);
-Transparency=0.5;
-ZIndex=1;
-Parent=ae;
-});
-t:AddToRegistry(ah,{
-
-BorderColor3='OutlineColor';
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-local ai=t:Create("UIGradient",{
-Rotation=90,
-Parent=ah,
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,t.AccentColor),
-ColorSequenceKeypoint.new(1,t.SecondAccentColor),
-}),
-});
-t:AddToRegistry(ai,{
-Color=function()
-return ColorSequence.new({
-ColorSequenceKeypoint.new(0,t.AccentColor),
-ColorSequenceKeypoint.new(1,t.SecondAccentColor),
-})
-end
-});
-
-local aj=t:CreateLabel({
+local ai=r:CreateLabel({
 Position=UDim2.new(0,0,0,0);
 Size=UDim2.new(1,0,0,25);
 Text=ac.Title or'';
 RichText=true;
 TextXAlignment=Enum.TextXAlignment.Center;
-ZIndex=3;
-Parent=af;
-});
-local ak=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
-Position=UDim2.new(0,0,0,25);
-Size=UDim2.new(1,0,0,36);
 ZIndex=1;
-Parent=af;
+Parent=ah;
 });
-t:AddToRegistry(ak,{
+local aj=r:Create('ImageLabel',{
+BackgroundTransparency=1;
+Position=UDim2.new(0,2,0,-2);
+Size=UDim2.new(0,28,0,28);
+Image='rbxassetid://125779171427078';
+ZIndex=2;
+Parent=ah;
+});
+local x=r:CreateLabel({
+AnchorPoint=Vector2.new(1,0),
+Position=UDim2.new(1,-7,0,0),
+Size=UDim2.new(0,0,0,25),
+Text='Loading...',
+TextColor3=r.AccentColor,
+TextXAlignment=Enum.TextXAlignment.Right,
+ZIndex=1,
+Parent=ah;
+});
+r:AddToRegistry(x,{
+TextColor3='AccentColor';
+});
+task.spawn(function()
+local z,A=pcall(function()
+return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
+end)
+if z and A and A.Name then
+x.Text="Wild Horse Islands"
+else
+x.Text="Wild Horse Islands"
+
+end
+end)
+
+
+local z=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
+Position=UDim2.new(0,8,0,25);
+Size=UDim2.new(1,-16,0,29);
+ZIndex=1;
+Parent=ah;
+});
+r:AddToRegistry(z,{
 BackgroundColor3='BackgroundColor';
 BorderColor3='OutlineColor';
 });
-local al=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
+local A=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
 BorderColor3=Color3.new(0,0,0);
-BorderMode=Enum.BorderMode.Outline;
+BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,1,0);
 ZIndex=1;
-Parent=ak;
+Parent=z;
 });
-t:AddToRegistry(al,{
+r:AddToRegistry(A,{
 BackgroundColor3='BackgroundColor';
 });
-local am=t:Create('Frame',{
+local C=r:Create('Frame',{
 BackgroundTransparency=1;
-Position=UDim2.new(0,0,0,0);
-Size=UDim2.new(1,0,1,0);
+Position=UDim2.new(0,4,0,4);
+Size=UDim2.new(1,-8,1,-8);
 ZIndex=1;
-Parent=al;
+Parent=A;
 });
-local z=t:Create('UIListLayout',{
-Padding=UDim.new(0,0);
+local D=r:Create('UIListLayout',{
+Padding=UDim.new(0,ac.TabPadding);
 FillDirection=Enum.FillDirection.Horizontal;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=am;
+Parent=C;
 });
-local A=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
-Position=UDim2.new(0,0,0,61);
-Size=UDim2.new(1,0,1,-61);
+local E=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
+Position=UDim2.new(0,8,0,58);
+Size=UDim2.new(1,-16,1,-66);
 ZIndex=1;
-Parent=af;
+Parent=ah;
 });
-t:AddToRegistry(A,{
+r:AddToRegistry(E,{
 BackgroundColor3='BackgroundColor';
 BorderColor3='OutlineColor';
 });
-local B=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
+local F=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
 BorderColor3=Color3.new(0,0,0);
 BorderMode=Enum.BorderMode.Inset;
 Position=UDim2.new(0,0,0,0);
 Size=UDim2.new(1,0,1,0);
 ZIndex=1;
-Parent=A;
+Parent=E;
 });
-t:AddToRegistry(B,{
+r:AddToRegistry(F,{
 BackgroundColor3='BackgroundColor';
 });
-local C=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.OutlineColor;
+local G=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=r.OutlineColor;
 Position=UDim2.new(0,8,0,8);
 Size=UDim2.new(1,-16,1,-16);
 ZIndex=2;
-Parent=B;
+Parent=F;
 });
-t:AddToRegistry(C,{
+r:AddToRegistry(G,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-
-local D={};
-
-local function E()
-local F=#D;
-if F==0 then return end;
-for G,H in ipairs(D)do
-H.Size=UDim2.new(1/F,0,1,0);
+function ad:SetWindowTitle(H)
+ai.Text=H;
 end;
-end;
-
-function ad:SetWindowTitle(F)
-aj.Text=F;
-end;
-function ad:AddTab(F)
-local G={
+function ad:AddTab(H)
+local I={
 Groupboxes={};
 Tabboxes={};
 };
 
-local H=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
-Size=UDim2.new(1,0,1,0);
+local J=r:GetTextBounds(H,r.Font,r.FontSize+2);
+local K=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
+Size=UDim2.new(0,J+8+4,1,0);
 ZIndex=1;
-Parent=am;
+Parent=C;
 });
-table.insert(D,H);
-E();
-t:AddToRegistry(H,{
+r:AddToRegistry(K,{
 BackgroundColor3='BackgroundColor';
 BorderColor3='OutlineColor';
 });
-local I=t:Create("UIGradient",{
-Rotation=-90;
-Parent=H;
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255));
-ColorSequenceKeypoint.new(1,Color3.fromRGB(185,185,185));
-});
-});
-t:AddToRegistry(H,{
-BackgroundColor3="BackgroundColor";
-BorderColor3="OutlineColor";
-});
-
-local J=t:CreateLabel({
+local L=r:CreateLabel({
 Position=UDim2.new(0,0,0,0);
-Size=UDim2.new(1,0,1,-3);
-Text=F;
-FontFace=Font.new("rbxasset://fonts/families/Tahoma.json",Enum.FontWeight.Bold),
-TextSize=15,
+Size=UDim2.new(1,0,1,-1);
+Text=H;
 ZIndex=1;
-Parent=H;
+Parent=K;
 });
-
-local K=t:Create('Frame',{
-BackgroundColor3=t.AccentColor;
+local M=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
 BorderSizePixel=0;
-Position=UDim2.new(0,0,1,-3);
+Position=UDim2.new(0,0,0,0);
 Size=UDim2.new(1,0,0,2);
 Visible=false;
 ZIndex=4;
-Parent=H;
-});
-t:AddToRegistry(K,{BackgroundColor3='AccentColor'});
-
-local L=t:Create('Frame',{
-BackgroundTransparency=1;
-BackgroundColor3=t.MainColor;
-BorderSizePixel=0;
-Size=UDim2.new(1,0,1,0);
-Position=UDim2.new(0,0,0,0);
-ZIndex=3;
-Visible=false;
-Parent=H;
-});
-
-t:Create('UIGradient',{
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,Color3.new(1,1,1));
-ColorSequenceKeypoint.new(0.5,Color3.new(1,1,1));
-ColorSequenceKeypoint.new(1,Color3.new(1,1,1));
-});
-Transparency=NumberSequence.new({
-NumberSequenceKeypoint.new(0,1);
-NumberSequenceKeypoint.new(0.2,0.6);
-NumberSequenceKeypoint.new(0.5,0);
-NumberSequenceKeypoint.new(0.8,0.6);
-NumberSequenceKeypoint.new(1,1);
-});
-Rotation=0;
 Parent=K;
 });
+r:AddToRegistry(M,{BackgroundColor3='AccentColor'});
 
-local M=t:Create('Frame',{
-Name='TabClip';
+local N=r:Create('Frame',{
 BackgroundTransparency=1;
-BorderSizePixel=0;
-Position=UDim2.new(0,0,0,0);
-Size=UDim2.new(1,0,1,0);
-ClipsDescendants=true;
-ZIndex=2;
-Parent=C;
+Size=UDim2.new(0,0,0,0);
+Visible=false;
+Parent=K;
 });
-
-local N=t:Create('Frame',{
-Name='TabFrame';
+local O=r:Create('Frame',{
+Name='TabFrame',
 BackgroundTransparency=1;
 Position=UDim2.new(0,0,0,0);
 Size=UDim2.new(1,0,1,0);
 Visible=false;
 ZIndex=2;
-Parent=M;
+Parent=G;
 });
-local O=t:Create('ScrollingFrame',{
+local P=r:Create("UIGradient",{
+Rotation=-90,
+Parent=O,
+Color=ColorSequence.new({
+ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
+ColorSequenceKeypoint.new(1,Color3.fromRGB(185,185,185)),
+}),
+})
+local Q=r:Create('ScrollingFrame',{
 BackgroundTransparency=1;
 BorderSizePixel=0;
 Position=UDim2.new(0,8-1,0,8-1);
@@ -3746,9 +3648,9 @@ BottomImage='';
 TopImage='';
 ScrollBarThickness=0;
 ZIndex=2;
-Parent=N;
+Parent=O;
 });
-local P=t:Create('ScrollingFrame',{
+local R=r:Create('ScrollingFrame',{
 BackgroundTransparency=1;
 BorderSizePixel=0;
 Position=UDim2.new(0.5,4+1,0,8-1);
@@ -3758,560 +3660,436 @@ BottomImage='';
 TopImage='';
 ScrollBarThickness=0;
 ZIndex=2;
-Parent=N;
-});
-t:Create('UIListLayout',{
-Padding=UDim.new(0,8);
-FillDirection=Enum.FillDirection.Vertical;
-SortOrder=Enum.SortOrder.LayoutOrder;
-HorizontalAlignment=Enum.HorizontalAlignment.Center;
 Parent=O;
 });
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 Padding=UDim.new(0,8);
 FillDirection=Enum.FillDirection.Vertical;
 SortOrder=Enum.SortOrder.LayoutOrder;
 HorizontalAlignment=Enum.HorizontalAlignment.Center;
-Parent=P;
+Parent=Q;
 });
-for Q,R in next,{O,P}do
-R:WaitForChild('UIListLayout'):GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
-R.CanvasSize=UDim2.fromOffset(0,R.UIListLayout.AbsoluteContentSize.Y);
+r:Create('UIListLayout',{
+Padding=UDim.new(0,8);
+FillDirection=Enum.FillDirection.Vertical;
+SortOrder=Enum.SortOrder.LayoutOrder;
+HorizontalAlignment=Enum.HorizontalAlignment.Center;
+Parent=R;
+});
+for S,T in next,{Q,R}do
+T:WaitForChild('UIListLayout'):GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+T.CanvasSize=UDim2.fromOffset(0,T.UIListLayout.AbsoluteContentSize.Y);
 end);
 end;
 
-local Q={}
-
-function G:ShowTab()
-for R,S in next,ad.Tabs do
-if S~=G then
-S:HideTab()
-end
-end
-
-if Q[N]then
-Q[N]:Cancel()
-Q[N]=nil
-end
-
-L.Visible=true
-H.BackgroundColor3=t.MainColor
-t.RegistryMap[H].Properties.BackgroundColor3='MainColor'
-
-N.Position=UDim2.new(0,0,0,12)
-N.Visible=true
-K.Visible=true
-
-local R=k:Create(N,TweenInfo.new(0.18,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{
-Position=UDim2.new(0,0,0,0),
-})
-Q[N]=R
-R:Play()
-R.Completed:Connect(function()
-Q[N]=nil
-end)
-end
-
-function G:HideTab()
-if Q[N]then
-Q[N]:Cancel()
-Q[N]=nil
-end
-
-L.Visible=false
-H.BackgroundColor3=t.BackgroundColor
-t.RegistryMap[H].Properties.BackgroundColor3='BackgroundColor'
-K.Visible=false
-
-local R=k:Create(N,TweenInfo.new(0.05,Enum.EasingStyle.Quart,Enum.EasingDirection.In),{
-Position=UDim2.new(0,0,0,8),
-})
-Q[N]=R
-R:Play()
-R.Completed:Connect(function(S)
-if S==Enum.PlaybackState.Completed then
-N.Visible=false
-end
-Q[N]=nil
-end)
-end
-function G:SetLayoutOrder(R)
-H.LayoutOrder=R;
-z:ApplyLayout();
+function I:ShowTab()
+for S,T in next,ad.Tabs do
+T:HideTab();
 end;
-function G:AddGroupbox(R)
-local S={};
-local T=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
+
+N.BackgroundTransparency=0;
+K.BackgroundColor3=r.MainColor;
+r.RegistryMap[K].Properties.BackgroundColor3='MainColor';
+O.Visible=true;
+M.Visible=true;
+end;
+function I:HideTab()
+N.BackgroundTransparency=1;
+K.BackgroundColor3=r.BackgroundColor;
+r.RegistryMap[K].Properties.BackgroundColor3='BackgroundColor';
+O.Visible=false;
+M.Visible=false;
+end;
+function I:SetLayoutOrder(S)
+K.LayoutOrder=S;
+D:ApplyLayout();
+end;
+function I:AddGroupbox(S)
+local T={};
+local U=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
 BorderMode=Enum.BorderMode.Inset;
 Size=UDim2.new(1,0,0,507+2);
 ZIndex=2;
-Parent=R.Side==1 and O or P;
+Parent=S.Side==1 and Q or R;
 });
-t:AddToRegistry(T,{
+r:AddToRegistry(U,{
 BackgroundColor3='BackgroundColor';
 BorderColor3='OutlineColor';
 });
-local U=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
+local V=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
 BorderColor3=Color3.new(0,0,0);
+Size=UDim2.new(1,-2,1,-2);
+Position=UDim2.new(0,1,0,1);
+ZIndex=4;
+Parent=U;
+});
+r:AddToRegistry(V,{
+BackgroundColor3='BackgroundColor';
+});
+local W=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
+BorderSizePixel=0;
+Size=UDim2.new(1,0,0,2);
+ZIndex=5;
+Parent=V;
+});
+r:AddToRegistry(W,{
+BackgroundColor3='AccentColor';
+});
+local X=r:CreateLabel({
+Size=UDim2.new(1,0,0,18);
+Position=UDim2.new(0,4,0,2);
+TextSize=r.FontSize;
+Text=S.Name;
+TextXAlignment=Enum.TextXAlignment.Left;
+ZIndex=5;
+Parent=V;
+});
+local Y=r:Create('Frame',{
+BackgroundTransparency=1;
+Position=UDim2.new(0,4,0,20);
+Size=UDim2.new(1,-4,1,-20);
+ZIndex=1;
+Parent=V;
+});
+r:Create('UIListLayout',{
+FillDirection=Enum.FillDirection.Vertical;
+SortOrder=Enum.SortOrder.LayoutOrder;
+Parent=Y;
+});
+function T:Resize()
+local Z=0;
+for _,ak in next,T.Container:GetChildren()do
+if(not ak:IsA('UIListLayout'))and ak.Visible then
+Z=Z+ak.Size.Y.Offset;
+end;
+end;
+
+U.Size=UDim2.new(1,0,0,20+Z+2+2);
+end;
+
+T.Container=Y;
+setmetatable(T,aa);
+T:AddBlank(3);
+T:Resize();
+
+I.Groupboxes[S.Name]=T;
+
+return T
+end;
+
+function I:AddLeftGroupbox(ak)
+return I:AddGroupbox({Side=1;Name=ak;})
+end;
+
+function I:AddRightGroupbox(ak)
+return I:AddGroupbox({Side=2;Name=ak;})
+end;
+
+function I:AddTabbox(ak)
+local S={
+Tabs={};
+};
+
+local T=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=r.OutlineColor;
+BorderMode=Enum.BorderMode.Inset;
+Size=UDim2.new(1,0,0,0);
+ZIndex=2;
+Parent=ak.Side==1 and Q or R;
+});
+r:AddToRegistry(T,{
+BackgroundColor3='BackgroundColor';
+BorderColor3='OutlineColor';
+});
+local U=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
+BorderColor3=Color3.new(0.109804,0.109804,0.129412);
 Size=UDim2.new(1,-2,1,-2);
 Position=UDim2.new(0,1,0,1);
 ZIndex=4;
 Parent=T;
 });
-t:AddToRegistry(U,{
+r:AddToRegistry(U,{
 BackgroundColor3='BackgroundColor';
 });
-local V=t:Create('Frame',{
-BackgroundColor3=t.AccentColor;
-BorderSizePixel=0;
-Position=UDim2.new(0,0,0,0);
-Size=UDim2.new(0,2,0,19);
-ZIndex=5;
-Parent=U;
-});
-t:AddToRegistry(V,{
-BackgroundColor3='AccentColor';
-});
-local W=t:Create("UIGradient",{
-Rotation=90,
-Parent=V,
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,t.AccentColor),
-ColorSequenceKeypoint.new(1,t.SecondAccentColor),
-}),
-});
-t:AddToRegistry(W,{
-Color=function()
-return ColorSequence.new({
-ColorSequenceKeypoint.new(0,t.AccentColor),
-ColorSequenceKeypoint.new(1,t.SecondAccentColor),
-})
-end
-});
-local X=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderSizePixel=0;
-Position=UDim2.new(0,0,0,0);
-Size=UDim2.new(1,0,0,20);
-ZIndex=4;
-Parent=U;
-});
-t:AddToRegistry(X,{
-BackgroundColor3='BackgroundColor';
-});
-
-local Y=t:Create("UIGradient",{
-Rotation=-90;
-Parent=X;
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255));
-ColorSequenceKeypoint.new(1,Color3.fromRGB(185,185,185));
-});
-});
-t:AddToRegistry(H,{
-BackgroundColor3="BackgroundColor";
-BorderColor3="OutlineColor";
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-local Z=t:CreateLabel({
-Size=UDim2.new(1,-10,1,0);
-Position=UDim2.new(0,10,0,0);
-FontFace=Font.new("rbxasset://fonts/families/Tahoma.json",Enum.FontWeight.Bold);
-TextSize=15;
-Text=R.Name;
-TextXAlignment=Enum.TextXAlignment.Left;
-ZIndex=5;
-Parent=X;
-});
-local _=t:Create('Frame',{
-BackgroundTransparency=1;
-Position=UDim2.new(0,4,0,20);
-Size=UDim2.new(1,-4,1,-20);
-ZIndex=1;
-Parent=U;
-});
-t:Create('UIListLayout',{
-FillDirection=Enum.FillDirection.Vertical;
-SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=_;
-});
-function S:Resize()
-local an=0;
-for ao,ap in next,S.Container:GetChildren()do
-if(not ap:IsA('UIListLayout'))and ap.Visible then
-an=an+ap.Size.Y.Offset;
-end;
-end;
-
-T.Size=UDim2.new(1,0,0,20+an+2+2);
-end;
-
-S.Container=_;
-setmetatable(S,aa);
-S:AddBlank(3);
-S:Resize();
-
-G.Groupboxes[R.Name]=S;
-
-return S
-end;
-
-function G:AddLeftGroupbox(an)
-return G:AddGroupbox({Side=1;Name=an;})
-end;
-
-function G:AddRightGroupbox(an)
-return G:AddGroupbox({Side=2;Name=an;})
-end;
-
-function G:AddTabbox(an)
-local ao={
-Tabs={};
-};
-
-local ap=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.OutlineColor;
-BorderMode=Enum.BorderMode.Inset;
-Size=UDim2.new(1,0,0,0);
-ZIndex=2;
-Parent=an.Side==1 and O or P;
-});
-t:AddToRegistry(ap,{
-BackgroundColor3='BackgroundColor';
-BorderColor3='OutlineColor';
-});
-local R=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
-BorderColor3=t.MainColor;
-Size=UDim2.new(1,-2,1,-2);
-Position=UDim2.new(0,1,0,1);
-ZIndex=4;
-Parent=ap;
-});
-t:AddToRegistry(R,{
-BackgroundColor3='BackgroundColor';
-});
-local S=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
+local V=r:Create('Frame',{
 BackgroundTransparency=1;
 Position=UDim2.new(0,0,0,1);
 Size=UDim2.new(1,0,0,18);
 ZIndex=5;
-Parent=R;
+Parent=U;
 });
-
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 FillDirection=Enum.FillDirection.Horizontal;
 HorizontalAlignment=Enum.HorizontalAlignment.Left;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=S;
+Parent=V;
 });
-function ao:AddTab(T)
-local U={};
-local V=t:Create('Frame',{
-BackgroundColor3=t.MainColor;
-BorderColor3=t.BackgroundColor;
+function S:AddTab(W)
+local X={};
+local Y=r:Create('Frame',{
+BackgroundColor3=r.MainColor;
+BorderColor3=Color3.new(0.109804,0.109804,0.129412);
 Size=UDim2.new(0.5,0,1,0);
 ZIndex=6;
-Parent=S;
+Parent=V;
 });
-t:AddToRegistry(V,{
+r:AddToRegistry(Y,{
 BackgroundColor3='MainColor';
 });
-local W=t:Create("UIGradient",{
-Rotation=-90;
-Parent=V;
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255));
-ColorSequenceKeypoint.new(1,Color3.fromRGB(185,185,185));
-});
-});
-local X=t:Create('Frame',{
-BackgroundColor3=t.AccentColor;
+local Z=r:Create('Frame',{
+BackgroundColor3=r.AccentColor;
 BorderSizePixel=0;
-Position=UDim2.new(0,0,0,0);
-Size=UDim2.new(1,-1,0,2);
+Size=UDim2.new(1,0,0,2);
 Visible=false;
 ZIndex=10;
-Parent=V;
+Parent=Y;
 });
-t:AddToRegistry(X,{
+r:AddToRegistry(Z,{
 BackgroundColor3='AccentColor';
 });
-local Y=t:Create("UIGradient",{
-Rotation=90,
-Parent=X,
-Color=ColorSequence.new({
-ColorSequenceKeypoint.new(0,t.AccentColor),
-ColorSequenceKeypoint.new(1,t.SecondAccentColor),
-}),
-});
-t:AddToRegistry(Y,{
-Color=function()
-return ColorSequence.new({
-ColorSequenceKeypoint.new(0,t.AccentColor),
-ColorSequenceKeypoint.new(1,t.SecondAccentColor),
-})
-end
-});
-local Z=t:CreateLabel({
+local _=r:CreateLabel({
 Size=UDim2.new(1,0,1,0);
-TextSize=t.FontSize;
-Text=T;
+TextSize=r.FontSize;
+Text=W;
 TextXAlignment=Enum.TextXAlignment.Center;
 ZIndex=7;
-Parent=V;
+Parent=Y;
 });
-local _=t:Create('Frame',{
-BackgroundColor3=t.BackgroundColor;
+local al=r:Create('Frame',{
+BackgroundColor3=r.BackgroundColor;
 BorderSizePixel=0;
 Position=UDim2.new(0,0,1,0);
 Size=UDim2.new(1,0,0,1);
 Visible=false;
 ZIndex=9;
-Parent=V;
+Parent=Y;
 });
-t:AddToRegistry(_,{
+r:AddToRegistry(al,{
 BackgroundColor3='BackgroundColor';
 });
-local aq=t:Create('Frame',{
+local am=r:Create('Frame',{
 BackgroundTransparency=1;
 Position=UDim2.new(0,4,0,20);
 Size=UDim2.new(1,-4,1,-20);
 ZIndex=1;
 Visible=false;
-Parent=R;
+Parent=U;
 });
-t:Create('UIListLayout',{
+r:Create('UIListLayout',{
 FillDirection=Enum.FillDirection.Vertical;
 SortOrder=Enum.SortOrder.LayoutOrder;
-Parent=aq;
+Parent=am;
 });
-function U:Show()
-for ar,as in next,ao.Tabs do
-as:Hide();
+function X:Show()
+for an,ao in next,S.Tabs do
+ao:Hide();
 end;
 
-aq.Visible=true;
-_.Visible=true;
-X.Visible=true;
+am.Visible=true;
+al.Visible=true;
+Z.Visible=true;
 
-V.BackgroundColor3=t.BackgroundColor;
-t.RegistryMap[V].Properties.BackgroundColor3='BackgroundColor';
+Y.BackgroundColor3=r.BackgroundColor;
+r.RegistryMap[Y].Properties.BackgroundColor3='BackgroundColor';
 
-U:Resize();
+X:Resize();
 end;
-function U:Hide()
-aq.Visible=false;
-_.Visible=false;
-X.Visible=false;
+function X:Hide()
+am.Visible=false;
+al.Visible=false;
+Z.Visible=false;
 
-V.BackgroundColor3=t.MainColor;
-t.RegistryMap[V].Properties.BackgroundColor3='MainColor';
+Y.BackgroundColor3=r.MainColor;
+r.RegistryMap[Y].Properties.BackgroundColor3='MainColor';
 end;
-function U:Resize()
-local ar=0;
-for as,at in next,ao.Tabs do
-ar=ar+1;
-end;
-
-for as,at in next,S:GetChildren()do
-if not at:IsA('UIListLayout')then
-at.Size=UDim2.new(1/ar,0,1,0);
-end;
+function X:Resize()
+local an=0;
+for ao,ap in next,S.Tabs do
+an=an+1;
 end;
 
-if(not aq.Visible)then
+for ao,ap in next,V:GetChildren()do
+if not ap:IsA('UIListLayout')then
+ap.Size=UDim2.new(1/an,0,1,0);
+end;
+end;
+
+if(not am.Visible)then
 return
 end;
 
-local as=0;
+local ao=0;
 
-for at,au in next,U.Container:GetChildren()do
-if(not au:IsA('UIListLayout'))and au.Visible then
-as=as+au.Size.Y.Offset;
+for ap,aq in next,X.Container:GetChildren()do
+if(not aq:IsA('UIListLayout'))and aq.Visible then
+ao=ao+aq.Size.Y.Offset;
 end;
 end;
 
-ap.Size=UDim2.new(1,0,0,20+as+2+2);
+T.Size=UDim2.new(1,0,0,20+ao+2+2);
 end;
-V.InputBegan:Connect(function(ar)
-if(ar.UserInputType==Enum.UserInputType.MouseButton1 or ar.UserInputType==Enum.UserInputType.Touch)and not t:MouseIsOverOpenedFrame()then
-U:Show();
-U:Resize();
-end;
-end);
-
-U.Container=aq;
-ao.Tabs[T]=U;
-
-setmetatable(U,aa);
-
-U:AddBlank(3);
-U:Resize();
-
-if#S:GetChildren()==2 then
-U:Show();
-end;
-
-return U
-end;
-
-G.Tabboxes[an.Name or'']=ao;
-
-return ao
-end;
-function G:AddLeftTabbox(an)
-return G:AddTabbox({Name=an,Side=1;})
-end;
-
-function G:AddRightTabbox(an)
-return G:AddTabbox({Name=an,Side=2;})
-end;
-
-H.InputBegan:Connect(function(an)
-if(an.UserInputType==Enum.UserInputType.MouseButton1 or an.UserInputType==Enum.UserInputType.Touch)then
-G:ShowTab();
+Y.InputBegan:Connect(function(an)
+if(an.UserInputType==Enum.UserInputType.MouseButton1 or an.UserInputType==Enum.UserInputType.Touch)and not r:MouseIsOverOpenedFrame()then
+X:Show();
+X:Resize();
 end;
 end);
-if#C:GetChildren()==1 then
-G:ShowTab();
-end;
-ad.Tabs[F]=G;
-return G
+
+X.Container=am;
+S.Tabs[W]=X;
+
+setmetatable(X,aa);
+
+X:AddBlank(3);
+X:Resize();
+
+if#V:GetChildren()==2 then
+X:Show();
 end;
 
-local an=t:Create('TextButton',{
+return X
+end;
+
+I.Tabboxes[ak.Name or'']=S;
+
+return S
+end;
+function I:AddLeftTabbox(ak)
+return I:AddTabbox({Name=ak,Side=1;})
+end;
+
+function I:AddRightTabbox(ak)
+return I:AddTabbox({Name=ak,Side=2;})
+end;
+
+K.InputBegan:Connect(function(ak)
+if(ak.UserInputType==Enum.UserInputType.MouseButton1 or ak.UserInputType==Enum.UserInputType.Touch)then
+I:ShowTab();
+end;
+end);
+if#G:GetChildren()==1 then
+I:ShowTab();
+end;
+ad.Tabs[H]=I;
+return I
+end;
+
+local ak=r:Create('TextButton',{
 BackgroundTransparency=1;
 Size=UDim2.new(0,0,0,0);
 Visible=true;
 Text='';
 Modal=false;
-Parent=q;
+Parent=o;
 });
-function t:Toggle()
-t.Toggled=not t.Toggled;
-an.Modal=t.Toggled;
-ae.Visible=t.Toggled;
-if t.Toggled then
+function r:Toggle()
+r.Toggled=not r.Toggled;
+ak.Modal=r.Toggled;
+ae.Visible=r.Toggled;
+if r.Toggled then
 task.spawn(function()
-local ao=e.MouseIconEnabled;
+local al=c.MouseIconEnabled;
 
-local ap=Drawing.new('Triangle');
-ap.Thickness=1;
-ap.Filled=true;
-ap.Visible=true;
+local am=Drawing.new('Triangle');
+am.Thickness=1;
+am.Filled=true;
+am.Visible=true;
 
-local aq=Drawing.new('Triangle');
-aq.Thickness=1;
-aq.Filled=false;
-aq.Color=Color3.new(0,0,0);
-aq.Visible=true;
+local an=Drawing.new('Triangle');
+an.Thickness=1;
+an.Filled=false;
+an.Color=Color3.new(0,0,0);
+an.Visible=true;
 
-while t.Toggled and q.Parent do
-e.MouseIconEnabled=false;
+while r.Toggled and o.Parent do
+c.MouseIconEnabled=false;
 
-local ar=e:GetMouseLocation();
+local ao=c:GetMouseLocation();
 
-ap.Color=t.AccentColor;
+am.Color=r.AccentColor;
 
-ap.PointA=Vector2.new(ar.X,ar.Y);
-ap.PointB=Vector2.new(ar.X+16,ar.Y+6);
-ap.PointC=Vector2.new(ar.X+6,ar.Y+16);
-aq.PointA=ap.PointA;
-aq.PointB=ap.PointB;
-aq.PointC=ap.PointC;
+am.PointA=Vector2.new(ao.X,ao.Y);
+am.PointB=Vector2.new(ao.X+16,ao.Y+6);
+am.PointC=Vector2.new(ao.X+6,ao.Y+16);
+an.PointA=am.PointA;
+an.PointB=am.PointB;
+an.PointC=am.PointC;
 
-m:Wait();
+k:Wait();
 end;
 
-e.MouseIconEnabled=ao;
+c.MouseIconEnabled=al;
 
-ap:Remove();
-aq:Remove();
+am:Remove();
+an:Remove();
 end);
 end;
-if t.UseBlur then
-if t.Toggled then
-t.BlurEffect.Enabled=true
-t.BlurEffect.Size=t.BlurSize
+if r.UseBlur then
+if r.Toggled then
+r.BlurEffect.Enabled=true
+r.BlurEffect.Size=r.BlurSize
 else
-t.BlurEffect.Size=0
-t.BlurEffect.Enabled=false
+r.BlurEffect.Size=0
+r.BlurEffect.Enabled=false
 end
 else
-t.BlurEffect.Size=0
-t.BlurEffect.Enabled=false
+r.BlurEffect.Size=0
+r.BlurEffect.Enabled=false
 end
 end
 
-t:GiveSignal(e.InputBegan:Connect(function(ao,ap)
-if type(t.ToggleKeybind)=='table'and t.ToggleKeybind.Type=='KeyPicker'then
-if ao.UserInputType==Enum.UserInputType.Keyboard and ao.KeyCode.Name==t.ToggleKeybind.Value then
-task.spawn(t.Toggle)
+r:GiveSignal(c.InputBegan:Connect(function(al,am)
+if type(r.ToggleKeybind)=='table'and r.ToggleKeybind.Type=='KeyPicker'then
+if al.UserInputType==Enum.UserInputType.Keyboard and al.KeyCode.Name==r.ToggleKeybind.Value then
+task.spawn(r.Toggle)
 end
-elseif type(t.ToggleKeybind)=='string'then
-if ao.UserInputType==Enum.UserInputType.Keyboard and ao.KeyCode.Name==t.ToggleKeybind then
-task.spawn(t.Toggle)
+elseif type(r.ToggleKeybind)=='string'then
+if al.UserInputType==Enum.UserInputType.Keyboard and al.KeyCode.Name==r.ToggleKeybind then
+task.spawn(r.Toggle)
 end
-elseif ao.KeyCode==Enum.KeyCode.RightControl or(ao.KeyCode==Enum.KeyCode.RightShift and(not ap))then
-task.spawn(t.Toggle)
+elseif al.KeyCode==Enum.KeyCode.RightControl or(al.KeyCode==Enum.KeyCode.RightShift and(not am))then
+task.spawn(r.Toggle)
 end
 end))
 
-if ac.AutoShow then task.spawn(t.Toggle)end
+if ac.AutoShow then task.spawn(r.Toggle)end
 
 ad.Holder=ae;
 return ad
 end;
 
 local function ab()
-local ac=w();
-for ad,ae in next,s do
+local ac=u();
+for ad,ae in next,q do
 if ae.Type=='Dropdown'and ae.SpecialType=='Player'then
 ae:SetValues(ac);
 end;
 end;
 end;
 
-i.PlayerAdded:Connect(ab);
-i.PlayerRemoving:Connect(ab);
+g.PlayerAdded:Connect(ab);
+g.PlayerRemoving:Connect(ab);
 
-if e.TouchEnabled then
+if c.TouchEnabled then
 local ac=Instance.new("ScreenGui")
 ac.Name="LinoriaMobileUI"
 ac.ZIndexBehavior=Enum.ZIndexBehavior.Global
-p(ac)
-ac.Parent=g
+n(ac)
+ac.Parent=e
 
 local ad,ae=88,30
 local af=40
 
 local function ah(ai,aj,ak)
-local al=t:Create('Frame',{
+local al=r:Create('Frame',{
 Name=ai.."Outer",
-BackgroundColor3=t.OutlineColor,
+BackgroundColor3=r.OutlineColor,
 BorderSizePixel=0,
 Position=ak,
 Size=UDim2.new(0,ad,0,ae),
@@ -4319,20 +4097,20 @@ ZIndex=300,
 Parent=ac,
 Active=true,
 })
-t:AddToRegistry(al,{BackgroundColor3='OutlineColor'})
+r:AddToRegistry(al,{BackgroundColor3='OutlineColor'})
 
-local am=t:Create('Frame',{
+local am=r:Create('Frame',{
 Name=ai.."Accent",
-BackgroundColor3=t.AccentColor,
+BackgroundColor3=r.AccentColor,
 BorderSizePixel=0,
 Position=UDim2.new(0,1,0,1),
 Size=UDim2.new(1,-2,1,-2),
 ZIndex=301,
 Parent=al,
 })
-t:AddToRegistry(am,{BackgroundColor3='AccentColor'})
+r:AddToRegistry(am,{BackgroundColor3='AccentColor'})
 
-local an=t:Create('Frame',{
+local an=r:Create('Frame',{
 Name=ai.."Inner",
 BackgroundColor3=Color3.fromRGB(8,8,12),
 BorderSizePixel=0,
@@ -4342,7 +4120,7 @@ ZIndex=302,
 Parent=am,
 })
 
-local ao=t:Create('Frame',{
+local ao=r:Create('Frame',{
 Name=ai.."Gradient",
 BackgroundColor3=Color3.new(1,1,1),
 BorderSizePixel=0,
@@ -4350,7 +4128,7 @@ Size=UDim2.new(1,0,1,0),
 ZIndex=303,
 Parent=an,
 })
-t:Create('UIGradient',{
+r:Create('UIGradient',{
 Transparency=NumberSequence.new({
 NumberSequenceKeypoint.new(0,0.90),
 NumberSequenceKeypoint.new(1,1.0)
@@ -4359,14 +4137,14 @@ Rotation=90,
 Parent=ao,
 })
 
-local ap=t:Create('TextButton',{
+local ap=r:Create('TextButton',{
 Name=ai.."Btn",
 BackgroundTransparency=1,
 Size=UDim2.new(1,0,1,0),
 Font=Enum.Font.Code,
 Text=aj,
 TextColor3=Color3.fromRGB(255,255,255),
-TextSize=t.FontSize-1,
+TextSize=r.FontSize-1,
 ZIndex=304,
 Parent=an,
 Active=true,
@@ -4381,27 +4159,27 @@ local ak,al=ah("Lock","Unlock UI",UDim2.new(0,10,0,10+ae+(af-ae)))
 local am=false
 
 local function an(ao,ap,aq)
-local ar=false
-local as=nil
-local at=nil
-local au=nil
-local z=false
+local x=false
+local z=nil
+local A=nil
+local C=nil
+local D=false
 
-ao.InputBegan:Connect(function(A)
-if A.UserInputType==Enum.UserInputType.MouseButton1
-or A.UserInputType==Enum.UserInputType.Touch then
-ar=true
-z=false
-at=A.Position
-au=ap.Position
-as=A
+ao.InputBegan:Connect(function(E)
+if E.UserInputType==Enum.UserInputType.MouseButton1
+or E.UserInputType==Enum.UserInputType.Touch then
+x=true
+D=false
+A=E.Position
+C=ap.Position
+z=E
 
-local B
-B=A.Changed:Connect(function()
-if A.UserInputState==Enum.UserInputState.End then
-ar=false
-B:Disconnect()
-if not z then
+local F
+F=E.Changed:Connect(function()
+if E.UserInputState==Enum.UserInputState.End then
+x=false
+F:Disconnect()
+if not D then
 aq()
 end
 end
@@ -4409,16 +4187,16 @@ end)
 end
 end)
 
-e.InputChanged:Connect(function(A)
-if A==as and ar then
-local B=A.Position-at
-if B.Magnitude>3 then
-z=true
+c.InputChanged:Connect(function(E)
+if E==z and x then
+local F=E.Position-A
+if F.Magnitude>3 then
+D=true
 end
-if am and z then
+if am and D then
 ap.Position=UDim2.new(
-au.X.Scale,au.X.Offset+B.X,
-au.Y.Scale,au.Y.Offset+B.Y
+C.X.Scale,C.X.Offset+F.X,
+C.Y.Scale,C.Y.Offset+F.Y
 )
 end
 end
@@ -4426,25 +4204,26 @@ end)
 end
 
 an(aj,ai,function()
-t:Toggle()
+r:Toggle()
 end)
 
 an(al,ak,function()
 am=not am
 al.Text=am and"Lock UI"or"Unlock UI"
 al.TextColor3=am
-and t.AccentColor
+and r.AccentColor
 or Color3.fromRGB(255,255,255)
 end)
 
-local ao=t.UpdateColorsUsingRegistry
-t.UpdateColorsUsingRegistry=function(ap)
+local ao=r.UpdateColorsUsingRegistry
+r.UpdateColorsUsingRegistry=function(ap)
 ao(ap)
 end
 end
 
-getgenv().Library=t
-return t end function a.a():typeof(b())local aa=a.cache.a if not aa then aa={c=b()}a.cache.a=aa end return aa.c end end do local function aa()
+getgenv().Library=r
+return r end function a.a():typeof(b())local aa=a.cache.a if not aa then aa={c=b()}a.cache.a=aa end return aa.c end end do local function aa()
+
 local ab=game:GetService('HttpService')
 local ac={}do
 ac.Folder='LinoriaLibSettings'
@@ -4452,18 +4231,17 @@ ac.Folder='LinoriaLibSettings'
 
 ac.Library=nil
 ac.BuiltInThemes={
-['Default']={1,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"242328","AccentColor":"faa614","SecondAccentColor":"fcc55a","BackgroundColor":"212025","OutlineColor":"323232"}')},
-['Blue']={2,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"181818","AccentColor":"4777b6","SecondAccentColor":"5a8fd4","BackgroundColor":"141414","OutlineColor":"1f1f1f"}')},
-['Dracula']={3,ab:JSONDecode('{"FontColor":"f8f8f2","MainColor":"282a36","AccentColor":"bd93f9","SecondAccentColor":"d4b5ff","BackgroundColor":"1e1f29","OutlineColor":"44475a"}')},
-['Yuki']={4,ab:JSONDecode('{"FontColor":"c8c8c8","MainColor":"171515","AccentColor":"bab972","SecondAccentColor":"d4d48a","BackgroundColor":"131111","OutlineColor":"1b1919"}')},
-['Primordial']={5,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"181818","AccentColor":"d7a6b0","SecondAccentColor":"ecc4cc","BackgroundColor":"1f1f1f","OutlineColor":"2a2a2a"}')},
-['BBot']={6,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"1e1e1e","AccentColor":"7e48a3","SecondAccentColor":"9e60c9","BackgroundColor":"232323","OutlineColor":"141414"}')},
-['Fatality']={7,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"1e1842","AccentColor":"c50754","SecondAccentColor":"e8196a","BackgroundColor":"191335","OutlineColor":"3c355d"}')},
-['Jester']={8,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"242424","AccentColor":"db4467","SecondAccentColor":"f05c80","BackgroundColor":"1c1c1c","OutlineColor":"373737"}')},
-['Mint']={9,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"242424","AccentColor":"3db488","SecondAccentColor":"55d4a4","BackgroundColor":"1c1c1c","OutlineColor":"373737"}')},
-['Tokyo Night']={10,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"191925","AccentColor":"6759b3","SecondAccentColor":"8470d4","BackgroundColor":"16161f","OutlineColor":"323232"}')},
-['Ubuntu']={11,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"3e3e3e","AccentColor":"e2581e","SecondAccentColor":"ff7035","BackgroundColor":"323232","OutlineColor":"191919"}')},
-['Quartz']={12,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"232330","AccentColor":"426e87","SecondAccentColor":"5a90b0","BackgroundColor":"1d1b26","OutlineColor":"27232f"}')},
+['Default']={1,ab:JSONDecode('{"MainColor":"242328","AccentColor":"faa614","OutlineColor":"323232","BackgroundColor":"212025","FontColor":"ffffff"}')},
+['Yuki']={2,ab:JSONDecode('{"MainColor":"171515","AccentColor":"bab972","OutlineColor":"1b1919","BackgroundColor":"131111","FontColor":"c8c8c8"}')},
+['Blue']={3,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"181818","AccentColor":"4777b6","BackgroundColor":"141414","OutlineColor":"1f1f1f"}')},
+['Primordial']={4,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"181818","AccentColor":"d7a6b0","BackgroundColor":"1f1f1f","OutlineColor":"2a2a2a"}')},
+['BBot']={5,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"1e1e1e","AccentColor":"7e48a3","BackgroundColor":"232323","OutlineColor":"141414"}')},
+['Fatality']={6,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"1e1842","AccentColor":"c50754","BackgroundColor":"191335","OutlineColor":"3c355d"}')},
+['Jester']={7,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"242424","AccentColor":"db4467","BackgroundColor":"1c1c1c","OutlineColor":"373737"}')},
+['Mint']={8,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"242424","AccentColor":"3db488","BackgroundColor":"1c1c1c","OutlineColor":"373737"}')},
+['Tokyo Night']={9,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"191925","AccentColor":"6759b3","BackgroundColor":"16161f","OutlineColor":"323232"}')},
+['Ubuntu']={10,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"3e3e3e","AccentColor":"e2581e","BackgroundColor":"323232","OutlineColor":"191919"}')},
+['Quartz']={11,ab:JSONDecode('{"FontColor":"ffffff","MainColor":"232330","AccentColor":"426e87","BackgroundColor":"1d1b26","OutlineColor":"27232f"}')},
 }
 
 function ac:ApplyTheme(ad)
@@ -4488,7 +4266,7 @@ end
 
 function ac:ThemeUpdate()
 
-local ad={"FontColor","MainColor","AccentColor","SecondAccentColor","BackgroundColor","OutlineColor"}
+local ad={"FontColor","MainColor","AccentColor","BackgroundColor","OutlineColor"}
 for ae,af in next,ad do
 if Options and Options[af]then
 self.Library[af]=Options[af].Value
@@ -4530,7 +4308,6 @@ function ac:CreateThemeManager(ad)
 ad:AddLabel('Background color'):AddColorPicker('BackgroundColor',{Default=self.Library.BackgroundColor});
 ad:AddLabel('Main color'):AddColorPicker('MainColor',{Default=self.Library.MainColor});
 ad:AddLabel('Accent color'):AddColorPicker('AccentColor',{Default=self.Library.AccentColor});
-ad:AddLabel('2nd Accent'):AddColorPicker('SecondAccentColor',{Default=self.Library.SecondAccentColor});
 ad:AddLabel('Outline color'):AddColorPicker('OutlineColor',{Default=self.Library.OutlineColor});
 ad:AddLabel('Font color'):AddColorPicker('FontColor',{Default=self.Library.FontColor});
 
@@ -4614,7 +4391,7 @@ return self.Library:Notify('Invalid file name for theme (empty)',3)
 end
 
 local ae={}
-local af={"FontColor","MainColor","AccentColor","SecondAccentColor","BackgroundColor","OutlineColor"}
+local af={"FontColor","MainColor","AccentColor","BackgroundColor","OutlineColor"}
 
 for ah,ai in next,af do
 ae[ai]=Options[ai].Value:ToHex()
@@ -4836,7 +4613,7 @@ end
 
 function ac:IgnoreThemeSettings()
 self:SetIgnoreIndexes({
-"BackgroundColor","MainColor","AccentColor","SecondAccentColor","OutlineColor","FontColor",
+"BackgroundColor","MainColor","AccentColor","OutlineColor","FontColor",
 "ThemeManager_ThemeList",'ThemeManager_CustomThemeList','ThemeManager_CustomThemeName',
 })
 end
@@ -5021,7 +4798,7 @@ local aq={
 "Lunar Islands","Volcano Island",
 }
 
-local ar={
+local b={
 ["Mainland"]=8,["Stable Island"]=1,
 ["Training Island"]=1,["Royal Island"]=1,
 ["Volcano Island"]=1,["Blizzard Island"]=1,
@@ -5030,7 +4807,7 @@ local ar={
 ["Jungle Island"]=1,["Lunar Islands"]=1,
 }
 
-local as={
+local c={
 ["Mainland"]={
 CFrame.new(665.936,14.998,-201.439,0.160052,0.000000,0.987109,0.000000,1.000000,-0.000000,-0.987109,0.000000,0.160052),
 CFrame.new(390.433,19.315,-318.522,0.433055,-0.000000,0.901368,0.000000,1.000000,0.000000,-0.901368,0.000000,0.433055),
@@ -5341,7 +5118,7 @@ CFrame.new(3700.177,44.611,-6779.036,-0.526967,-0.000000,0.849886,-0.000000,1.00
 },
 }
 
-local at={
+local d={
 ["Mainland"]=CFrame.new(34.923,14.990,-470.256,-0.987316,0,0.158766,0,1,0,-0.158766,0,-0.987316),
 ["Blizzard Island"]=CFrame.new(-395.354,15.404,-3828.735,-0.763117,0,0.646261,0,1,0,-0.646261,0,-0.763117),
 ["Forest Island"]=CFrame.new(-7436.085,28.764,4508.391,-0.889721,0,0.456505,0,1,0,-0.456505,0,-0.889721),
@@ -5354,7 +5131,7 @@ local at={
 ["Volcano Island"]=CFrame.new(2858.625,24.998,-7019.049,0.672071,-0.000000,0.740487,0.000000,1.000000,0.000000,-0.740487,0.000000,0.672071)
 }
 
-local au={
+local e={
 ["Mainland"]=CFrame.new(-50.854,13.037,-941.285,0.818569,0,0.574408,0,1,0,-0.574408,0,0.818569),
 ["Blizzard Island"]=CFrame.new(-318.315,15.842,-3194.496,-0.997635,0,-0.068731,0,1,0,0.068731,0,-0.997635),
 ["Forest Island"]=CFrame.new(-7091.160,19.167,4562.860,-0.464963,0,-0.885330,0,1,0,0.885330,0,-0.464963),
@@ -5370,7 +5147,7 @@ local au={
 
 
 
-local b={
+local f={
 ["Mainland"]=false,
 ["Blizzard Island"]=false,
 ["Forest Island"]=false,
@@ -5382,94 +5159,77 @@ local b={
 ["Lunar Islands"]=false,
 ["Volcano Island"]=false
 }
-local c=false
-local d=false
-local e=false
-local f=0
+local g=false
+local h=false
+local i=false
+local j=0
 
 
 
 
-local g=7
-local h=90
-local i=math.rad(60)
-local j=70
-local k=120
-local l=0.5
-local m=0.5
-local n=1.5
-local o=0.6
-local p=4
+local k=7
+local l=90
+local m=math.rad(60)
+local n=70
+local o=120
+local p=0.5
+local q=2
+local r=2.0
+local s=0.6
 
 
 
 
-local q=nil
-local r=nil
-local s=nil
 local t=nil
 local u=nil
+local v=nil
+local w=nil
+local x=nil
 
-local v=false
-
-local function w(x,y)
-if not x then return end
-
-if y==v then
-
-if not y then return end
-end
-v=y
-for z,A in ipairs(x:GetDescendants())do
-if A:IsA("BasePart")then
-A.CanCollide=not y
+local function z(A,C)
+for D,E in ipairs(A:GetDescendants())do
+if E:IsA("BasePart")then
+E.CanCollide=not C
 end
 end
 end
 
 
 
-local x=RaycastParams.new()
-x.FilterType=Enum.RaycastFilterType.Exclude
-x.IgnoreWater=true
+
+local A=RaycastParams.new()
+A.FilterType=Enum.RaycastFilterType.Exclude
+A.IgnoreWater=true
 
 
 
 
-local function y()
-
-if v then
-local z=ae.Character
-if z then
-for A,B in ipairs(z:GetDescendants())do
-if B:IsA("BasePart")then
-B.CanCollide=true
-end
-end
-end
-v=false
+local function C()
+if w then
+local D=w.Parent
+if D then z(D,false)end
 end
 
-if s then s:Disconnect();s=nil end
-if r then r:Destroy();r=nil end
-if q then q:Destroy();q=nil end
-if t then
-t.PlatformStand=false
-t=nil
+if v then v:Disconnect();v=nil end
+if u then u:Destroy();u=nil end
+if t then t:Destroy();t=nil end
+if w then
+w.PlatformStand=false
+w=nil
 end
-u=nil
+x=nil
 end
 
 
 
 
 
-local function z(A,B,C)
-local D=workspace:Raycast(A,B.Unit*C,x)
-if D and D.Instance then
-local E=D.Instance
-if E:IsA("Terrain")or(E:IsA("BasePart")and E.CanCollide)then
-return true,D.Position
+local function D(E,F,G)
+local H=workspace:Raycast(E,F.Unit*G,A)
+if H and H.Instance then
+local I=H.Instance
+if I:IsA("Terrain")or(I:IsA("BasePart")and I.CanCollide)then
+return true,H.Position
 end
 end
 return false,nil
@@ -5477,225 +5237,174 @@ end
 
 
 
-local function A(B,C,D)
-local E=C.Position+Vector3.new(0,ai,0)
-local F=E-B.Position
-local G=F.Magnitude
+local function E(F,G,H)
+local I=G.Position+Vector3.new(0,ai,0)
+local J=I-F.Position
+local K=J.Magnitude
 
-if G<l then return Vector3.zero,G end
+if K<p then return Vector3.zero,K end
 
-local H=F.Unit
+local L=J.Unit
 
-local I={ae.Character}
-if u then table.insert(I,u)end
-x.FilterDescendantsInstances=I
+local M={ae.Character}
+if x then table.insert(M,x)end
+A.FilterDescendantsInstances=M
 
 
-local J,K=z(B.Position,H,math.min(G,h))
+local N,O=D(F.Position,L,math.min(K,l))
 
-if not J then
-return H*math.min(G*60,k),G
+if not N then
+return L*math.min(K*60,o),K
 end
 
 
-local L=K and K.Y or B.Position.Y
-local M=Vector3.new(E.X,L+g,E.Z)
-local N=(M-B.Position).Unit
+local P=O and O.Y or F.Position.Y
+local Q=Vector3.new(I.X,P+k,I.Z)
+local R=(Q-F.Position).Unit
 
 
-if D then
-local O=(N+D*0.8).Unit
-return O*math.min(G*60,k),G
+if H then
+local S=(R+H*0.8).Unit
+return S*math.min(K*60,o),K
 end
 
 
-local O=Vector3.new(H.X,0,H.Z)
-if O.Magnitude<0.01 then O=Vector3.new(1,0,0)end
-O=O.Unit
+local S=Vector3.new(L.X,0,L.Z)
+if S.Magnitude<0.01 then S=Vector3.new(1,0,0)end
+S=S.Unit
 
-local P,Q=math.cos(i),math.sin(i)
+local T,U=math.cos(m),math.sin(m)
 
-local R=Vector3.new(
-O.X*P-O.Z*(-Q),
+local V=Vector3.new(
+S.X*T-S.Z*(-U),
 0,
-O.X*(-Q)+O.Z*P
+S.X*(-U)+S.Z*T
 ).Unit
 
-local S=Vector3.new(
-O.X*P-O.Z*Q,
+local W=Vector3.new(
+S.X*T-S.Z*U,
 0,
-O.X*Q+O.Z*P
+S.X*U+S.Z*T
 ).Unit
 
-local T=z(B.Position,R,j)
-local U=z(B.Position,S,j)
+local X=D(F.Position,V,n)
+local Y=D(F.Position,W,n)
 
-local V
-if not T and U then
-V=R
-elseif not U and T then
-V=S
-elseif not T and not U then
-local W=R:Dot(H)
-local X=S:Dot(H)
-V=(W>=X)and R or S
+local Z
+if not X and Y then
+Z=V
+elseif not Y and X then
+Z=W
+elseif not X and not Y then
+local _=V:Dot(L)
+local ar=W:Dot(L)
+Z=(_>=ar)and V or W
 else
-V=nil
+Z=nil
 end
 
-local W
-if V then
-W=(N+V*1.2).Unit
+local ar
+if Z then
+ar=(R+Z*1.2).Unit
 else
-W=N
+ar=R
 end
 
-return W*math.min(G*60,k),G
-end
-
-
-
-
-local function B(C)
-y()
-
-local D=ae.Character
-local E=D and D:FindFirstChild("HumanoidRootPart")
-if not E then return end
-
-u=C:FindFirstAncestorOfClass("Model")
-
-local F=D:FindFirstChildOfClass("Humanoid")
-if F then
-F.PlatformStand=true
-t=F
+return ar*math.min(K*60,o),K
 end
 
 
-w(D,true)
 
-q=Instance.new("Attachment")
-q.Parent=E
 
-r=Instance.new("LinearVelocity")
-r.Attachment0=q
-r.MaxForce=1e6
-r.RelativeTo=Enum.ActuatorRelativeTo.World
-r.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-r.VectorVelocity=Vector3.zero
-r.Parent=E
+local function ar(F)
+C()
 
-local G=E.Position
-local H=tick()
-local I=nil
-local J=0
-local K=0
+local G=ae.Character
+local H=G and G:FindFirstChild("HumanoidRootPart")
+if not H then return end
+
+x=F:FindFirstAncestorOfClass("Model")
+
+local I=G:FindFirstChildOfClass("Humanoid")
+if I then
+I.PlatformStand=true
+w=I
+end
+z(G,true)
+
+
+t=Instance.new("Attachment")
+t.Parent=H
+
+u=Instance.new("LinearVelocity")
+u.Attachment0=t
+u.MaxForce=1e6
+u.RelativeTo=Enum.ActuatorRelativeTo.World
+u.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+u.VectorVelocity=Vector3.zero
+u.Parent=H
+
+
+local J=H.Position
+local K=tick()
 local L=nil
+local M=0
 
-s=ac.Heartbeat:Connect(function()
-if not C or not C.Parent then
-y()
+v=ac.Heartbeat:Connect(function()
+if not F or not F.Parent then
+C()
 return
 end
 
-local M=ae.Character and ae.Character:FindFirstChild("HumanoidRootPart")
-if not M or not r then return end
-
-local N=ae.Character
-if N and v then
-for O,P in ipairs(N:GetDescendants())do
-if P:IsA("BasePart")and P.CanCollide then
-P.CanCollide=false
-end
-end
-end
-
-
-
+local N=ae.Character and ae.Character:FindFirstChild("HumanoidRootPart")
+if not N or not u then return end
+z(ae.Character,true)
 local O=tick()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-local P=(M.Position-G).Magnitude
-if P>m then
-G=M.Position
-H=O
-K=0
-if O>J then I=nil end
+local P=(N.Position-J).Magnitude
+if P>q then
+J=N.Position
+K=O
+if O>M then L=nil end
 else
-local Q=O-H
-if Q>=n and O>J then
-
-if L and(M.Position-L).Magnitude<m then
-K+=1
-end
-L=M.Position
-
-if K>=p then
-
-
-K=0
-I=nil
-y()
-return
-end
-
-local R=C.Position-M.Position
+local Q=O-K
+if Q>=r and O>M then
+local R=F.Position-N.Position
 local S=Vector3.new(R.X,0,R.Z)
 if S.Magnitude>0.01 then
 local T=S.Unit:Cross(Vector3.new(0,1,0)).Unit
-I=(math.random(0,1)==0)and T or-T
-J=O+o
-H=O
+L=(math.random(0,1)==0)and T or-T
+M=O+s
+K=O
 end
 end
 end
 
-local Q=(O<=J)and I or nil
-local R,S=A(M,C,Q)
-r.VectorVelocity=R
+local Q=(O<=M)and L or nil
+
+local R,S=E(N,F,Q)
+u.VectorVelocity=R
 end)
 end
 
 
 
 
-local function C(D)
-if not D then return end
-local E=ar[D]or 1
-pcall(function()ah.Travel(D,E)end)
+local function F(G)
+if not G then return end
+local H=b[G]or 1
+pcall(function()ah.Travel(G,H)end)
 end
 
 
 
 
-local function D()
-local E=workspace:FindFirstChild("Islands")
-if not E then return nil end
-for F,G in ipairs(E:GetChildren())do
-if G:FindFirstChild(ae.Name)then return G end
+local function G()
+local H=workspace:FindFirstChild("Islands")
+if not H then return nil end
+for I,J in ipairs(H:GetChildren())do
+if J:FindFirstChild(ae.Name)then return J end
 end
 return nil
 end
@@ -5703,156 +5412,155 @@ end
 
 
 
-local function E(F,G)
-if not G then return end
-if e then return end
-
-local H=as[G.Name]
-if not H or#H==0 then return end
-
-local I=H[math.random(1,#H)].Position
-local J=ae.Character
+local function H(I,J)
 if not J then return end
-local K=J:FindFirstChildOfClass("Humanoid")
+if i then return end
 
-e=true
-f=tick()
+local K=c[J.Name]
+if not K or#K==0 then return end
 
-local L=15
+local L=K[math.random(1,#K)].Position
+local M=ae.Character
+if not M then return end
+local N=M:FindFirstChildOfClass("Humanoid")
 
-local M=r~=nil
-local N,O=r,q
-local P,Q=nil,nil
+i=true
+j=tick()
 
-if not M then
-if K then K.PlatformStand=true end
-Q=Instance.new("Attachment")
-Q.Parent=F
-P=Instance.new("LinearVelocity")
-P.Attachment0=Q
-P.MaxForce=1e6
-P.RelativeTo=Enum.ActuatorRelativeTo.World
-P.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-P.VectorVelocity=Vector3.zero
-P.Parent=F
-N,O=P,Q
+local O=15
+
+local P=u~=nil
+local Q,R=u,t
+local S,T=nil,nil
+
+if not P then
+if N then N.PlatformStand=true end
+T=Instance.new("Attachment")
+T.Parent=I
+S=Instance.new("LinearVelocity")
+S.Attachment0=T
+S.MaxForce=1e6
+S.RelativeTo=Enum.ActuatorRelativeTo.World
+S.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+S.VectorVelocity=Vector3.zero
+S.Parent=I
+Q,R=S,T
 end
 
-local R=40
-local S=2
+local U=40
+local V=2
 
-local function T()
-if P then P:Destroy()end
-if Q then Q:Destroy()end
-if K and not M then K.PlatformStand=false end
-e=false
+local function W()
+if S then S:Destroy()end
+if T then T:Destroy()end
+if N and not P then N.PlatformStand=false end
+i=false
 end
 
-local U
-U=ac.Heartbeat:Connect(function()
+local X
+X=ac.Heartbeat:Connect(function()
 
-if tick()-f>L then
-U:Disconnect()
-T()
+if tick()-j>O then
+X:Disconnect()
+W()
 return
 end
 
 
-local V=ae.Character
-local W=V and V:FindFirstChild("HumanoidRootPart")
+local Y=ae.Character
+local Z=Y and Y:FindFirstChild("HumanoidRootPart")
 
-if not W or not N or not N.Parent then
-U:Disconnect()
-T()
+if not Z or not Q or not Q.Parent then
+X:Disconnect()
+W()
 return
 end
 
-local X=I-W.Position
-local Y=X.Magnitude
+local _=L-Z.Position
+local as=_.Magnitude
 
-if Y<S then
-N.VectorVelocity=Vector3.zero
-U:Disconnect()
-T()
+if as<V then
+Q.VectorVelocity=Vector3.zero
+X:Disconnect()
+W()
 else
-N.VectorVelocity=X.Unit*math.min(Y*8,R)
+Q.VectorVelocity=_.Unit*math.min(as*8,U)
 end
 end)
 end
 
-local function F(G,H)
-local I=nil
-local J=math.huge
+local function as(I,J)
+local K=nil
+local L=math.huge
 
-if d then
-for K,L in ipairs(workspace:GetChildren())do
-if L:IsA("Model")then
-local M=L:FindFirstChild("HumanoidRootPart")
-if M then
-local N=(G.Position-M.Position).Magnitude
-if N<J then J=N;I=M end
+if h then
+for M,N in ipairs(workspace:GetChildren())do
+if N:IsA("Model")then
+local O=N:FindFirstChild("HumanoidRootPart")
+if O then
+local P=(I.Position-O.Position).Magnitude
+if P<L then L=P;K=O end
 end
 end
 end
-if I then return I end
-end
-
-for K,L in ipairs(H:GetDescendants())do
-if L:IsA("Model")then
-local M=L:FindFirstChild("HumanoidRootPart")
-local N=L:FindFirstChild("CaptureProgress",true)
-if M and N then
-local O=(G.Position-M.Position).Magnitude
-if O<J then J=O;I=M end
-end
-end
+if K then return K end
 end
 
-return I
+for M,N in ipairs(J:GetDescendants())do
+if N:IsA("Model")then
+local O=N:FindFirstChild("HumanoidRootPart")
+local P=N:FindFirstChild("CaptureProgress",true)
+if O and P then
+local Q=(I.Position-O.Position).Magnitude
+if Q<L then L=Q;K=O end
+end
+end
 end
 
-local function G(H)
-local I={}
-for J,K in ipairs(aq)do
-if b[K]then table.insert(I,K)end
-end
-if#I==0 then return nil end
-if#I==1 then return I[1]end
-for J,K in ipairs(I)do
-if K==H then return I[(J%#I)+1]end
-end
-return I[1]
+return K
 end
 
+local function I(J)
+local K={}
+for L,M in ipairs(aq)do
+if f[M]then table.insert(K,M)end
+end
+if#K==0 then return nil end
+if#K==1 then return K[1]end
+for L,M in ipairs(K)do
+if M==J then return K[(L%#K)+1]end
+end
+return K[1]
+end
 
 
 
-local function H()
-local I=workspace:FindFirstChild("Islands")
-if not I then return end
-local J=I:FindFirstChild("Volcano Island")
-if not J then return end
-local K=J:FindFirstChild("LavaParts")
+
+local function J()
+local K=workspace:FindFirstChild("Islands")
 if not K then return end
-for L,M in ipairs(K:GetDescendants())do
-if M:IsA("TouchTransmitter")then M:Destroy()end
+local L=K:FindFirstChild("Volcano Island")
+if not L then return end
+local M=L:FindFirstChild("LavaParts")
+if not M then return end
+for N,O in ipairs(M:GetDescendants())do
+if O:IsA("TouchTransmitter")then O:Destroy()end
 end
 end
 
 do
-local I=nil
+local K=nil
 ac.Heartbeat:Connect(function()
-local J=D()
-local K=J and J.Name or nil
-if K~=I then
-I=K
-if K=="Volcano Island"then
-H()
-end
+local L=G()
+if L and L.Name=="Volcano Island"and K~="Volcano Island"then
+K="Volcano Island"
+J()
+elseif not L or L.Name~="Volcano Island"then
+K=L and L.Name or nil
 end
 end)
 task.spawn(function()
-while true do H();task.wait(3)end
+while true do J();task.wait(3)end
 end)
 end
 
@@ -5860,24 +5568,24 @@ end
 
 
 do
-local I=require(af.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
+local K=require(af.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
 task.spawn(function()
 while true do
 task.wait(tonumber(ao)or ak)
 if not an then continue end
-local J=I.object
-if not J then continue end
-local K=false
-if J.controller and J.controller.GetTarget then
-local L,M=pcall(J.controller.GetTarget,J)
-K=L and M~=nil
-elseif J.controller and J.controller.GetAnimals then
-local L,M=pcall(J.controller.GetAnimals,J,true,true)
-K=L and M and#M>0
+local L=K.object
+if not L then continue end
+local M=false
+if L.controller and L.controller.GetTarget then
+local N,O=pcall(L.controller.GetTarget,L)
+M=N and O~=nil
+elseif L.controller and L.controller.GetAnimals then
+local N,O=pcall(L.controller.GetAnimals,L,true,true)
+M=N and O and#O>0
 else
-K=true
+M=true
 end
-if K then pcall(function()J:Activate()end)end
+if M then pcall(function()L:Activate()end)end
 end
 end)
 end
@@ -5886,51 +5594,51 @@ end
 
 
 do
-local I=5
+local K=5
 
 task.spawn(function()
-local J=0
-local K=nil
-local L=false
-local M=0
-local N=0
+local L=0
+local M=nil
+local N=false
+local O=0
+local P=0
 
-local function O(P)
-if not P then return false end
-if not P.Parent then return false end
-local Q=P:FindFirstAncestorOfClass("Model")
-if not Q then return false end
-if not Q.Parent then return false end
+local function Q(R)
+if not R then return false end
+if not R.Parent then return false end
+local S=R:FindFirstAncestorOfClass("Model")
+if not S then return false end
+if not S.Parent then return false end
 return true
 end
 
-local function P()
-y()
-K=nil
-N=0
+local function R()
+C()
+M=nil
+P=0
 end
 
-local function Q(R)
-if L then return end
-L=true
-J=0
-M=0
-P()
-C(R)
-local S=tick()+30
+local function S(T)
+if N then return end
+N=true
+L=0
+O=0
+R()
+F(T)
+local U=tick()+30
 repeat
 task.wait(1)
-local T=D()
-if T and T.Name==R then break end
-until tick()>S
+local V=G()
+if V and V.Name==T then break end
+until tick()>U
 task.wait(2)
-L=false
+N=false
 end
 
-local function R(S)
-local T=D()
-if not T then return end
-E(S,T)
+local function T(U)
+local V=G()
+if not V then return end
+H(U,V)
 end
 
 while true do
@@ -5938,74 +5646,74 @@ task.wait(0.4)
 
 
 
-if e and tick()-f>20 then
-e=false
+if i and tick()-j>20 then
+i=false
 end
 
 if not am then
-P()
-J=0
-M=0
+R()
+L=0
+O=0
 continue
 end
 
-if L then continue end
+if N then continue end
 
-local S=ae.Character
-local T=S and S:FindFirstChild("HumanoidRootPart")
-if not T then continue end
+local U=ae.Character
+local V=U and U:FindFirstChild("HumanoidRootPart")
+if not V then continue end
 
-local U=D()
-if not U then continue end
+local W=G()
+if not W then continue end
 
-if c and not b[U.Name]then
-local V=G(U.Name)
-if V then Q(V)end
+if g and not f[W.Name]then
+local X=I(W.Name)
+if X then S(X)end
 continue
 end
 
 
-if K then
-if O(K)then
-N=0
+if M then
+if Q(M)then
+P=0
 else
-N+=1
-if N>=I then P()end
+P+=1
+if P>=K then R()end
 end
 end
 
 
-if not K then
-local V=F(T,U)
-if V then
-K=V
-N=0
-B(K)
+if not M then
+local X=as(V,W)
+if X then
+M=X
+P=0
+ar(M)
 end
 end
 
-if K then
-J=0
-M=0
+if M then
+L=0
+O=0
 else
-J+=1
-M+=0.4
+L+=1
+O+=0.4
 
-if c and M>=al then
-local V=G(U.Name)
-if V and V~=U.Name then
-Q(V)
+if g and O>=al then
+local X=I(W.Name)
+if X and X~=W.Name then
+S(X)
 else
-R(T)
-M=0
-J=0
+T(V)
+O=0
+L=0
 end
 continue
 end
 
-if J>=(tonumber(ap)or aj)then
-R(T)
-J=0
+if L>=(tonumber(ap)or aj)then
+T(V)
+L=0
 end
 end
 end
@@ -6019,21 +5727,15 @@ end
 
 
 return{
-autofarm_islands=b,
-setEnabled=function(I)am=I end,
-setWildherd=function(I)d=I end,
-setAutotravel=function(I)c=I end,
-setIsland=function(I,J)b[I]=J end,
-setAutoclick=function(I)an=I end,
-setClickDuration=function(I)ao=I end,
-setIdleLimit=function(I)ap=I end,
+autofarm_islands=f,
+setEnabled=function(K)am=K end,
+setWildherd=function(K)h=K end,
+setAutotravel=function(K)g=K end,
+setIsland=function(K,L)f[K]=L end,
+setAutoclick=function(K)an=K end,
+setClickDuration=function(K)ao=K end,
+setIdleLimit=function(K)ap=K end,
 }end function a.d():typeof(aa())local ab=a.cache.d if not ab then ab={c=aa()}a.cache.d=ab end return ab.c end end do local function aa()
-
-
-
-
-
-
 local ab=game:GetService("ReplicatedStorage")
 local ac=game:GetService("Players")
 local ad=game:GetService("RunService")
@@ -6041,462 +5743,131 @@ local ad=game:GetService("RunService")
 local ae=require(ab:WaitForChild("References"))
 local af=ae.Utilities
 local ah=require(ae.PlayerScripts.Priority:WaitForChild("Data"))
-local ai=require(ae.PlayerScripts.Priority:WaitForChild("InventoryHandler"))
-local aj=ac.LocalPlayer
+local ai=ac.LocalPlayer
 
 
 
 
+local aj=0.2
+local ak=0.8
+local al=1.2
+local am=0.05
+local an=3
 
 
 
 
-local ak={
-
-{id=401,name="Prismatic Lasso",strength=30,craftable=true},
-{id=32,name="Perfect Lasso",strength=25,craftable=false},
-{id=1349,name="Rescue Lasso",strength=25,craftable=false},
-{id=31,name="Moonstone Lasso",strength=24,craftable=true},
-{id=30,name="Obsidian Lasso",strength=22,craftable=true},
-{id=29,name="Amethyst Lasso",strength=20,craftable=true},
-{id=28,name="Emerald Lasso",strength=18,craftable=true},
-{id=27,name="Topaz Lasso",strength=16,craftable=true},
-{id=26,name="Sapphire Lasso",strength=14,craftable=true},
-{id=25,name="Diamond Lasso",strength=12,craftable=true},
-{id=1243,name="Ice Lasso",strength=11,craftable=true},
-{id=24,name="Ruby Lasso",strength=10,craftable=true},
-{id=325,name="Clear Quartz Lasso",strength=7,craftable=true},
-{id=21,name="Iron Lasso",strength=7,craftable=true},
-{id=22,name="Silver Lasso",strength=7,craftable=true},
-{id=23,name="Gold Lasso",strength=8,craftable=true},
-{id=20,name="Bronze Lasso",strength=6,craftable=true},
-{id=19,name="Copper Lasso",strength=5,craftable=true},
-{id=18,name="Tin Lasso",strength=4,craftable=true},
-{id=191,name="Stone Lasso",strength=3,craftable=true},
-{id=17,name="Wooden Lasso",strength=2,craftable=true},
-{id=1029,name="Corrupt Lasso",strength=20,craftable=false},
-{id=1163,name="Lasso",strength=1,craftable=false},
-}
-
-
-local al={}
-for am,an in ipairs(ak)do
-al[an.id]=am
-end
-
-
-
-
-
-
-
-local am={
-[17]={{id=102,qty=1},{id=70,qty=1}},
-[18]={{id=102,qty=1},{id=35,qty=3}},
-[19]={{id=102,qty=1},{id=34,qty=3}},
-[20]={{id=102,qty=1},{id=36,qty=3}},
-[21]={{id=102,qty=1},{id=37,qty=3}},
-[22]={{id=102,qty=1},{id=38,qty=3}},
-[23]={{id=102,qty=1},{id=39,qty=3}},
-[24]={{id=102,qty=1},{id=40,qty=2}},
-[25]={{id=102,qty=1},{id=41,qty=2}},
-[26]={{id=102,qty=1},{id=42,qty=2}},
-[27]={{id=102,qty=1},{id=43,qty=2}},
-[28]={{id=102,qty=1},{id=44,qty=2}},
-[29]={{id=102,qty=1},{id=45,qty=2}},
-[30]={{id=102,qty=1},{id=46,qty=2}},
-[31]={{id=102,qty=1},{id=47,qty=2}},
-[191]={{id=102,qty=1},{id=33,qty=3}},
-[325]={{id=102,qty=1},{id=323,qty=3}},
-[401]={{id=102,qty=1},{id=381,qty=2}},
-[1243]={{id=102,qty=1},{id=1238,qty=2}},
-}
-
-
-
-
-
-
-local an={
-[102]={shop="Mainland Shop",slot=1},
-[70]={shop="Mainland Shop",slot=8},
-[33]={shop="Mainland Shop",slot=9},
-[35]={shop="Mainland Shop",slot=10},
-[34]={shop="Blizzard Island Shop",slot=8},
-[36]={shop="Blizzard Island Shop",slot=9},
-[37]={shop="Forest Island Shop",slot=8},
-[38]={shop="Forest Island Shop",slot=9},
-[39]={shop="Desert Island Shop",slot=8},
-[40]={shop="Desert Island Shop",slot=9},
-[41]={shop="Mountain Island Shop",slot=8},
-[42]={shop="Mountain Island Shop",slot=9},
-[43]={shop="Jungle Island Shop",slot=9},
-[44]={shop="Jungle Island Shop",slot=10},
-[45]={shop="Jungle Island Shop",slot=11},
-[46]={shop="Lunar Islands Shop",slot=8},
-[47]={shop="Lunar Islands Shop",slot=9},
-[323]={shop="Royal Island Shop",slot=7},
-[381]={shop="Volcano Island Shop",slot=7},
-[1238]={shop="Glacier Island Shop",slot=6},
-}
-
-
-
-
-local ao={
-autoEquipEnabled=false,
-autoCraftEnabled=false,
-selectedLassoId=191,
-restockThreshold=50,
-restockAmount=100,
-pollInterval=0.5,
-craftPollInterval=3,
-buyCooldown=0.4,
-craftCooldown=1.0,
-confirmTimeout=5,
-confirmInterval=0.1,
-}
-
-local ap=250
-local aq=1000
-
-
-
-
+local ao=false
+local ap=false
+local aq=0
 local ar=false
-local as=false
-local at=0
-local au=0.8
-local b=1.2
-local c=0.05
-local d=3
 
 
 
 
-local function e(f)
-local g,h=pcall(ai.GetAmountOf,f)
-return(g and tonumber(h))or 0
-end
-
-local function f()
+local function as()
 return ah.GetLocal({"quickEquipment","Lasso"})
 end
 
-local function g()
+local function b()
 return ah.GetLocal({"temporary","equippedEquipment"})
 end
 
-local function h()
-local i=f()
-if not i then return false end
-return tostring(g())==tostring(i)
+local function c()
+local d=as()
+if not d then return false end
+return tostring(b())==tostring(d)
 end
 
 
 
 
-
-
-local i=1163
-local j=0
-local k=2.0
-
-local function l()
-local m=tick()
-if m-j<k then return i end
-j=m
-for n,o in ipairs(ak)do
-if e(o.id)>0 then
-i=o.id
-return i
-end
-end
-i=1163
-return i
-end
-
-
-
-
-
-
-local function m()
+local function d()
 af.Network:FireServer("QuickEquipment","Use","Lasso")
-local n=tick()+b
-while tick()<n do
-task.wait(c)
-if h()then return true end
-end
-return false
-end
 
-local function n(o)
-
-
-local p=ai.GetGuidsOfItemId(o)
-if not p or#p==0 then return false end
-
-af.Network:FireServer("QuickEquipment","Set","Lasso",p[1])
-task.wait(0.3)
+local e=tick()+al
+while tick()<e do
+task.wait(am)
+if c()then
 return true
 end
-
-local function o()
-if not ao.autoEquipEnabled then return end
-if ar then return end
-
-local p=l()
-local q=f()
-
-
-local r=q and ai.GetGuidsOfItemId(p)
-local s=r and table.find(r,q)~=nil
-
-
-if h()and s then return end
-
-local t=tick()
-if(t-at)<au then return end
-
-
-if not s then
-local u=n(p)
-if not u then return end
-end
-
-ar=true
-at=tick()
-
-local u,v=pcall(function()
-for u=1,d do
-if m()then break end
-task.wait(au*u)
-end
-end)
-
-if not u then warn("[AutoLasso] Equip error:",v)end
-ar=false
-end
-
-
-
-
-local function p(q,r)
-local s=tick()+ao.confirmTimeout
-while tick()<s do
-task.wait(ao.confirmInterval)
-if e(q)>r then return true end
 end
 return false
 end
 
-local function q(r,s)
-local t=an[r]
-if not t then
-warn(string.format("[AutoLasso] No shop source for material id=%d",r))
-return 0
+local function e()
+if not ao then return end
+if ap then return end
+if c()then ar=true;return end
+
+
+
+if ar then
+ar=false
 end
 
-s=math.min(s,aq)
-if s<=0 then return 0 end
+local f=tick()
+if(f-aq)<ak then return end
 
-local u=e(r)
-af.Network:FireServer("Shopping","BuyShopItem",t.shop,t.slot,s,nil)
+local g=as()
+if not g then return end
 
-local v=p(r,u)
-if not v then
-warn(string.format("[AutoLasso] Buy timed out id=%d shop=%s slot=%d qty=%d",
-r,t.shop,t.slot,s))
-return 0
-end
-return e(r)-u
-end
+ap=true
+aq=tick()
 
-local function r(s,t)
-t=math.min(t,ap)
-if t<=0 then return 0 end
-
-local u=e(s)
-af.Network:FireServer("Crafting","Craft",{
-id=s,
-variants={},
-amt=t,
-})
-
-local v=p(s,u)
-if not v then
-warn(string.format("[AutoLasso] Craft timed out id=%d qty=%d",s,t))
-return 0
-end
-return e(s)-u
-end
-
-local function s(t,u)
-local v=am[t]
-if not v then
-warn(string.format("[AutoLasso] No recipe for lasso id=%d",t))
-return
-end
-
-u=math.min(u,ap)
-
-
-for w,x in ipairs(v)do
-local y=x.qty*u
-local z=e(x.id)
-local A=math.max(0,y-z)
-if A>0 then
-local B=q(x.id,A)
-if B<A then
-warn(string.format("[AutoLasso] Material short: id=%d needed=%d got=%d",
-x.id,A,B))
-end
-task.wait(ao.buyCooldown)
-end
+local h,i=pcall(function()
+for h=1,an do
+if d()then
+ar=true
+break
 end
 
 
-local w=u
-for x,y in ipairs(v)do
-local z=e(y.id)
-local A=math.floor(z/y.qty)
-w=math.min(w,A)
+task.wait(ak*h)
+end
+end)
+
+if not h then
+warn("[AutoLasso] Error on equip attempt:",i)
 end
 
-w=math.min(w,ap)
-if w<=0 then
-warn("[AutoLasso] No materials to craft after buying — aborting.")
-return
+ap=false
 end
-
-task.wait(ao.craftCooldown)
-
-local x=r(t,w)
-if x>0 then
-
-
-local y=l()
-local z=al[t]or 999
-local A=al[y]or 999
-if z<=A then
-n(t)
-task.wait(0.3)
-af.Network:FireServer("QuickEquipment","Use","Lasso")
-end
-else
-warn("[AutoLasso] Craft fired but no lassos received.")
-end
-end
-
-
 
 
 
 
 task.spawn(function()
 while true do
-task.wait(ao.pollInterval)
-o()
+task.wait(aj)
+e()
 end
 end)
 
 
-task.spawn(function()
-while true do
-task.wait(ao.craftPollInterval)
-if not ao.autoCraftEnabled then continue end
-if as then continue end
-
-local t=ao.selectedLassoId
-if e(t)<=ao.restockThreshold then
-as=true
-local u,v=pcall(s,t,ao.restockAmount)
-if not u then warn("[AutoLasso] Restock error:",v)end
-as=false
-end
-end
-end)
 
 
-aj.CharacterAdded:Connect(function()
+local function f()
 task.wait(1.5)
+ap=false
+aq=0
 ar=false
-at=0
-as=false
-end)
+e()
+end
+
+ai.CharacterAdded:Connect(f)
 
 
 
 
 return{
+setEnabled=function(g)
+ao=g
+if not g then
 
-setEnabled=function(t)
-ao.autoEquipEnabled=t
-if not t then
 ar=false
+ap=false
 end
-end,
-
-
-setCraftEnabled=function(t)
-ao.autoCraftEnabled=t
-if not t then as=false end
-end,
-
-
-setSelectedLasso=function(t)
-ao.selectedLassoId=tonumber(t)or 191
-end,
-
-
-setRestockThreshold=function(t)
-ao.restockThreshold=tonumber(t)or 50
-end,
-
-
-setRestockAmount=function(t)
-ao.restockAmount=math.min(tonumber(t)or 100,ap)
-end,
-
-
-getCraftableLassos=function()
-local t={}
-for u,v in ipairs(ak)do
-if v.craftable then
-table.insert(t,{id=v.id,name=v.name,strength=v.strength})
-end
-end
-return t
-end,
-
-
-getStatus=function()
-local t=l()
-return{
-autoEquipEnabled=ao.autoEquipEnabled,
-autoCraftEnabled=ao.autoCraftEnabled,
-isCycleRunning=as,
-bestLassoId=t,
-bestLassoName=(function()
-for u,v in ipairs(ak)do
-if v.id==t then return v.name end
-end
-return"Unknown"
-end)(),
-selectedCraftId=ao.selectedLassoId,
-selectedCraftCount=e(ao.selectedLassoId),
-threshold=ao.restockThreshold,
-}
-end,
-
-
-triggerRestock=function()
-if as then return end
-as=true
-local t,u=pcall(s,ao.selectedLassoId,ao.restockAmount)
-if not t then warn("Manual restock error:",u)end
-as=false
 end,
 }end function a.e():typeof(aa())local ab=a.cache.e if not ab then ab={c=aa()}a.cache.e=ab end return ab.c end end do local function aa()
 local ab=require(game:GetService("ReplicatedStorage").References)
@@ -6550,6 +5921,7 @@ end,
 
 
 local ab=game:GetService("Players")
+
 local ac=ab.LocalPlayer
 
 
@@ -6562,57 +5934,44 @@ local ah=0
 local ai=nil
 
 
-local aj={
-mismatchHairColour=0,
-summer2026=0,
-naturallyDyedHairColour=0,
-islandUniqueCoat=0,
-islandUniqueHorn=0,
-islandUniqueHairColour=0,
-specialIslandUniqueCoat=0,
-specialCoat=0,
-specialHair=0,
-horned=0,
-rareCoat=0,
-}
 
 
+local function aj(ak)
+if not ak or ak==""then return nil end
 
-
-local function ak(al)
-if not al or al==""then return nil end
-al=al:gsub(",",""):gsub("%s+","")
-local am=1
-if al:sub(1,1)=="-"then am=-1;al=al:sub(2)
-elseif al:sub(1,1)=="+"then al=al:sub(2)end
-local an=tonumber(al)
-return an and(am*math.floor(an))or nil
+ak=ak:gsub(",",""):gsub("%s+","")
+local al=1
+if ak:sub(1,1)=="-"then al=-1;ak=ak:sub(2)
+elseif ak:sub(1,1)=="+"then ak=ak:sub(2)end
+local am=tonumber(ak)
+return am and(al*math.floor(am))or nil
 end
+
+local function ak()
+local al=ac:FindFirstChild("PlayerGui");if not al then return nil end
+local am=al:FindFirstChild("HUD");if not am then return nil end
+local an=am:FindFirstChild("TopBar");if not an then return nil end
+local ao=an:FindFirstChild("Tokens");if not ao then return nil end
+return ao:FindFirstChild("ChangeLabel")
+end
+
+
+
+
 
 local function al()
-local am=ac:FindFirstChild("PlayerGui");if not am then return nil end
-local an=am:FindFirstChild("HUD");if not an then return nil end
-local ao=an:FindFirstChild("TopBar");if not ao then return nil end
-local ap=ao:FindFirstChild("Tokens");if not ap then return nil end
-return ap:FindFirstChild("ChangeLabel")
-end
-
-
-
-
-local function am()
 if ai then ai:Disconnect();ai=nil end
 
-local an=al()
-if not an then
-task.delay(3,am)
+local am=ak()
+if not am then
+task.delay(3,al)
 return
 end
 
-ai=an:GetPropertyChangedSignal("Text"):Connect(function()
-local ao=ak(an.Text)
-if ao and ao>0 then
-ae+=ao
+ai=am:GetPropertyChangedSignal("Text"):Connect(function()
+local an=aj(am.Text)
+if an and an>0 then
+ae+=an
 end
 end)
 end
@@ -6620,62 +5979,53 @@ end
 
 
 
-local an={}
+local am={}
 
-function an.recordSell()
+function am.recordSell()
 ad+=1
 af+=1
 end
 
-
-function an.recordLock(ao)
+function am.recordLock()
 ad+=1
 ah+=1
-if ao and aj[ao]~=nil then
-aj[ao]+=1
-end
 end
 
-function an.getStats()
-
-local ao={}
-for ap,aq in pairs(aj)do
-ao[ap]=aq
-end
+function am.getStats()
 return{
 captures=ad,
 sold=af,
 locked=ah,
 coins=ae,
-
-lockedByReason=ao,
 }
 end
 
-function an.reset()
+function am.reset()
 ad=0
 ae=0
 af=0
 ah=0
-for ao in pairs(aj)do
-aj[ao]=0
-end
 end
 
-function an.destroy()
+function am.destroy()
 if ai then ai:Disconnect();ai=nil end
 end
 
-am()
+al()
 
-return an end function a.g():typeof(aa())local ab=a.cache.g if not ab then ab={c=aa()}a.cache.g=ab end return ab.c end end do local function aa()
+return am end function a.g():typeof(aa())local ab=a.cache.g if not ab then ab={c=aa()}a.cache.g=ab end return ab.c end end do local function aa()
+
+
+
+
 
 local ab=game:GetService("ReplicatedStorage")
-local ac=game:GetService("HttpService")
-local ad=require(ab.References.HorseVariants)
-local ae=a.g()
+local ac=require(ab.References.HorseVariants)
 
-local af={
+
+local ad=a.g()
+
+local ae={
 "mismatchHairColour",
 "summer2026",
 "naturallyDyedHairColour",
@@ -6689,35 +6039,14 @@ local af={
 "rareCoat",
 }
 
-local ah={}
-for ai,aj in ipairs(af)do
-ah[aj]=false
+local af={}
+for ah,ai in ipairs(ae)do
+af[ai]=true
 end
 
-local ai=0.975
-local aj=0.5
+local ah=0.975
 
-
-
-
-local ak=""
-local al=false
-
-local am={
-mismatchHairColour="Mismatched Hair",
-summer2026="Summer 2026",
-naturallyDyedHairColour="Naturally Dyed Hair",
-islandUniqueCoat="Island Unique Coat",
-islandUniqueHorn="Island Unique Horn",
-islandUniqueHairColour="Island Unique Hair Colour",
-specialIslandUniqueCoat="Special Island Unique Coat",
-specialCoat="Special Coat",
-specialHair="Special Hair",
-horned="Horned",
-rareCoat="Rare Coat",
-}
-
-local an={
+local ai={
 ["sandy"]=true,["pearly purple"]=true,["pearly gold"]=true,["clear sea glass"]=true,
 ["blessed"]=true,["iceyBlue"]=true,["iceyWhite"]=true,["iceyPink"]=true,
 ["iceyBlack"]=true,["iceyGreen"]=true,["winterStreaks"]=true,["flowery"]=true,
@@ -6734,227 +6063,69 @@ local an={
 ["crackedLavaFade"]=true,["volcanicBlack"]=true,["prismatic"]=true,
 }
 
-
-
-
-local function ao(ap,aq,ar)
-if not al or ak==""then return end
-
-local as=aq and aq.variants or{}
-
-
-local at={}
-
-
-table.insert(at,{
-name="Lock Reason",
-value=am[ar]or ar or"Unknown",
-inline=true,
-})
-
-
-if as.colour then
-local au=ad.colour[as.colour]
-table.insert(at,{
-name="Coat",
-value=(au and au.name)or as.colour,
-inline=true,
-})
-if au then
-table.insert(at,{
-name="Rarity",
-value=tostring(math.floor((au.rarityFloat or 0)*100)).."%",
-inline=true,
-})
-end
-end
-
-
-if as.maneColour then
-local au=ad.maneAndTailColour[as.maneColour]
-table.insert(at,{
-name="Mane Colour",
-value=(au and au.name)or as.maneColour,
-inline=true,
-})
-end
-
-if as.tailColour then
-local au=ad.maneAndTailColour[as.tailColour]
-table.insert(at,{
-name="Tail Colour",
-value=(au and au.name)or as.tailColour,
-inline=true,
-})
-end
-
-
-if as.maneColour and as.tailColour
-and as.maneColour~=as.tailColour then
-table.insert(at,{
-name="Mismatch",
-value="Yes",
-inline=true,
-})
-end
-
-
-if as.hornStyle and as.hornStyle~=""then
-table.insert(at,{
-name="Horn Style",
-value=as.hornStyle,
-inline=true,
-})
-end
-
-if as.hornColour and as.hornColour~=""then
-table.insert(at,{
-name="Horn Colour",
-value=as.hornColour,
-inline=true,
-})
-end
-
-
-if aq.isNatDyed then
-table.insert(at,{
-name="Naturally Dyed",
-value="Yes",
-inline=true,
-})
-end
-
-
-if as.maneStyle then
-table.insert(at,{
-name="Mane Style",
-value=as.maneStyle,
-inline=true,
-})
-end
-
-if as.tailStyle then
-table.insert(at,{
-name="Tail Style",
-value=as.tailStyle,
-inline=true,
-})
-end
-
-
-table.insert(at,{
-name="GUID",
-value="`"..tostring(ap).."`",
-inline=false,
-})
-
-
-local au=ae.getStats()
-table.insert(at,{
-name="Session Stats",
-value=string.format("Sold: %d | Locked: %d | Coins: %d",
-au.sold,au.locked,au.coins),
-inline=false,
-})
-
-
-local b=os.date("!%Y-%m-%d %H:%M:%S UTC")
-
-local c=ac:JSONEncode({
-embeds={
-{
-title="Horse Locked — "..(am[ar]or ar or"Unknown"),
-color=0xF5A623,
-fields=at,
-footer={text="coconut.xyz • "..b},
-timestamp=os.date("!%Y-%m-%dT%H:%M:%SZ"),
-}
-}
-})
-
-
-task.spawn(function()
-local d,e=pcall(function()
-local d=(syn and syn.request)or http_request or request
-if not d then
-warn("[AutoSell] Webhook failed: no http function available")
-return
-end
-d({
-Url=ak,
-Method="POST",
-Headers={["Content-Type"]="application/json"},
-Body=c,
-})
-end)
-if not d then
-warn("[AutoSell] Webhook failed:",e)
-end
-end)
-end
+local aj=0.5
 
 
 
 
-local function ap(aq)
-if not aq then return false,nil end
-local ar=aq.variants
-if not ar then return false,nil end
+local function ak(al)
+if not al then return false,nil end
+local am=al.variants
+if not am then return false,nil end
 
-if ah["horned"]==true then
-if(ar.hornStyle and ar.hornStyle~="")
-or(ar.hornColour and ar.hornColour~="")then
+if af["horned"]==true then
+if am.horn and am.horn~=""then
 return true,"horned"
 end
 end
 
-if ar.colour then
-local as=ad.colour[ar.colour]
-if as then
-local at=as.specialItemIndicator
-if at and ah[at]==true then
-return true,at
+if am.colour then
+local an=ac.colour[am.colour]
+if an then
+local ao=an.specialItemIndicator
+if ao and af[ao]==true then
+return true,ao
 end
-if ah["rareCoat"]==true
-and(as.rarityFloat or 0)>=ai then
+if af["rareCoat"]==true
+and(an.rarityFloat or 0)>=ah then
 return true,"rareCoat"
 end
 end
 end
 
-for as,at in ipairs({"maneColour","tailColour"})do
-local au=ar[at]
-if au then
-local b=ad.maneAndTailColour[au]
-if b then
-local c=b.specialItemIndicator
-if c and ah[c]==true then
-return true,c
+for an,ao in ipairs({"maneColour","tailColour"})do
+local ap=am[ao]
+if ap then
+local aq=ac.maneAndTailColour[ap]
+if aq then
+local ar=aq.specialItemIndicator
+if ar and af[ar]==true then
+return true,ar
 end
 end
-if ah["islandUniqueHairColour"]==true
-and an[au]==true then
+if af["islandUniqueHairColour"]==true
+and ai[ap]==true then
 return true,"islandUniqueHairColour"
 end
 end
 end
 
-if ah["mismatchHairColour"]==true then
-local as=ar.maneColour
-local at=ar.tailColour
-if as and at and as~=at then
+if af["mismatchHairColour"]==true then
+local an=al.maneColourOg or am.maneColour
+local ao=al.tailColourOg or am.tailColour
+if an and ao and an~=ao then
 return true,"mismatchHairColour"
 end
 end
 
-if ah["naturallyDyedHairColour"]==true
-and aq.isNatDyed==true then
+if af["naturallyDyedHairColour"]==true
+and al.isNatDyed==true then
 return true,"naturallyDyedHairColour"
 end
 
-if aq.specialItemIndicator
-and ah[aq.specialItemIndicator]==true then
-return true,aq.specialItemIndicator
+if al.specialItemIndicator
+and af[al.specialItemIndicator]==true then
+return true,al.specialItemIndicator
 end
 
 return false,nil
@@ -6963,68 +6134,52 @@ end
 
 
 
-local aq=getloadedmodules()
-local ar=nil
-local as=nil
+local al=getloadedmodules()
+local am=nil
+local an=nil
 
-for at,au in aq do
-if not au then continue end
-local b,c=pcall(function()return au.ClassName=="ModuleScript"end)
-if not b or not c then continue end
-
-if au.Name=="Network"and ar==nil then
-local d,e=pcall(require,au)
-if d then ar=e end
+for ao,ap in al do
+if not ap or ap.ClassName~="ModuleScript"then continue end
+if ap.Name=="Network"then am=require(ap)end
+if ap.Name=="InventoryHandler"then an=require(ap)end
 end
 
-if au.Name=="InventoryHandler"and as==nil then
-local d,e=pcall(require,au)
-if d then as=e end
-end
-
-if ar and as then break end
-end
-
-if not ar then
-warn("[AutoSell] Failed to resolve Network module")
-end
-if not as then
-warn("[AutoSell] Failed to resolve InventoryHandler module")
-end
-
-local at=false
-local au=nil
+local ao=false
+local ap=nil
 
 
 
 
-local function b(c)
-at=(c~=nil)and c or(not at)
+local function aq(ar)
+ao=(ar~=nil)and ar or(not ao)
 
-if at then
-if not au then
-au=as.Bind("Added",function(d,e)
-local f,g=pcall(function()
-local f,g=ap(e)
+if ao then
+if not ap then
+ap=an.Bind("Added",function(as,b)
+if not ao then return end
+
+local c,d=ak(b)
+
 task.delay(aj,function()
-if not at then return end
-if f then
-ar:FireServer("Inventory","Lock",d)
-ao(d,e,g)
-ae.recordLock(g)
+if not ao then return end
+
+if c then
+warn("[AutoSell] Locking:",as,"| Reason:",d)
+am:FireServer("Inventory","Lock",as)
+sendLockWebhook(as,b,d)
+ad.recordLock()
 else
-ar:FireServer("Shopping","QuickSellItem",d)
-ae.recordSell()
+warn("[AutoSell] Selling:",as)
+am:FireServer("Shopping","QuickSellItem",as)
+ad.recordSell()
 end
 end)
 end)
-if not f then warn("[AutoSell] Bind callback error:",g)end
-end)
 end
 else
-if au then
-as.Unbind(au)
-au=nil
+if ap then
+an.Unbind(ap)
+ap=nil
 end
 end
 end
@@ -7033,75 +6188,70 @@ end
 
 
 return{
-setEnabled=function(c)b(c)end,
-isEnabled=function()return at end,
-
-getStats=ae.getStats,
-resetCounters=ae.reset,
-snapshotBalance=ae.snapshotBalance,
-
-setWebhook=function(c)
-ak=c or""
+setEnabled=function(ar)
+aq(ar)
 end,
-setWebhookEnabled=function(c)
-al=c==true
-end,
-testWebhook=function()
-local c="{niggercoconut-0000-0000-0000-000000000000}"
-local d={
-isNatDyed=true,
-specialItemIndicator=nil,
-variants={
-colour="buckskinAp2",
-maneColour="grey",
-tailColour="brown",
-maneStyle="shortAp2",
-tailStyle="ratAp2",
-hornStyle="forestFlower",
-hornColour="pinkForestFlower",
-},
-}
-ao(c,d,"horned")
+isEnabled=function()
+return ao
 end,
 
-setLockOption=function(c,d)
-local e=ah[c]~=nil
-if not e then
-for f,g in ipairs(af)do
-if g==c then e=true break end
+
+getStats=ad.getStats,
+resetCounters=ad.reset,
+snapshotBalance=ad.snapshotBalance,
+
+
+setLockOption=function(ar,as)
+if af[ar]==nil and not table.find(ae,ar)then
+warn("[AutoSell] Unknown lock option:",ar)
+return
 end
-end
-if not e then
-warn("[AutoSell] Unknown lock option:",c)return
-end
-ah[c]=d
+af[ar]=as
 end,
-getLockOption=function(c)return ah[c]==true end,
+getLockOption=function(ar)
+return af[ar]==true
+end,
 getAllLockOptions=function()
-local c={}
-for d,e in ipairs(af)do c[e]=ah[e]==true end
-return c
+local ar={}
+for as,b in ipairs(ae)do
+ar[b]=af[b]==true
+end
+return ar
 end,
 
-setRareThreshold=function(c)ai=tonumber(c)or ai end,
-getRareThreshold=function()return ai end,
-setActionDelay=function(c)aj=tonumber(c)or aj end,
-getActionDelay=function()return aj end,
-checkHorse=function(c)return ap(c)end,
-getLockOptionNames=function()return af end,
+setRareThreshold=function(ar)
+ah=tonumber(ar)or ah
+end,
+getRareThreshold=function()
+return ah
+end,
+
+setActionDelay=function(ar)
+aj=tonumber(ar)or aj
+end,
+getActionDelay=function()
+return aj
+end,
+
+checkHorse=function(ar)
+return ak(ar)
+end,
+
+getLockOptionNames=function()
+return ae
+end,
 }end function a.h():typeof(aa())local ab=a.cache.h if not ab then ab={c=aa()}a.cache.h=ab end return ab.c end end do local function aa()
-local function ab(ac,ad)
-local ae=game:GetService("ReplicatedStorage")
-local af=game:GetService("RunService")
-local ah=game:GetService("Players")
-local ai=ah.LocalPlayer
+local function ab(ac)
+local ad=game:GetService("ReplicatedStorage")
+local ae=game:GetService("RunService")
+local af=game:GetService("Players")
+local ah=af.LocalPlayer
 
-local aj=require(ae.References)
-local ak=aj.Utilities
-local al=require(aj.PlayerScripts.Priority.Data)
-local am=require(aj.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
+local ai=require(ad.References)
+local aj=ai.Utilities
+local ak=require(ai.PlayerScripts.Priority.Data)
 
-local an={
+local al={
 CFrame.new(3536.414,20.998,-8541.338,-0.986777,0.000000,0.162083,0.000000,1.000000,-0.000000,-0.162083,-0.000000,-0.986777),
 CFrame.new(3081.965,20.998,-8160.560,0.430185,0.000000,-0.902741,0.000000,1.000000,0.000000,0.902741,-0.000000,0.430185),
 CFrame.new(3040.943,21.278,-7674.188,0.183440,0.000000,-0.983031,0.000000,1.000000,0.000000,0.983031,-0.000000,0.183440),
@@ -7123,17 +6273,18 @@ CFrame.new(3907.742,526.523,-7917.505,-0.471205,-0.000000,-0.882024,-0.000000,1.
 }
 
 
+local am=false
+local an=false
 local ao=false
-local ap=false
+local ap=5
 local aq=false
-local ar=0.05
-local as=5
-local at=false
-local au=false
-local b=false
-local c=false
+local ar=false
 
-local d={
+
+
+local as=nil
+
+local b={
 ["Rock"]=false,
 ["Tin Rock"]=false,
 ["Copper Rock"]=false,
@@ -7158,7 +6309,7 @@ local d={
 ["Erupted Deposit"]=false,
 }
 
-local e={
+local c={
 "Rock","Tin Rock","Copper Rock","Bronze Rock","Iron Rock",
 "Random Crystal","Random Rock","Silver Rock","Gold Rock",
 "Ruby Crystal","Frozen Crystal","Clear Quartz Crystal",
@@ -7167,270 +6318,174 @@ local e={
 "Obsidian Rock","Moonstone Rock","Prismatic Crystal","Erupted Deposit",
 }
 
-local f="itemName"
-local g="health"
+local d="itemName"
+local e="health"
 
-local h=Vector3.zero
-local i=tick()
-
-
-local j=Instance.new("Highlight")
-j.FillColor=Color3.fromRGB(0,255,255)
-j.OutlineColor=Color3.fromRGB(255,255,255)
-j.FillTransparency=0.5
-j.OutlineTransparency=0
-j.Parent=game:GetService("CoreGui")
-j.Enabled=false
+local f=Vector3.zero
+local g=tick()
 
 
-local k=Instance.new("Attachment")
-local l=Instance.new("LinearVelocity")
-l.Attachment0=k
-l.MaxForce=1e6
-l.RelativeTo=Enum.ActuatorRelativeTo.World
-l.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-l.VectorVelocity=Vector3.zero
+local h=Instance.new("Highlight")
+h.FillColor=Color3.fromRGB(0,255,255)
+h.OutlineColor=Color3.fromRGB(255,255,255)
+h.FillTransparency=0.5
+h.OutlineTransparency=0
+h.Parent=game:GetService("CoreGui")
+h.Enabled=false
 
-local m=120
-local n=1.5
 
-local function o(p)
-if k.Parent~=p then
-k.Parent=p
-l.Parent=p
+local i=Instance.new("Attachment")
+local j=Instance.new("LinearVelocity")
+j.Attachment0=i
+j.MaxForce=1e6
+j.RelativeTo=Enum.ActuatorRelativeTo.World
+j.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+j.VectorVelocity=Vector3.zero
+
+local function k(l)
+if i.Parent~=l then
+i.Parent=l
+j.Parent=l
 end
 end
 
-local function p()
-l.VectorVelocity=Vector3.zero
-k.Parent=nil
-l.Parent=nil
+local function l()
+j.VectorVelocity=Vector3.zero
+i.Parent=nil
+j.Parent=nil
+end
+
+local function m(n,o)
+k(n)
+n.CFrame=o
+j.VectorVelocity=Vector3.zero
+n.AssemblyLinearVelocity=Vector3.zero
+n.AssemblyAngularVelocity=Vector3.zero
 end
 
 
-
-
-local q=nil
-local r=false
-
-local function s(t,u,v)
-if r then return end
-r=true
-
-local w=200
-local x=3
-local y=12
-
-local z=tick()
-local A=t.Parent and t.Parent:FindFirstChildOfClass("Humanoid")
-if A then A.PlatformStand=true end
-
-o(t)
-
-if q then q:Disconnect()end
-q=af.Heartbeat:Connect(function()
-local B=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-
-if not B or not l.Parent then
-if q then q:Disconnect();q=nil end
-if A then A.PlatformStand=false end
-p()
-r=false
-return
-end
-
-
-if tick()-z>y then
-q:Disconnect();q=nil
-if A then A.PlatformStand=false end
-p()
-r=false
-if v then v()end
-return
-end
-
-local C=u-B.Position
-local D=C.Magnitude
-
-if D<=x then
-l.VectorVelocity=Vector3.zero
-q:Disconnect();q=nil
-if A then A.PlatformStand=false end
-p()
-r=false
-if v then v()end
-else
-l.VectorVelocity=C.Unit*math.min(D*15,w)
-end
-end)
-end
-
-
-local t=nil
-
-local function u()
-local v=ai.Character
-if not v then return end
-for w,x in ipairs(v:GetDescendants())do
-if x:IsA("BasePart")then
-x.CanCollide=false
-end
-end
-end
-
-local function v()
-local w=ai.Character
-if not w then return end
-for x,y in ipairs(w:GetDescendants())do
-if y:IsA("BasePart")then
-y.CanCollide=true
-end
-end
-end
-
-local function w(x)
-c=x
-if x then
-
-if t then t:Disconnect();t=nil end
-u()
-else
-if t then t:Disconnect();t=nil end
-v()
-end
-end
-
-ai.CharacterAdded:Connect(function()
-if c then
-task.wait(0.1)
-u()
-end
-end)
-
-
-local function x()
-pcall(function()
-if not at then return end
-local y=al.GetLocal({"quickEquipment","Harvester"})
-if not y then return end
-if not au then
-au=true
-ak.Network:FireServer("QuickEquipment","Use","Harvester")
-end
-end)
-end
-
-local function y()
-au=false
-task.wait(1.5)
-x()
-end
-
-al.BindLocal({"temporary","equippedEquipment"},function()
-local z=al.GetLocal({"quickEquipment","Harvester"})
-local A=al.GetLocal({"temporary","equippedEquipment"})
-if A~=z then
-au=false
-task.wait(0.1)
-x()
-end
-end,true)
-
-if ai.Character then y()end
-ai.CharacterAdded:Connect(y)
-
-
-local function z()
-local A=workspace:FindFirstChild("Islands")
-if not A then return nil end
-for B,C in ipairs(A:GetChildren())do
-if C:FindFirstChild(ai.Name)then return C end
+local function n()
+local o=workspace:FindFirstChild("Islands")
+if not o then return nil end
+for p,q in ipairs(o:GetChildren())do
+if q:FindFirstChild(ah.Name)then return q end
 end
 return nil
 end
 
-local A=nil
-local B=nil
+local function o(p)
+local q=ah.Character and ah.Character:FindFirstChild("HumanoidRootPart")
+if not q then return nil end
 
-local function C()
-A=nil
-end
+local r,s=nil,math.huge
 
-local function D(E)
-if A and B==E then return A end
-local F={}
-for G,H in ipairs(E:GetDescendants())do
-local I=H:GetAttribute(f)
-if H:IsA("Model")and d[I]~=nil then
-table.insert(F,H)
-end
-end
-A=F
-B=E
-E.DescendantRemoving:Connect(C)
-return F
-end
+for t,u in ipairs(p:GetDescendants())do
 
-local function E(F)
-local G=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if not G then return nil end
-local H,I=nil,math.huge
-for J,K in ipairs(D(F))do
-local L=K:GetAttribute(f)
-if d[L]==true then
-local M=K:GetAttribute(g)
-if M and M>0 then
-local N=K.PrimaryPart or K:FindFirstChildWhichIsA("BasePart")
-if N then
-local O=(G.Position-N.Position).Magnitude
-if O<I then
-I=O
-H=K
+if u==as then continue end
+
+local v=u:GetAttribute(d)
+if u:IsA("Model")and b[v]==true then
+local w=u:GetAttribute(e)
+if w and w>0 then
+local x=u.PrimaryPart or u:FindFirstChildWhichIsA("BasePart")
+if x then
+local z=(q.Position-x.Position).Magnitude
+if z<s then
+s=z
+r=u
 end
 end
 end
 end
 end
-return H
+
+return r
 end
 
 
-
-
-
-local F=nil
-
-local function G()
-local H=am.object
-if not H or not H.controller then return false end
-if H.controller._silentAimInstalled then return true end
-
-local I=H.controller.GetTarget
-H.controller.GetTarget=function(J)
-if F and F.Parent then
-local K=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if K and(K.Position-F:GetPivot().Position).Magnitude<=10 then
-local L=F.PrimaryPart
-or F:FindFirstChildWhichIsA("BasePart")
-return F,{Position=L and L.Position or F:GetPivot().Position}
+local function p()
+local q,r=pcall(function()
+if not aq then return end
+local q=ak.GetLocal({"quickEquipment","Harvester"})
+if not q then return end
+if not ar then
+ar=true
+aj.Network:FireServer("QuickEquipment","Use","Harvester")
+end
+end)
+if not q then
+warn("[AutoHarvester] Error:",r)
 end
 end
-return I(J)
+
+local function q()
+ar=false
+
+as=nil
+task.wait(1.5)
+p()
+
+
+
 end
 
-H.controller._silentAimInstalled=true
-return true
+ak.BindLocal({"temporary","equippedEquipment"},function()
+local r=ak.GetLocal({"quickEquipment","Harvester"})
+local s=ak.GetLocal({"temporary","equippedEquipment"})
+if s~=r then
+ar=false
+task.wait(0.1)
+p()
+end
+end,true)
+
+if ah.Character then q()end
+ah.CharacterAdded:Connect(q)
+
+
+local r=nil
+
+local function s()
+if r then
+r:Disconnect()
+r=nil
+end
+l()
+h.Enabled=false
 end
 
-local function H(I)
-local J=am.object
-if not J or not J.controller then return false end
+local function t(u)
+local v=u.PrimaryPart or u:FindFirstChildWhichIsA("BasePart")
+if not v then return end
 
-F=I
-G()
+local w=u:GetAttribute(d)=="Erupted Deposit"
+local x=w and Vector3.new(0,10,0)or Vector3.new(0,2,4)
 
-local K=pcall(function()J:Activate()end)
-return K
+if r then
+r:Disconnect()
+r=nil
+end
+
+r=ae.Heartbeat:Connect(function()
+local z=ah.Character and ah.Character:FindFirstChild("HumanoidRootPart")
+if not z or not u.Parent then
+s()
+return
+end
+
+local A=CFrame.new(v.Position+x,v.Position)
+k(z)
+
+local C=A.Position-z.Position
+if C.Magnitude>0.1 then
+j.VectorVelocity=C.Unit*math.min(C.Magnitude*10,200)
+else
+j.VectorVelocity=Vector3.zero
+z.CFrame=A
+z.AssemblyLinearVelocity=Vector3.zero
+z.AssemblyAngularVelocity=Vector3.zero
+end
+end)
 end
 
 
@@ -7438,171 +6493,147 @@ task.spawn(function()
 while true do
 task.wait(1)
 
-if not ao or not aq or b then
-i=tick()
+if not am or not ao or as~=nil then
+g=tick()
 continue
 end
 
-local I=ai.Character
-local J=I and I:FindFirstChild("HumanoidRootPart")
-if not J then continue end
+local u=ah.Character
+local v=u and u:FindFirstChild("HumanoidRootPart")
+if not v then continue end
 
-if(J.Position-h).Magnitude>2 then
-h=J.Position
-i=tick()
-elseif tick()-i>as then
-local K=z()
-if K then
-local L=(K.Name=="Volcano Island")
-and an
-or(ad and ad[K.Name])
-if L and#L>0 then
-local M=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if M then
-
-local N=L[math.random(1,#L)]
-s(M,N.Position,nil)
+if(v.Position-f).Magnitude>2 then
+f=v.Position
+g=tick()
+elseif tick()-g>ap then
+local w=n()
+if w then
+local x=(w.Name=="Volcano Island")and al or IslandTeleports[w.Name]
+if x and#x>0 then
+local z=ah.Character and ah.Character:FindFirstChild("HumanoidRootPart")
+if z then
+m(z,x[math.random(1,#x)])
 end
 end
 end
-i=tick()
+g=tick()
 end
 end
 end)
 
 
-local I=nil
 
-local function J()
-if I then
-I:Disconnect()
-I=nil
-end
-p()
-b=false
-F=nil
-j.Enabled=false
-end
+
 
 task.spawn(function()
 while true do
 task.wait(0.3)
 
-if not ao then
-J()
+if not am then
+s()
+
+
+pcall(function()
+aj.Network:FireServer("Resource","Disengage")
+end)
 continue
 end
 
-local K=z()
-if not K then continue end
 
-local L=E(K)
-if not L then
-J()
+local u=ah.Character
+if not u or not u:FindFirstChild("HumanoidRootPart")then
 continue
 end
 
-local M=L.PrimaryPart or L:FindFirstChildWhichIsA("BasePart")
-if not M then continue end
+local v=n()
+if not v then continue end
 
-if ap then
-j.Adornee=L
-j.Enabled=true
+local w=o(v)
+if not w then continue end
+
+local x=w.PrimaryPart or w:FindFirstChildWhichIsA("BasePart")
+if not x then continue end
+
+if an then
+h.Adornee=w
+h.Enabled=true
 end
 
-local N=L:GetAttribute(f)=="Erupted Deposit"
-local O=N and Vector3.new(0,10,0)or Vector3.new(0,2,2)
 
-J()
+t(w)
 
 
+as=w
 
 
-if N then
-task.wait(3)
-if not L.Parent or(L:GetAttribute(g)or 0)<=0 then continue end
-end
-
-b=true
 
 
-I=af.Heartbeat:Connect(function()
-local P=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if not P then J();return end
-
-if not L or not L.Parent or(L:GetAttribute(g)or 0)<=0 then
-J()
-return
-end
-
-local Q=M.Position+O
-o(P)
-
-local R=Q-P.Position
-local S=R.Magnitude
-
-if S<=n then
-l.VectorVelocity=Vector3.zero
-else
-l.VectorVelocity=R.Unit*math.min(S*10,m)
-end
+local z,A,C=pcall(function()
+return aj.Network:InvokeServer("Resource","Engage",w)
 end)
 
 
-local P=L:GetAttribute(g)
+s()
+as=nil
 
-while ao
-and L.Parent
-and(L:GetAttribute(g)or 0)>0
-and d[L:GetAttribute(f)]==true
-do
-H(L)
+if not z then
 
 
-local Q=tick()
-while tick()-Q<5 do
-task.wait(0.05)
-if not L.Parent or(L:GetAttribute(g)or 0)<=0 then break end
-local R=L:GetAttribute(g)
-if R~=P then
-P=R
-break
-end
+warn("[Automine] Engage pcall error:",A)
+task.wait(1)
+continue
 end
 
-if ar>0 then
-task.wait(ar)
+
+if not A then
+
+if C then
+warn("[Automine] Engage rejected:",C)
 end
+task.wait(0.5)
 end
 
-J()
+
 end
 end)
 
 
 return{
-setEnabled=function(K)
-ao=K
-if not K then J()end
+setEnabled=function(u)
+am=u
+if not u then
+s()
+pcall(function()
+aj.Network:FireServer("Resource","Disengage")
+end)
+as=nil
+end
 end,
-setPickaxeEnabled=function(K)
-at=K
-if K then x()end
+setPickaxeEnabled=function(u)
+aq=u
+if u then p()end
 end,
-isEnabled=function()return ao end,
-setHighlight=function(K)
-ap=K
-if not K then j.Enabled=false end
+isEnabled=function()
+return am
 end,
-setRandomTeleport=function(K)aq=K end,
-setIdleThreshold=function(K)as=tonumber(K)or 5 end,
-setClickCooldown=function(K)ar=tonumber(K)or 0.05 end,
-setOreTarget=function(K,L)
-if d[K]~=nil then d[K]=L end
+setHighlight=function(u)
+an=u
+if not u then h.Enabled=false end
 end,
-getOreValues=function()return e end,
-setNoclip=function(K)w(K)end,
-isNoclipEnabled=function()return c end,
+setRandomTeleport=function(u)
+ao=u
+end,
+setIdleThreshold=function(u)
+ap=tonumber(u)or 5
+end,
+setOreTarget=function(u,v)
+if b[u]~=nil then
+b[u]=v
+end
+end,
+getOreValues=function()
+return c
+end,
 }
 end
 
@@ -7736,17 +6767,17 @@ for ap,aq in ipairs(am:GetChildren())do
 if aq:FindFirstChild(ac.Name)then
 for ar,as in ipairs(aq:GetDescendants())do
 if as:IsA("Model")then
-local at=as:FindFirstChild("HumanoidRootPart")
-local au=as:FindFirstChildOfClass("Humanoid")
+local b=as:FindFirstChild("HumanoidRootPart")
+local c=as:FindFirstChildOfClass("Humanoid")
 
-if at and au and(
+if b and c and(
 as:FindFirstChildWhichIsA("AlignPosition")or
 as:FindFirstChildWhichIsA("AlignOrientation")
 )then
-local b=(al.Position-at.Position).Magnitude
-if b<ao then
-ao=b
-an=au
+local d=(al.Position-b.Position).Magnitude
+if d<ao then
+ao=d
+an=c
 end
 end
 end
@@ -7850,276 +6881,281 @@ local an=game:GetService("Players")
 local ao=an.LocalPlayer
 
 
-local ap,aq,ar,as,at,au
+local ap,aq,ar,as,b,c
 
-local function b()
+local function d()
 if aq then return true end
 
-local c=game:GetService("ReplicatedStorage")
-local d,e=pcall(require,c.References)
-if not d then warn("[CC] References not found:",e);return false end
+local e=game:GetService("ReplicatedStorage")
+local f,g=pcall(require,e.References)
+if not f then warn("[CC] References not found:",g);return false end
 
-ap=e
+ap=g
 aq=ap.Utilities.Network
 ar=ap.Utilities.Time
 
-local f=ao.PlayerScripts:FindFirstChild("RidingHandler",true)
-if not f then warn("[CC] RidingHandler not found");return false end
-as=require(f)
+local h=ao.PlayerScripts:FindFirstChild("RidingHandler",true)
+if not h then warn("[CC] RidingHandler not found");return false end
+as=require(h)
 
-local g=ao.PlayerScripts:FindFirstChild("CheckpointActivityHandler",true)
-if not g then warn("[CC] CheckpointActivityHandler not found");return false end
-at=require(g)
+local i=ao.PlayerScripts:FindFirstChild("CheckpointActivityHandler",true)
+if not i then warn("[CC] CheckpointActivityHandler not found");return false end
+b=require(i)
 
-local h,i=pcall(function()
+local j,k=pcall(function()
 return workspace.Islands["Training Island"]["Cross Country"].CheckpointActivity
 end)
-if not h then warn("[CC] CheckpointActivity model not found:",i);return false end
-au=i
+if not j then warn("[CC] CheckpointActivity model not found:",k);return false end
+c=k
 
 return true
 end
 
 
-local c={"Collision","BallCollision","HumanoidRootPart"}
-local d={"LowerTorso","UpperTorso"}
-local e={}
-
-local function f(g)
-for h,i in e do pcall(function()i:Disconnect()end)end
-e={}
-if not ak or not g then return end
-
-for h,i in c do
-local j=g.instance:FindFirstChild(i,true)
-if j and j:IsA("BasePart")then
-j.CanCollide=false
-table.insert(e,j:GetPropertyChangedSignal("CanCollide"):Connect(function()
-if ak and j.CanCollide then j.CanCollide=false end
-end))
-end
-end
-
-local h=ao.Character
-if h then
-for i,j in d do
-local k=h:FindFirstChild(j,true)
-if k and k:IsA("BasePart")then
-k.CanCollide=false
-table.insert(e,k:GetPropertyChangedSignal("CanCollide"):Connect(function()
-if ak and k.CanCollide then k.CanCollide=false end
-end))
-end
-end
-end
-end
-
-local function g(h)
-for i,j in e do pcall(function()j:Disconnect()end)end
-e={}
-if not h then return end
-for i,j in c do
-local k=h.instance:FindFirstChild(j,true)
-if k and k:IsA("BasePart")then k.CanCollide=true end
-end
-local i=ao.Character
-if i then
-for j,k in d do
-local l=i:FindFirstChild(k,true)
-if l and l:IsA("BasePart")then l.CanCollide=true end
-end
-end
-end
-
+local e={"Collision","BallCollision","HumanoidRootPart"}
+local f={"LowerTorso","UpperTorso"}
+local g={}
 
 local function h(i)
-local j=Instance.new("Attachment")
-j.Parent=i
-local k=Instance.new("LinearVelocity")
-k.Attachment0=j
-k.MaxForce=1e6
-k.RelativeTo=Enum.ActuatorRelativeTo.World
-k.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-k.VectorVelocity=Vector3.zero
-k.Parent=i
-return k,j
+for j,k in g do pcall(function()k:Disconnect()end)end
+g={}
+if not ak or not i then return end
+
+for j,k in e do
+local l=i.instance:FindFirstChild(k,true)
+if l and l:IsA("BasePart")then
+l.CanCollide=false
+table.insert(g,l:GetPropertyChangedSignal("CanCollide"):Connect(function()
+if ak and l.CanCollide then l.CanCollide=false end
+end))
+end
+end
+
+local j=ao.Character
+if j then
+for k,l in f do
+local m=j:FindFirstChild(l,true)
+if m and m:IsA("BasePart")then
+m.CanCollide=false
+table.insert(g,m:GetPropertyChangedSignal("CanCollide"):Connect(function()
+if ak and m.CanCollide then m.CanCollide=false end
+end))
+end
+end
+end
+end
+
+local function i(j)
+for k,l in g do pcall(function()l:Disconnect()end)end
+g={}
+if not j then return end
+for k,l in e do
+local m=j.instance:FindFirstChild(l,true)
+if m and m:IsA("BasePart")then m.CanCollide=true end
+end
+local k=ao.Character
+if k then
+for l,m in f do
+local n=k:FindFirstChild(m,true)
+if n and n:IsA("BasePart")then n.CanCollide=true end
+end
+end
 end
 
 
-local function i()
+local function j(k)
+local l=Instance.new("Attachment")
+l.Parent=k
+local m=Instance.new("LinearVelocity")
+m.Attachment0=l
+m.MaxForce=1e6
+m.RelativeTo=Enum.ActuatorRelativeTo.World
+m.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+m.VectorVelocity=Vector3.zero
+m.Parent=k
+return m,l
+end
+
+
+local function k()
 return as and as.GetCurrentMount and as.GetCurrentMount()
 end
 
-local function j(k)
-return k and k.instance and k.instance:FindFirstChild("HumanoidRootPart")
+local function l(m)
+return m and m.instance and m.instance:FindFirstChild("HumanoidRootPart")
 end
 
-local function k()
-local l={}
-for m,n in workspace:GetDescendants()do
-if n:IsA("Part")
-and n.Shape==Enum.PartType.Ball
-and n.Transparency==1
-and n.Anchored
-and not n.CanCollide
-and n:FindFirstChildOfClass("TouchTransmitter")
-and n:GetFullName():find("Cross Country")then
-table.insert(l,n)
+local function m()
+local n={}
+for o,p in workspace:GetDescendants()do
+if p:IsA("Part")
+and p.Shape==Enum.PartType.Ball
+and p.Transparency==1
+and p.Anchored
+and not p.CanCollide
+and p:FindFirstChildOfClass("TouchTransmitter")
+and p:GetFullName():find("Cross Country")then
+table.insert(n,p)
 end
 end
-local m=workspace:FindFirstChild("Part")
-if m and m:IsA("Part")and m:FindFirstChildOfClass("TouchTransmitter")then
-table.insert(l,m)
+local o=workspace:FindFirstChild("Part")
+if o and o:IsA("Part")and o:FindFirstChildOfClass("TouchTransmitter")then
+table.insert(n,o)
 end
-return l
-end
-
-local function l(m,n)
-local o,p=nil,math.huge
-for q,r in n do
-local s=(r.Position-m).Magnitude
-if s<p then o,p=r,s end
-end
-return o,p
+return n
 end
 
-local function m(n,o)
-if o:FindFirstChildOfClass("TouchTransmitter")then
-firetouchinterest(n,o,0)
+local function n(o,p)
+local q,r=nil,math.huge
+for s,t in p do
+local u=(t.Position-o).Magnitude
+if u<r then q,r=t,u end
+end
+return q,r
+end
+
+local function o(p,q)
+if q:FindFirstChildOfClass("TouchTransmitter")then
+firetouchinterest(p,q,0)
 end
 end
 
 
-local n,o,p,q,r,s
-local t=false
-
-local function u()
-t=false
-if p then pcall(function()p:Disconnect()end);p=nil end
-if q then pcall(function()q:Disconnect()end);q=nil end
-if n then
-pcall(function()n.VectorVelocity=Vector3.zero;n:Destroy()end)
-n=nil
-end
-if o then
-pcall(function()o:Destroy()end)
-o=nil
-end
-g(s)
-s=nil
-end
-
-local function v()
-aq:FireServer("CheckpointActivity","TriggerInteractable",au)
-task.wait(2)
-r=0
-end
+local p,q,r,s,t,u
+local v=false
 
 local function w()
-if t then return end
-if not b()then
+v=false
+if r then pcall(function()r:Disconnect()end);r=nil end
+if s then pcall(function()s:Disconnect()end);s=nil end
+if p then
+pcall(function()p.VectorVelocity=Vector3.zero;p:Destroy()end)
+p=nil
+end
+if q then
+pcall(function()q:Destroy()end)
+q=nil
+end
+i(u)
+u=nil
+print("[CC] Stopped.")
+end
+
+local function x()
+aq:FireServer("CheckpointActivity","TriggerInteractable",c)
+print("[CC] TriggerInteractable fired")
+task.wait(2)
+t=0
+end
+
+local function z()
+if v then return end
+if not d()then
 warn("[CC] Cannot start — refs failed to resolve")
 return
 end
 
-local x=i()
-if not x then warn("[CC] Mount up before enabling");return end
-local y=j(x)
-if not y then warn("[CC] No HumanoidRootPart on mount");return end
+local A=k()
+if not A then warn("[CC] Mount up before enabling");return end
+local C=l(A)
+if not C then warn("[CC] No HumanoidRootPart on mount");return end
 
-s=x
-t=true
-r=0
-n,o=h(y)
+u=A
+v=true
+t=0
+p,q=j(C)
 
-f(x)
-v()
+h(A)
+x()
 
 
-q=at.ActivityChanged:Connect(function()
-if not t then return end
+s=b.ActivityChanged:Connect(function()
+if not v then return end
 task.wait(0.3)
-if at.currentObject==nil then
-if n then n.VectorVelocity=Vector3.zero end
+if b.currentObject==nil then
+print("[CC] Activity ended — restarting in",aj,"s")
+if p then p.VectorVelocity=Vector3.zero end
 task.wait(aj)
-if t and ac then
-local z=i()
-if z then f(z)end
-v()
+if v and ac then
+local D=k()
+if D then h(D)end
+x()
 end
 end
 end)
 
 
-p=am.Heartbeat:Connect(function()
-if not ac or not t then
-if n then n.VectorVelocity=Vector3.zero end
+r=am.Heartbeat:Connect(function()
+if not ac or not v then
+if p then p.VectorVelocity=Vector3.zero end
 return
 end
 
-local z=i()
-if not z then if n then n.VectorVelocity=Vector3.zero end;return end
-local A=j(z)
-if not A then if n then n.VectorVelocity=Vector3.zero end;return end
+local D=k()
+if not D then if p then p.VectorVelocity=Vector3.zero end;return end
+local E=l(D)
+if not E then if p then p.VectorVelocity=Vector3.zero end;return end
 
 
-local B=os.clock()
-if B-r>=ai then
-r=B
-z.lastTimeJumped=ar.Get()
+local F=os.clock()
+if F-t>=ai then
+t=F
+D.lastTimeJumped=ar.Get()
 end
 
-local C=A.Position
-local D=k()
-local E,F=l(C,D)
+local G=E.Position
+local H=m()
+local I,J=n(G,H)
 
-if not E then
-if n then n.VectorVelocity=Vector3.zero end
+if not I then
+if p then p.VectorVelocity=Vector3.zero end
 return
 end
 
 if al then
+print(string.format("[CC] %s | %.1f studs",I.Name,J))
 end
 
-local G=E.Position
-local H=F<=af and ae or 0
-local I=(Vector3.new(G.X,G.Y+H,G.Z)-C).Unit
-n.VectorVelocity=I*ad
+local K=I.Position
+local L=J<=af and ae or 0
+local M=(Vector3.new(K.X,K.Y+L,K.Z)-G).Unit
+p.VectorVelocity=M*ad
 
-if F<=ah then
-m(A,E)
+if J<=ah then
+o(E,I)
 end
 end)
 
+print("[CC] Running.")
 end
 
 
 return{
-setEnabled=function(x)
-ac=x
-if x and not t then
+setEnabled=function(A)
+ac=A
+if A and not v then
+z()
+elseif not A and v then
 w()
-elseif not x and t then
-u()
 end
 end,
 
-setNoclip=function(x)
-ak=x
-if t then
-local y=i()
-if x then f(y)else g(y)end
+setNoclip=function(A)
+ak=A
+if v then
+local C=k()
+if A then h(C)else i(C)end
 end
 end,
 
-setMoveSpeed=function(x)ad=x end,
-setYBias=function(x)ae=x end,
-setCloseDist=function(x)af=x end,
-setTriggerDist=function(x)ah=x end,
-setJumpInterval=function(x)ai=x end,
-setRetriggerDelay=function(x)aj=x end,
-setDebug=function(x)al=x end,
-stop=u,
+setMoveSpeed=function(A)ad=A end,
+setYBias=function(A)ae=A end,
+setCloseDist=function(A)af=A end,
+setTriggerDist=function(A)ah=A end,
+setJumpInterval=function(A)ai=A end,
+setRetriggerDelay=function(A)aj=A end,
+setDebug=function(A)al=A end,
+stop=w,
 }
 end
 
@@ -8169,16 +7205,16 @@ end
 
 an=ar.Utilities.Network
 
-local as,at=pcall(function()
+local as,b=pcall(function()
 return workspace.Islands["Carnival Island"].Pier.Games["Whack A Larry"]["Whack a Larry Minigame"]
 end)
-if not as or not at then
-warn("[WAL] Game object not found:",at)
-ab:Notify("Game object not found:",at,2)
+if not as or not b then
+warn("[WAL] Game object not found:",b)
+ab:Notify("Game object not found:",b,2)
 return false
 end
 
-ao=at
+ao=b
 return true
 end
 
@@ -8203,11 +7239,11 @@ end
 if ai then ab:Notify("Play Accepted - waiting",ae,2)end
 
 
-local at=0
-while at<ae do
+local b=0
+while b<ae do
 if not al or not ad then return false end
 task.wait(0.5)
-at+=0.5
+b+=0.5
 end
 
 if not al or not ad then return false end
@@ -8216,12 +7252,12 @@ if ai then print("[WAL] Invoking End(true,",ah,")")end
 
 
 
-local au,b=pcall(function()
+local c,d=pcall(function()
 return an:InvokeServer("Minigame","End",true,ah)
 end)
 
-if not au then
-warn("[WAL] End error:",b)
+if not c then
+warn("[WAL] End error:",d)
 elseif ai then
 
 end
@@ -8240,11 +7276,11 @@ if not al or not ad then break end
 
 if as then
 if ai then print("[WAL] Cooldown:",af,"s")end
-local at=0
-while at<af do
+local b=0
+while b<af do
 if not al or not ad then break end
 task.wait(0.5)
-at+=0.5
+b+=0.5
 end
 else
 
@@ -8264,24 +7300,24 @@ end
 
 
 return{
-setEnabled=function(at)
-ad=at
-if at and not al then
+setEnabled=function(b)
+ad=b
+if b and not al then
 if not ap()then
 warn("[WAL] Cannot start — refs failed")
 ad=false
 return
 end
 ar()
-elseif not at and al then
+elseif not b and al then
 as()
 end
 end,
 
-setGameDuration=function(at)ae=at end,
-setLoopCooldown=function(at)af=at end,
-setClaimedScore=function(at)ah=at end,
-setDebug=function(at)ai=at end,
+setGameDuration=function(b)ae=b end,
+setLoopCooldown=function(b)af=b end,
+setClaimedScore=function(b)ah=b end,
+setDebug=function(b)ai=b end,
 stop=as,
 }
 end
@@ -8317,311 +7353,312 @@ local ap=game:GetService("RunService")
 local aq=game:GetService("Players")
 local ar=game:GetService("VirtualUser")
 local as=aq.LocalPlayer
-local at=workspace.CurrentCamera
+local b=workspace.CurrentCamera
 
 
-local au=false
-local b=nil
 local c=false
-local d=0
-local e={}
+local d=nil
+local e=false
+local f=0
+local g={}
 
 
-local f,g,h,i
+local h,i,j,k
 
-local function j()
-if g then return true end
+local function l()
+if i then return true end
 
-local k,l=pcall(require,game:GetService("ReplicatedStorage").References)
-if not k then warn("[AT] References failed:",l);return false end
-f=l
-g=f.Utilities
+local m,n=pcall(require,game:GetService("ReplicatedStorage").References)
+if not m then warn("[AT] References failed:",n);return false end
+h=n
+i=h.Utilities
 
-local m=as.PlayerScripts:FindFirstChild("Data",true)
-if not m then warn("[AT] Data not found");return false end
-local n,o=pcall(require,m)
-if not n then warn("[AT] Data require failed:",o);return false end
-h=o
+local o=as.PlayerScripts:FindFirstChild("Data",true)
+if not o then warn("[AT] Data not found");return false end
+local p,q=pcall(require,o)
+if not p then warn("[AT] Data require failed:",q);return false end
+j=q
 
-local p=as.PlayerScripts:FindFirstChild("CharacterHandler",true)
-if not p then warn("[AT] CharacterHandler not found");return false end
-local q,r=pcall(require,p)
-if not q then warn("[AT] CharacterHandler require failed:",r);return false end
-i=r
+local r=as.PlayerScripts:FindFirstChild("CharacterHandler",true)
+if not r then warn("[AT] CharacterHandler not found");return false end
+local s,t=pcall(require,r)
+if not s then warn("[AT] CharacterHandler require failed:",t);return false end
+k=t
 
 return true
 end
 
 
-local k={"LowerTorso","UpperTorso","HumanoidRootPart"}
+local m={"LowerTorso","UpperTorso","HumanoidRootPart"}
 
-local function l()
-for m,n in e do pcall(function()n:Disconnect()end)end
-e={}
+local function n()
+for o,p in g do pcall(function()p:Disconnect()end)end
+g={}
 if not an then return end
 
-local m=as.Character
-if not m then return end
+local o=as.Character
+if not o then return end
 
-for n,o in k do
-local p=m:FindFirstChild(o,true)
-if p and p:IsA("BasePart")then
-p.CanCollide=false
-table.insert(e,p:GetPropertyChangedSignal("CanCollide"):Connect(function()
-if an and p.CanCollide then
-p.CanCollide=false
+for p,q in m do
+local r=o:FindFirstChild(q,true)
+if r and r:IsA("BasePart")then
+r.CanCollide=false
+table.insert(g,r:GetPropertyChangedSignal("CanCollide"):Connect(function()
+if an and r.CanCollide then
+r.CanCollide=false
 end
 end))
 end
 end
 end
 
-local function m()
-for n,o in e do pcall(function()o:Disconnect()end)end
-e={}
+local function o()
+for p,q in g do pcall(function()q:Disconnect()end)end
+g={}
 
-local n=as.Character
-if not n then return end
-for o,p in k do
-local q=n:FindFirstChild(p,true)
-if q and q:IsA("BasePart")then q.CanCollide=true end
+local p=as.Character
+if not p then return end
+for q,r in m do
+local s=p:FindFirstChild(r,true)
+if s and s:IsA("BasePart")then s.CanCollide=true end
 end
 end
 
 
 as.CharacterAdded:Connect(function()
 task.wait(1.5)
-c=false
-d=0
-if an then l()end
+e=false
+f=0
+if an then n()end
 end)
 
 
-local function n(o)
-local p=as.Character
-if not p then return end
-local q=p:FindFirstChild("HumanoidRootPart")
-if not q then return end
+local function p(q)
+local r=as.Character
+if not r then return end
+local s=r:FindFirstChild("HumanoidRootPart")
+if not s then return end
 
-local r=p:FindFirstChildOfClass("Humanoid")
-if r then r.PlatformStand=true end
+local t=r:FindFirstChildOfClass("Humanoid")
+if t then t.PlatformStand=true end
 
-local s=Instance.new("Attachment")
-s.Parent=q
+local u=Instance.new("Attachment")
+u.Parent=s
 
-local t=Instance.new("LinearVelocity")
-t.Attachment0=s
-t.MaxForce=1e6
-t.RelativeTo=Enum.ActuatorRelativeTo.World
-t.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-t.VectorVelocity=Vector3.zero
-t.Parent=q
+local v=Instance.new("LinearVelocity")
+v.Attachment0=u
+v.MaxForce=1e6
+v.RelativeTo=Enum.ActuatorRelativeTo.World
+v.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+v.VectorVelocity=Vector3.zero
+v.Parent=s
 
-local u=false
+local w=false
 
-local v=ap.Heartbeat:Connect(function()
-local v=as.Character and as.Character:FindFirstChild("HumanoidRootPart")
-if not v or not t.Parent then u=true;return end
+local x=ap.Heartbeat:Connect(function()
+local x=as.Character and as.Character:FindFirstChild("HumanoidRootPart")
+if not x or not v.Parent then w=true;return end
 
-local w=o-v.Position
-local x=w.Magnitude
+local z=q-x.Position
+local A=z.Magnitude
 
-if x<am then
-t.VectorVelocity=Vector3.zero
-u=true
+if A<am then
+v.VectorVelocity=Vector3.zero
+w=true
 else
-t.VectorVelocity=w.Unit*math.min(x*8,al)
+v.VectorVelocity=z.Unit*math.min(A*8,al)
 end
 end)
 
-local w=tick()+8
-while not u and tick()<w do
+local z=tick()+8
+while not w and tick()<z do
 task.wait(0.05)
 end
 
-v:Disconnect()
-t:Destroy()
-s:Destroy()
-if r then r.PlatformStand=false end
+x:Disconnect()
+v:Destroy()
+u:Destroy()
+if t then t.PlatformStand=false end
 
 
-if an then l()end
+if an then n()end
 end
 
-local function o(p)
-n(p+Vector3.new(0,4,0))
-end
-
-
-local function p()
-if c then return end
-local q=tick()
-if(q-d)<ae then return end
-
-local r,s=pcall(function()
-local r=h.GetLocal({"quickEquipment","Tool"})
-if not r then return end
-
-local s=h.GetLocal({"temporary","equippedEquipment"})
-if tostring(s)==tostring(r)then return end
-
-c=true
-d=tick()
-
-for t=1,af do
-g.Network:FireServer("QuickEquipment","Use","Tool")
-task.wait(ah)
-local u=h.GetLocal({"temporary","equippedEquipment"})
-if tostring(u)==tostring(r)then break end
-end
-
-c=false
-end)
-
-if not r then
-c=false
-warn("[AT] equipShovel error:",s)
-end
-end
-
-local function q()
-pcall(function()
-g.Network:FireServer(
-"Inventory","Use",
-h.GetLocal({"quickEquipment","Tool"}),
-"Unequip"
-)
-end)
-task.wait(0.4)
-c=false
-d=0
-p()
-task.wait(0.4)
+local function q(r)
+p(r+Vector3.new(0,4,0))
 end
 
 
 local function r()
-local s,t=pcall(function()
-return g.Network:InvokeServer("BuriedTreasure","GetPoint")
+if e then return end
+local s=tick()
+if(s-f)<ae then return end
+
+local t,u=pcall(function()
+local t=j.GetLocal({"quickEquipment","Tool"})
+if not t then return end
+
+local u=j.GetLocal({"temporary","equippedEquipment"})
+if tostring(u)==tostring(t)then return end
+
+e=true
+f=tick()
+
+for v=1,af do
+i.Network:FireServer("QuickEquipment","Use","Tool")
+task.wait(ah)
+local w=j.GetLocal({"temporary","equippedEquipment"})
+if tostring(w)==tostring(t)then break end
+end
+
+e=false
 end)
-if s and t then return t end
+
+if not t then
+e=false
+warn("[AT] equipShovel error:",u)
+end
+end
+
+local function s()
+pcall(function()
+i.Network:FireServer(
+"Inventory","Use",
+j.GetLocal({"quickEquipment","Tool"}),
+"Unequip"
+)
+end)
+task.wait(0.4)
+e=false
+f=0
+r()
+task.wait(0.4)
+end
+
+
+local function t()
+local u,v=pcall(function()
+return i.Network:InvokeServer("BuriedTreasure","GetPoint")
+end)
+if u and v then return v end
 return nil
 end
 
 
 
-local function s(t)
+local function u(v)
 pcall(function()
-local u=at.ViewportSize
-local v=Vector2.new(u.X/2,u.Y/2)
-for w=1,t do
-ar:ClickButton1(v,at.CFrame)
+local w=b.ViewportSize
+local x=Vector2.new(w.X/2,w.Y/2)
+for z=1,v do
+ar:ClickButton1(x,b.CFrame)
 task.wait(ak)
 end
 end)
 end
 
 
-local function t()
-au=true
+local function v()
+c=true
 
-if an then l()end
+if an then n()end
 
-b=task.spawn(function()
-while au and ac do
+d=task.spawn(function()
+while c and ac do
 task.wait(ad)
 
 
-p()
+r()
 task.wait(0.6)
 
 
-local u=nil
-local v=0
+local w=nil
+local x=0
 
-while not u and v<10 do
-if not au or not ac then break end
-u=r()
-if not u then
-v+=1
-q()
+while not w and x<10 do
+if not c or not ac then break end
+w=t()
+if not w then
+x+=1
+s()
 task.wait(0.5)
 end
 end
 
-if not u then
+if not w then
 if ao then print("[AT] No treasure point found — retrying")end
 task.wait(1)
 continue
 end
 
-if ao then print("[AT] Treasure at",tostring(u))end
+if ao then print("[AT] Treasure at",tostring(w))end
 
 
-o(u)
+q(w)
 
 
-if not i.object:InRange(u,ai)then
+if not k.object:InRange(w,ai)then
 if ao then print("[AT] Not in range — re-teleporting")end
-o(u)
+q(w)
 end
 
 
-q()
-q()
+s()
+s()
 task.wait(0.3)
 
 
-s(aj)
+u(aj)
 task.wait(1.5)
 
 
-q()
+s()
 task.wait(1)
 end
 
-au=false
+c=false
 if ao then print("[AT] Loop exited.")end
 end)
 end
 
-local function u()
-au=false
-b=nil
-m()
+local function w()
+c=false
+d=nil
+o()
+print("[AT] Stopped.")
 end
 
 
 return{
-setEnabled=function(v)
-ac=v
-if v and not au then
-if not j()then
+setEnabled=function(x)
+ac=x
+if x and not c then
+if not l()then
 warn("[AT] Cannot start — refs failed")
 ac=false
 return
 end
-t()
-elseif not v and au then
-u()
+v()
+elseif not x and c then
+w()
 end
 end,
 
-setNoclip=function(v)
-an=v
-if au then
-if v then l()else m()end
+setNoclip=function(x)
+an=x
+if c then
+if x then n()else o()end
 end
 end,
 
-setDigClicks=function(v)aj=v end,
-setDigClickDelay=function(v)ak=v end,
-setDigRange=function(v)ai=v end,
-setTeleSpeed=function(v)al=v end,
-setPollInterval=function(v)ad=v end,
-setEquipCooldown=function(v)ae=v end,
-setDebug=function(v)ao=v end,
-stop=u,
+setDigClicks=function(x)aj=x end,
+setDigClickDelay=function(x)ak=x end,
+setDigRange=function(x)ai=x end,
+setTeleSpeed=function(x)al=x end,
+setPollInterval=function(x)ad=x end,
+setEquipCooldown=function(x)ae=x end,
+setDebug=function(x)ao=x end,
+stop=w,
 }
 end
 
@@ -8635,26 +7672,25 @@ local ae=a.d()
 local af=a.e()
 local ah=a.f()
 local ai=a.h()
-local aj=a.i()
-local ak=aj(m_References,IslandTeleports)
-local al=a.j()
-local am=a.k()
-local an=a.g()
-local ao=a.l()
-local ap=ao()
-local aq=a.m()
-local ar=aq()
-local as=a.n()
-local at=as()
+local aj=a.i()(m_References)
+local ak=a.j()
+local al=a.k()
+local am=a.g()
+local an=a.l()
+local ao=an()
+local ap=a.m()
+local aq=ap()
+local ar=a.n()
+local as=ar()
 
-local au=getgenv().Options
-local b=getgenv().Toggles
+local b=getgenv().Options
+local c=getgenv().Toggles
 
 ab.ShowToggleFrameInKeybinds=true
 ab.ShowCustomCursor=true
 ab.NotifySide="Left"
 
-local c=ab:CreateWindow({
+local d=ab:CreateWindow({
 
 
 
@@ -8672,17 +7708,16 @@ ShowCustomCursor=true,
 UnlockMouseWhileOpen=true,
 NotifySide="Left",
 TabPadding=8,
-Size=UDim2.new(0,558,0,482),
 MenuFadeTime=0.2
 })
 
-local d=game:GetService("Players").LocalPlayer
-local e=game:GetService("VirtualUser")
+local e=game:GetService("Players").LocalPlayer
+local f=game:GetService("VirtualUser")
 
-d.Idled:Connect(function()
-e:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+e.Idled:Connect(function()
+f:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 task.wait(1)
-e:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+f:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
 
@@ -8691,162 +7726,149 @@ end)
 
 
 
-local f={
+local g={
 
-IlovemyWife=c:AddTab("Home"),
-Main=c:AddTab("Automation"),
-HorseRender=c:AddTab("Render"),
-Misc=c:AddTab("Misc"),
-["UI Settings"]=c:AddTab("UI Settings"),
+IlovemyWife=d:AddTab("<ZEE3"),
+Main=d:AddTab("Automation"),
+HorseRender=d:AddTab("Render"),
+Misc=d:AddTab("Misc"),
+["UI Settings"]=d:AddTab("UI Settings"),
 }
 
-local g=f.IlovemyWife:AddLeftGroupbox("Information")
+local h=g.IlovemyWife:AddLeftGroupbox("Information")
 
-local h=f.IlovemyWife:AddRightGroupbox("Session Information")
+local i=g.IlovemyWife:AddRightGroupbox("Session Information")
 
-local i=tick()
-local j=h:AddLabel('Time Played: 0s')
+local j=tick()
+local k=i:AddLabel('Time Played: 0s')
 
 task.spawn(function()
 while true do
 task.wait(1)
 
-local k=math.floor(tick()-i)
+local l=math.floor(tick()-j)
 
-local l=math.floor(k/3600)
-local m=math.floor((k%3600)/60)
-local n=k%60
+local m=math.floor(l/3600)
+local n=math.floor((l%3600)/60)
+local o=l%60
 
-j:SetText(string.format(
+k:SetText(string.format(
 "Time Played: %02dh %02dm %02ds",
-l,m,n
+m,n,o
 ))
 end
 end)
 
-local k=h:AddLabel('Coins Earned: 0')
-
-task.spawn(function()
-while true do
-task.wait(2)
-local l=ai.getStats()
-k:SetText(string.format("Coins Earned: %d",l.coins))
-end
-end)
-
-local l=h:AddLabel('Horses Captured: 0')
+local l=i:AddLabel('Coins Earned: 0')
 
 task.spawn(function()
 while true do
 task.wait(2)
 local m=ai.getStats()
-l:SetText(string.format("Horses Captured: %d",m.captures))
+l:SetText(string.format("Coins Earned: %d",m.coins))
 end
 end)
 
-local m=f.Main:AddLeftTabbox()
+local m=i:AddLabel('Horses Captured: 0')
 
-local n=m:AddTab("Horses")
-local o=m:AddTab("Sell")
-local p=m:AddTab("Lassos")
+task.spawn(function()
+while true do
+task.wait(2)
+local n=ai.getStats()
+m:SetText(string.format("Horses Captured: %d",n.captures))
+end
+end)
 
-n:AddToggle('Autofarm_Enable',{
+local n=g.Main:AddLeftTabbox()
+
+local o=n:AddTab("Horses")
+local p=n:AddTab("Sell")
+local q=n:AddTab("Lassos")
+
+o:AddToggle('Autofarm_Enable',{
 Text='Enable',
 Default=false,
 Tooltip='Enables Autofarm',
 
-Callback=function(q)
-ae.setEnabled(q)
+Callback=function(r)
+ae.setEnabled(r)
 end
 })
 
-n:AddToggle('CatureHerds',{
+o:AddToggle('CatureHerds',{
 Text='Capture Herds',
 Default=false,
 Tooltip='Enables Capture Herds',
 
-Callback=function(q)
-ae.setWildherd(q)
+Callback=function(r)
+ae.setWildherd(r)
 end
 })
 
-n:AddToggle("AutoLasso",{
-Text="Lasso",
+o:AddToggle('AutoLasso',{
+Text='Lasso',
 Default=false,
-Tooltip="sloppy joe",
-Callback=function(q)
-af.setEnabled(q)
-end,
+Tooltip='Equips lasso for you',
+
+Callback=function(r)
+af.setEnabled(r)
+end
 })
 
-n:AddToggle('AutoCapture',{
+o:AddToggle('AutoCapture',{
 Text='Capture',
 Default=false,
 Tooltip='Clicks the horse to capture',
 
-Callback=function(q)
-ah.setEnabled(q)
+Callback=function(r)
+ah.setEnabled(r)
 end
 })
 
-n:AddSlider('CaptureRate',{
+o:AddSlider('CaptureRate',{
 Text='Capture Rate',
 Default=0.1,
-Min=1,
+Min=0.05,
 Max=5,
 Rounding=2,
 Compact=true,
 HideMax=true,
 
-Callback=function(q)
-ah.setDuration(q)
+Callback=function(r)
+ah.setDuration(r)
 end
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-n:AddToggle('autotravel',{
+o:AddToggle('autotravel',{
 Text='Travel',
 Default=false,
 Tooltip='type shit',
 
-Callback=function(q)
-ae.setAutotravel(q)
+Callback=function(r)
+ae.setAutotravel(r)
 end
 })
 
 
-local q=ae.autofarm_islands or{}
-local r={}
+local r=ae.autofarm_islands or{}
+local s={}
 
 
-for s,t in pairs(q)do
-table.insert(r,s)
+for t,u in pairs(r)do
+table.insert(s,t)
 end
 
 
-n:AddDropdown("IslandSelection",{
+o:AddDropdown("IslandSelection",{
 Text="Select Islands",
-Values=r,
+Values=s,
 Default={},
 Multi=true,
 Tooltip="Select Islands type shit",
 
-Callback=function(s)
-for t,u in pairs(s)do
-ae.setIsland(t,u)
+Callback=function(t)
+for u,v in pairs(t)do
+ae.setIsland(u,v)
 end
 end,
 
@@ -8854,17 +7876,17 @@ Disabled=false,
 Visible=true,
 })
 
-o:AddToggle('Autosell',{
+p:AddToggle('Autosell',{
 Text='Auto Sell',
 Default=false,
 Tooltip='Automatically sells horses',
 
-Callback=function(s)
-ai.setEnabled(s)
+Callback=function(t)
+ai.setEnabled(t)
 end
 })
 
-local s={
+local t={
 ["Mismatched Hair Colour"]="mismatchHairColour",
 ["Naturally Dyed Hair"]="naturallyDyedHairColour",
 ["Island Unique Coat"]="islandUniqueCoat",
@@ -8879,37 +7901,37 @@ local s={
 }
 
 
-local t={}
-for u,v in pairs(s)do
-t[v]=u
-end
-
-
 local u={}
-for v,w in pairs(s)do
-table.insert(u,v)
+for v,w in pairs(t)do
+u[w]=v
 end
-table.sort(u)
 
-o:AddDropdown("FilterTypeDropdown",{
+
+local v={}
+for w,x in pairs(t)do
+table.insert(v,w)
+end
+table.sort(v)
+
+p:AddDropdown("FilterTypeDropdown",{
 Text="Filter",
-Values=u,
+Values=v,
 Default=0,
 Multi=true,
 Tooltip="Select which horse types to lock instead of sell",
 
-Callback=function(v)
+Callback=function(w)
 
-for w,x in pairs(s)do
-ai.setLockOption(x,false)
+for x,z in pairs(t)do
+ai.setLockOption(z,false)
 end
 
 
-for w,x in pairs(v)do
-if x then
-local y=s[w]
-if y then
-ai.setLockOption(y,true)
+for x,z in pairs(w)do
+if z then
+local A=t[x]
+if A then
+ai.setLockOption(A,true)
 end
 end
 end
@@ -8919,132 +7941,35 @@ Disabled=false,
 Visible=true,
 })
 
-o:AddDivider()
+p:AddDivider()
 
-o:AddToggle("WebhookEnabled",{
-Text="Use Webhook",
-Default=false,
-Tooltip="sends a message thru webhook each time a horse is locked",
-Callback=function(v)
-ai.setWebhookEnabled(v)
-end,
-})
+local w=g.Main:AddRightTabbox()
 
+local x=w:AddTab("Ores")
+local z=w:AddTab("Pickaxe")
+local A=w:AddTab("Render")
 
-o:AddInput("WebhookURL",{
-Text="Webhook URL",
-Default="",
-Numeric=false,
-Finished=false,
-Tooltip="discord webhook input",
-Placeholder="https://discord.com/api/webhooks/...",
-Callback=function(v)
-ai.setWebhook(v)
-end,
-})
-
-o:AddButton("Test Webhook",function()
-ai.testWebhook()
-end)
-
-local v=af.getCraftableLassos()
-local w={}
-local x={}
-
-for y,z in ipairs(v)do
-local A=z.name.." (str "..z.strength..")"
-table.insert(w,A)
-x[A]=z.id
-end
-
-
-
-
-
-p:AddToggle("AutoCraftLasso",{
-Text="Auto Craft",
-Default=false,
-Tooltip="makes lassos when ur ur running low",
-Callback=function(y)
-af.setCraftEnabled(y)
-end,
-})
-
-p:AddDropdown("LassoToCraft",{
-Text="Lasso Type",
-Values=w,
-Default=1,
-Multi=false,
-Tooltip="which lasso to restock",
-Callback=function(y)
-local z=x[y]
-if z then af.setSelectedLasso(z)end
-end,
-Disabled=false,
-Visible=true,
-})
-
-p:AddSlider("LassoRestockThreshold",{
-Text="Restock Threshold",
-Default=50,
-Min=1,
-Max=250,
-Rounding=0,
-Compact=true,
-HideMax=true,
-Tooltip="threshold til buying more lassos",
-Callback=function(y)
-af.setRestockThreshold(y)
-end,
-})
-
-p:AddSlider("LassoRestockAmount",{
-Text="Restock Amount",
-Default=100,
-Min=1,
-Max=250,
-Rounding=0,
-Compact=true,
-HideMax=true,
-Tooltip="how many lassos u want",
-Callback=function(y)
-af.setRestockAmount(y)
-end,
-})
-
-p:AddButton("Restock Now",function()
-af.triggerRestock()
-end)
-
-
-local y=f.Main:AddRightTabbox()
-
-local z=y:AddTab("Ores")
-local A=y:AddTab("Pickaxe")
-local B=y:AddTab("Render")
-
-z:AddToggle('AutoMine',{
+x:AddToggle('AutoMine',{
 Text='Mine',
 Default=false,
 Tooltip='Auto mines ores for you',
 
 Callback=function(C)
-ak.setEnabled(C)
-ak.setNoclip(C)
+aj.setEnabled(C)
 end
 })
 
-z:AddToggle("RandomTP",{
+x:AddToggle("RandomTP",{
 Text="Random Teleport",
 Default=false,
 Tooltip="Teleports to a random spot on the island when idle",
 
 Callback=function(C)
-ak.setRandomTeleport(C)
+aj.setRandomTeleport(C)
 end,
 })
 
-z:AddSlider("ClickCooldown",{
+x:AddSlider("ClickCooldown",{
 Text="Click Cooldown",
 Default=0.05,
 Min=0,
@@ -9055,12 +7980,12 @@ HideMax=true,
 Tooltip="Delay between clicks in seconds",
 
 Callback=function(C)
-ak.setClickCooldown(C)
+aj.setClickCooldown(C)
 end,
 })
 
 
-z:AddSlider("IdleThreshold",{
+x:AddSlider("IdleThreshold",{
 Text="Idle Threshold",
 Default=5,
 Min=1,
@@ -9071,13 +7996,13 @@ HideMax=true,
 Tooltip="Seconds idle before random teleport fires",
 
 Callback=function(C)
-ak.setIdleThreshold(C)
+aj.setIdleThreshold(C)
 end,
 })
 
-local C=ak.getOreValues()
+local C=aj.getOreValues()
 
-z:AddDropdown("OreSelector",{
+x:AddDropdown("OreSelector",{
 Text="Ore Types",
 Values=C,
 Default=0,
@@ -9087,12 +8012,12 @@ Tooltip="Select which ores to mine",
 Callback=function(D)
 
 for E,F in ipairs(C)do
-ak.setOreTarget(F,false)
+aj.setOreTarget(F,false)
 end
 
 for E,F in pairs(D)do
 if F then
-ak.setOreTarget(E,true)
+aj.setOreTarget(E,true)
 end
 end
 end,
@@ -9101,13 +8026,13 @@ Disabled=false,
 Visible=true,
 })
 
-A:AddToggle("EquipPickaxe",{
+z:AddToggle("EquipPickaxe",{
 Text="Pickaxe",
 Default=false,
 Tooltip="Equips the pickaxe for you automatically",
 
 Callback=function(D)
-ak.setPickaxeEnabled(D)
+aj.setPickaxeEnabled(D)
 end,
 })
 
@@ -9120,6 +8045,9 @@ local F=E.Utilities.Network
 
 
 local G={
+["Harvester"]={shop="Training Island Shop",idx=4},
+["Stone Harvester (Train)"]={shop="Training Island Shop",idx=5},
+["Tin Harvester (Train)"]={shop="Training Island Shop",idx=6},
 ["Stone Harvester"]={shop="Mainland Shop",idx=4},
 ["Tin Harvester"]={shop="Mainland Shop",idx=5},
 ["Copper Harvester"]={shop="Blizzard Island Shop",idx=4},
@@ -9137,10 +8065,14 @@ local G={
 ["Obsidian Harvester"]={shop="Lunar Islands Shop",idx=4},
 ["Moonstone Harvester"]={shop="Lunar Islands Shop",idx=5},
 ["Prismatic Harvester"]={shop="Volcano Island Shop",idx=4},
+["Old Pickaxe"]={shop="Competition Shop",idx=11},
+["Perfect Harvester"]={shop="Premium Shop",idx=28},
 }
 
 local H={
 "Harvester",
+"Stone Harvester (Train)",
+"Tin Harvester (Train)",
 "Stone Harvester",
 "Tin Harvester",
 "Copper Harvester",
@@ -9158,11 +8090,13 @@ local H={
 "Obsidian Harvester",
 "Moonstone Harvester",
 "Prismatic Harvester",
+"Old Pickaxe",
+"Perfect Harvester",
 }
 
 local I=H[1]
 
-A:AddDropdown("PickaxeSelector",{
+z:AddDropdown("PickaxeSelector",{
 Text="Pickaxe",
 Values=H,
 Default=1,
@@ -9175,7 +8109,7 @@ Disabled=false,
 Visible=true,
 })
 
-A:AddButton("Buy Pickaxe",function()
+z:AddButton("Buy Pickaxe",function()
 local J=G[I]
 if not J then return end
 
@@ -9183,17 +8117,17 @@ if not J then return end
 F:FireServer("Shopping","BuyShopItem",J.shop,J.idx,1,nil)
 end)
 
-B:AddToggle("HighlightOre",{
+A:AddToggle("HighlightOre",{
 Text="Highlight",
 Default=false,
 Tooltip="Highlights ore that is being mined",
 
 Callback=function(J)
-ak.setHighlight(J)
+aj.setHighlight(J)
 end,
 })
 
-local J=f.Main:AddLeftTabbox()
+local J=g.Main:AddLeftTabbox()
 
 local K=J:AddTab("Train")
 
@@ -9202,51 +8136,37 @@ Text="Enable",
 Default=false,
 Tooltip="Automatically completes cross country",
 Callback=function(L)
-ap.setEnabled(L)
-ap.setNoclip(L)
+ao.setEnabled(L)
+ao.setNoclip(L)
 end,
 })
 
-local L=J:AddTab("Settings")
+local L=g.Main:AddRightGroupbox("Treasure")
 
-L:AddSlider("TrainSpeed",{
-Text="Speed",
-Default=42,
-Min=20,
-Max=80,
-Rounding=0,
-Compact=true,
-HideMax=true,
-Tooltip="training speed",
+L:AddToggle("TreasureEnabled",{
+Text="Enable",
+Default=false,
+Tooltip="Auto digs treasure",
 Callback=function(M)
-ap.setMoveSpeed(M)
+as.setEnabled(M)
+as.setNoclip(M)
 end,
 })
 
-local M=f.Main:AddRightGroupbox("Treasure")
+local M=g.Main:AddRightGroupbox("Wack A Larry")
 
 M:AddToggle("TreasureEnabled",{
 Text="Enable",
 Default=false,
-Tooltip="Auto digs treasure",
-Callback=function(N)
-at.setEnabled(N)
-at.setNoclip(N)
-end,
-})
-
-local N=f.Main:AddRightGroupbox("Wack A Larry")
-
-N:AddToggle("TreasureEnabled",{
-Text="Enable",
-Default=false,
 Tooltip="Auto completes larry",
-Callback=function(O)
-ar.setEnabled(O)
+Callback=function(N)
+aq.setEnabled(N)
 end,
 })
 
-local O=f.Misc:AddLeftTabbox()
+local N=J:AddTab("Settings")
+
+local O=g.Misc:AddLeftTabbox()
 
 local P=O:AddTab("Player")
 local Q=O:AddTab("Horse")
@@ -9256,7 +8176,7 @@ Text="Walkspeed",
 Default=false,
 Tooltip="Enhances characters speed",
 Callback=function(R)
-al.setEnabled(R)
+P.setEnabled(R)
 end,
 })
 
@@ -9270,7 +8190,7 @@ Compact=true,
 HideMax=true,
 Tooltip="walkspeed value",
 Callback=function(R)
-al.setValue(R)
+P.setValue(R)
 end,
 })
 
@@ -9279,7 +8199,7 @@ Text="JumpPower",
 Default=false,
 Tooltip="Enhances JumpPower",
 Callback=function(R)
-al.setJumpEnabled(R)
+P.setJumpEnabled(R)
 end,
 })
 
@@ -9293,16 +8213,19 @@ Compact=true,
 HideMax=true,
 Tooltip="jumppower value",
 Callback=function(R)
-al.setJumpValue(R)
+P.setJumpValue(R)
 end,
 })
+
+
+
 
 Q:AddToggle("HWalkspeedEnabled",{
 Text="Walkspeed",
 Default=false,
 Tooltip="Enhances horses speed",
 Callback=function(R)
-am.setEnabled(R)
+Q.setEnabled(R)
 end,
 })
 
@@ -9316,7 +8239,7 @@ Compact=true,
 HideMax=true,
 Tooltip="walkspeed value",
 Callback=function(R)
-am.setValue(R)
+Q.setValue(R)
 end,
 })
 
@@ -9325,7 +8248,7 @@ Text="JumpPower",
 Default=false,
 Tooltip="Enhances horses JumpPower",
 Callback=function(R)
-am.setJumpEnabled(R)
+Q.setJumpEnabled(R)
 end,
 })
 
@@ -9339,136 +8262,42 @@ Compact=true,
 HideMax=true,
 Tooltip="jumppower value",
 Callback=function(R)
-am.setJumpValue(R)
+Q.setJumpValue(R)
 end,
 })
 
-local R=f.Misc:AddRightGroupbox("Performance")
+local R=g.Misc:AddRightGroupbox("Performance")
 
 local S=Instance.new("ScreenGui")
 S.Name="BackgroundCover"
-S.DisplayOrder=-1
+S.DisplayOrder=-999999
 S.IgnoreGuiInset=true
 S.Parent=game:GetService("CoreGui")
 
 local T=Instance.new("Frame",S)
 T.Size=UDim2.new(1,0,1,0)
 T.BackgroundColor3=Color3.fromRGB(0,0,0)
-T.ZIndex=1
 T.BorderSizePixel=0
 T.Visible=false
 
-local U=Instance.new("TextLabel",T)
-U.Size=UDim2.new(1,0,1,0)
-U.Position=UDim2.new(0,0,0,0)
-U.BackgroundTransparency=1
-U.TextColor3=Color3.fromRGB(255,255,255)
-U.Font=Enum.Font.SourceSansBold
-U.TextSize=18
-U.ZIndex=2
-U.TextXAlignment=Enum.TextXAlignment.Center
-U.TextYAlignment=Enum.TextYAlignment.Center
-U.TextWrapped=true
-U.Text=""
-
-
-local V={
-mismatchHairColour="Mismatch Hair",
-summer2026="Summer 2026",
-naturallyDyedHairColour="Nat. Dyed",
-islandUniqueCoat="IS Coat",
-islandUniqueHorn="IS Horn",
-islandUniqueHairColour="IUH",
-specialIslandUniqueCoat="Special IS Coat",
-specialCoat="Special Coat",
-specialHair="Special Hair",
-horned="Horned",
-rareCoat="Rare Coat",
-}
-
-
-local W={
-"horned",
-"mismatchHairColour",
-"naturallyDyedHairColour",
-"islandUniqueCoat",
-"islandUniqueHorn",
-"islandUniqueHairColour",
-"specialIslandUniqueCoat",
-"specialCoat",
-"specialHair",
-"rareCoat",
-"summer2026",
-}
-
-
-local X={}
-for Y,Z in ipairs(W)do
-X[Z]=true
-end
-
-
-local Y={}
-for Z,_ in ipairs(W)do
-table.insert(Y,V[_])
-end
-
-
-local Z={}
-for _,av in pairs(V)do
-Z[av]=_
-end
-
-
-
-
-task.spawn(function()
-while true do
-task.wait(1)
-
-if not T.Visible then continue end
-
-
-if not ai then continue end
-
-local av,_=pcall(ai.getStats)
-if not av or not _ then continue end
-
-local aw={}
-
-table.insert(aw,string.format("Sold: %d   Locked: %d   Coins: %d",
-_.sold,_.locked,_.coins))
-table.insert(aw,"")
-
-for ax,ay in ipairs(W)do
-if X[ay]then
-local az=_.lockedByReason and _.lockedByReason[ay]or 0
-table.insert(aw,string.format("%s: %d",V[ay],az))
-end
-end
-
-U.Text=table.concat(aw,"\n")
-end
-end)
-
-local av={}
+local U={}
 
 R:AddToggle('MuteAmbientMusic',{
 Text='Ambient Music',
 Default=false,
 Tooltip='Turns on or off ambient music or sounds',
-Callback=function(aw)
-local ax=game:GetService("SoundService")
-local ay=ax:GetDescendants()
+Callback=function(V)
+local W=game:GetService("SoundService")
+local X=W:GetDescendants()
 
-for az,_ in ipairs(ay)do
-if _:IsA("Sound")then
-if aw then
+for Y,Z in ipairs(X)do
+if Z:IsA("Sound")then
+if V then
 
-_.Playing=false
+Z.Playing=false
 else
 
-_.Playing=true
+Z.Playing=true
 end
 end
 end
@@ -9479,51 +8308,26 @@ R:AddToggle('NoGraphics',{
 Text='No Graphics',
 Default=false,
 Tooltip='Disables 3D rendering with a black background',
-Callback=function(aw)
+Callback=function(V)
 do
-game:GetService("RunService"):Set3dRenderingEnabled(not aw)
-T.Visible=aw
+game:GetService("RunService"):Set3dRenderingEnabled(not V)
+T.Visible=V
 end
 end
 })
 
-R:AddDropdown("OverlayStatsDisplay",{
-Text="Overlay Stats",
-Values=Y,
-Default=Y,
-Multi=true,
-Tooltip="Choose which lock types to show on the black screen overlay",
-
-Callback=function(aw)
-
-for ax in pairs(X)do
-X[ax]=false
-end
-
-for ax,ay in pairs(aw)do
-if ay then
-local az=Z[ax]
-if az then X[az]=true end
-end
-end
-end,
-
-Disabled=false,
-Visible=true,
-})
-
-local aw=false
-local ax=60
+local V=false
+local W=60
 
 R:AddToggle('SetFPS',{
 Text='FPS Cap',
 Default=false,
 Tooltip='Caps the game FPS at the slider value',
-Callback=function(ay)
+Callback=function(X)
 do
-aw=ay
-if aw then
-setfpscap(ax)
+V=X
+if V then
+setfpscap(W)
 else
 setfpscap(0)
 end
@@ -9538,212 +8342,137 @@ Min=1,
 Max=240,
 Rounding=1,
 Compact=false,
-Callback=function(ay)
+Callback=function(X)
 do
-ax=ay
-if aw then
-setfpscap(ay)
+W=X
+if V then
+setfpscap(X)
 end
 end
 end
 })
 
-local ay=f.Misc:AddLeftGroupbox("Redeem")
+local X=g.Misc:AddLeftGroupbox("Redeem")
 
+X:AddButton("Redeem Codes",function()
+local Y=require(game:GetService("ReplicatedStorage"):WaitForChild("References"))
+local Z=Y.Utilities
+local _=require(Y.PlayerScripts.Priority.Data)
+local at=Y.Flags
 
+local au={
+"ty-4-100m-visits",
+"some-pasture-stuffs",
+"tridents-trident",
+"when-life-gives-you-lemons",
+"koolie-plush",
+}
 
-
-ay:AddButton("Redeem Codes",function()
-task.spawn(function()
-local az=game:GetService("ReplicatedStorage")
-local _=require(az:WaitForChild("References"))
-local aA=_.Flags
-local aB=require(_.PlayerScripts.Priority:WaitForChild("Data"))
-local aC=_.Utilities.Network
-
-local aD=aA.flags and aA.flags.codes or{}
-local aE,aF=0,0
-
-for aG,aH in pairs(aD)do
-if aB.GetLocal({"codesRedeemed",aG})==true then
-aF+=1
+for av,aw in ipairs(au)do
+local ax=(at.flags.codes or{})[aw]
+if ax==nil then
+ab:Notify("No new code: "..aw,2)
+elseif _.GetLocal({"codesRedeemed",aw})==true then
+ab:Notify("Already redeemed: "..aw,2)
 else
-aC:FireServer("Codes","Submit",aG)
-ab:Notify("Submitted: "..aG,5)
-print("[Codes] Submitted: "..aG)
-aE+=1
+Z.Network:FireServer("Codes","Submit",aw)
+print("[AutoRedeem] Submitted: "..aw)
+ab:Notify("Submitted: "..aw,2)
 task.wait(1.5)
 end
 end
 
-print(string.format("[Codes] Done — submitted: %d, already redeemed: %d",aE,aF))
-end)
 end)
 
-
-
-
-
-
-
-
-local function az(aA,aB,aC)
-task.spawn(function()
-local aD=game:GetService("ReplicatedStorage")
-local aE=require(aD:WaitForChild("References"))
-local aF=aE.Utilities.Network
-
-print(string.format("[Trade] Firing %s x%d...",aB,aC))
-for aG=1,aC do
-local aH,_=pcall(function()
-return aF:InvokeServer("TradeIn","Trade",aA)
-end)
-if aH and _ then
-print(string.format("[Trade] %s %d/%d — got item",aB,aG,aC))
-else
-warn(string.format("[Trade] %s %d/%d failed: %s",aB,aG,aC,tostring(_)))
-end
-if aG<aC then task.wait(0.8)end
-end
-print("[Trade] "..aB.." done.")
-end)
-end
-
-
-
-
-ay:AddButton("Golden Apples (20)",function()
-az("goldenAppleBasket","Golden Apples",1)
-end)
-
-ay:AddButton("Volcanic Minerals (5)",function()
-az("volcanicMinerals","Volcanic Minerals",1)
-end)
-
-ay:AddButton("Training Receipts (100)",function()
-az("trainingReceipts","Training Receipts",1)
-end)
-
-local aA=f.Misc:AddRightGroupbox("Teleport")
-
-
-
-
-local aB=game:GetService("ReplicatedStorage")
-local aC=require(aB:WaitForChild("References"))
-local aD=require(aC.PlayerScripts:WaitForChild("Secondary"):WaitForChild("TravelHandler"))
-
-local aE={
-
-"Mainland",
-"Blizzard Island",
-"Forest Island",
-"Royal Island",
-"Desert Island",
-"Glacier Island",
-"Mountain Island",
-"Jungle Island",
-"Lunar Islands",
-"Volcano Island",
-
-"Training Island",
-"Rescue Island",
-}
-
-local aF={
-["Mainland"]=8,
-["Blizzard Island"]=1,
-["Forest Island"]=1,
-["Royal Island"]=1,
-["Desert Island"]=1,
-["Glacier Island"]=1,
-["Mountain Island"]=1,
-["Jungle Island"]=1,
-["Lunar Islands"]=1,
-["Volcano Island"]=1,
-["Training Island"]=1,
-["Rescue Island"]=1,
-
-["Stable Island"]=1,
-["Competition Hub"]=1,
-["Breeding Hub"]=1,
-["Trading Hub"]=1,
-["RP Island"]=1,
-["Wild Island"]=1,
-}
-
-local function aG(aH)
-if not aH then return end
-local _=aF[aH]or 1
+X:AddButton("Redeem Volcanic Mineral (5)",function()
+for at,au in Functions:GetChildren()do
 pcall(function()
-aD.Travel(aH,_)
+au:FireServer("\002","Trade","volcanicMinerals")
 end)
 end
-
-aA:AddDropdown("IslandTravel",{
-Text="Travel to Island",
-Values=aE,
-Default=1,
-Multi=false,
-Tooltip="Select an island to travel to",
-Callback=function(aH)
-selected_island=aH
-end,
-Disabled=false,
-Visible=true,
-})
-
-aA:AddButton("Travel",function()
-aG(selected_island)
 end)
+
+local at=0
+
+local function au(av)
+if av<=255 then
+return string.char(av)
+end
+return string.char(math.floor(av/256),av%256)
+end
+
+local function av(aw,ax)
+local Y=au(at)
+at=(at+1)%4294967296
+for Z,_ in Functions:GetChildren()do
+pcall(function()
+_:FireServer(Y,aw,ax)
+end)
+end
+end
+
+X:AddButton("Training Receipt (100)",function()
+av("Trade","trainingReceipts")
+end)
+
+X:AddButton("Golden Apples (20)",function()
+av("Trade","goldenAppleBasket")
+end)
+
+X:AddButton("Relics (1)",function()
+av("Trade","archaeology")
+end)
+
 
 
 
 ab:SetWatermarkVisibility(true)
 
 
-local aH=tick()
-local _=0;
-local aI=60;
-local aJ=(function()return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())end)
-local aK=pcall(function()return aJ()end)
+local aw=tick()
+local ax=0;
+local Y=60;
+local Z=(function()return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())end)
+local _=pcall(function()return Z()end)
 
-local aL=game:GetService("RunService").RenderStepped:Connect(function()
-_+=1;
+local ay=game:GetService("RunService").RenderStepped:Connect(function()
+ax+=1;
 
-if(tick()-aH)>=1 then
-aI=_;
-aH=tick();
-_=0;
+if(tick()-aw)>=1 then
+Y=ax;
+aw=tick();
+ax=0;
 end;
 
-if aK then
+if _ then
 ab:SetWatermark(("coconut - [buyer build] | %d fps | %d ms"):format(
-math.floor(aI),
-aJ()
+math.floor(Y),
+Z()
 ));
 else
 ab:SetWatermark(("coconut - [buyer build] | %d fps"):format(
-math.floor(aI)
+math.floor(Y)
 ));
 end
 end);
 
 ab:OnUnload(function()
-aL:Disconnect()
+ay:Disconnect()
+
+print("Unloaded!")
 ab.Unloaded=true
 end)
 
 
-local aM=f["UI Settings"]:AddLeftGroupbox("Menu")
+local az=g["UI Settings"]:AddLeftGroupbox("Menu")
 
-aM:AddToggle("KeybindMenuOpen",{Default=ab.KeybindFrame.Visible,Text="Open Keybind Menu",Callback=function(aN)ab.KeybindFrame.Visible=aN end})
-aM:AddToggle("BlurEnabled",{Default=true,Text="Blur",Callback=function(aN)ab.BlurEffect.Enabled=aN end})
-aM:AddDivider()
-aM:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind",{Default="RightShift",NoUI=true,Text="Menu keybind"})
-aM:AddButton("Unload",function()ab:Unload()end)
+az:AddToggle("KeybindMenuOpen",{Default=ab.KeybindFrame.Visible,Text="Open Keybind Menu",Callback=function(aA)ab.KeybindFrame.Visible=aA end})
+az:AddToggle("ShowCustomCursor",{Text="Custom Cursor",Default=true,Callback=function(aA)ab.ShowCustomCursor=aA end})
+az:AddDivider()
+az:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind",{Default="RightShift",NoUI=true,Text="Menu keybind"})
+az:AddButton("Unload",function()ab:Unload()end)
 
-ab.ToggleKeybind=au.MenuKeybind
+ab.ToggleKeybind=b.MenuKeybind
 
 
 
@@ -9772,11 +8501,11 @@ ad:SetFolder("coconut/whi")
 
 
 
-ad:BuildConfigSection(f["UI Settings"])
+ad:BuildConfigSection(g["UI Settings"])
 
 
 
-ac:ApplyToTab(f["UI Settings"])
+ac:ApplyToTab(g["UI Settings"])
 
 
 
