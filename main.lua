@@ -8619,6 +8619,7 @@ local ar=aq()
 local as=a.n()
 local at=as()
 
+
 local au=getgenv().Options
 local b=getgenv().Toggles
 
@@ -9604,6 +9605,17 @@ end)
 ay:AddButton("Training Receipts (100)",function()
 az("trainingReceipts","Training Receipts",1)
 end)
+
+ay:AddButton("Carnival Tickets (2k)",function()
+az("summerCarnival","Carnival Tickets",1)
+end)
+
+
+
+
+
+
+
 
 local aA=f.Misc:AddRightGroupbox("Teleport")
 
