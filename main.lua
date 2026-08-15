@@ -6473,73 +6473,73 @@ local ah=require(ab.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
 local ai=false
 local aj=0.1
 
-local function ak()
-return ad.GetLocal({"quickEquipment","Lasso"})
-end
+
+
+
+
+
+
+
+local ak=game:GetService("CollectionService")
 
 local function al()
 local am=af.Character and af.Character:FindFirstChild("HumanoidRootPart")
 if not am then return nil end
 
-local an=workspace:FindFirstChild("Islands")
-if not an then return nil end
+local an,ao=nil,math.huge
 
-local ao=nil
-for ap,aq in ipairs(an:GetChildren())do
-if aq:FindFirstChild(af.Name)then
-ao=aq
-break
-end
-end
-if not ao then return nil end
+for ap,aq in ipairs(ak:GetTagged("LassoCapture"))do
+if not aq:IsDescendantOf(workspace)then continue end
 
-local ap,aq=nil,math.huge
-for ar,as in ipairs(ao:GetDescendants())do
-if as:IsA("Model")then
-local at=as:FindFirstChild("HumanoidRootPart")
-local au=as:FindFirstChild("CaptureProgress",true)
-if at and au then
-local b=(am.Position-at.Position).Magnitude
-if b<aq then
-aq=b
-ap=as
-end
-end
+local ar=aq:FindFirstChild("HumanoidRootPart")
+or aq:FindFirstChildWhichIsA("BasePart")
+if not ar then continue end
+
+local as=(am.Position-ar.Position).Magnitude
+if as<ao then
+ao=as
+an=aq
 end
 end
 
-return ap
+return an
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 task.spawn(function()
 while true do
 task.wait(aj)
 if not ai then continue end
 
-
-
 local am=ah.object
 if not am then continue end
+
+
+
 
 local an=al()
 if not an then continue end
 
 
 
-local ao=false
-if am.controller and am.controller.GetAnimals then
-local ap,aq=pcall(am.controller.GetAnimals,am,true,true)
-ao=ap and aq and#aq>0
-elseif am.controller and am.controller.GetTarget then
-local ap,aq=pcall(am.controller.GetTarget,am)
-ao=ap and aq~=nil
-else
-ao=true
-end
 
-if ao then
 pcall(function()am:Activate()end)
-end
 end
 end)
 
