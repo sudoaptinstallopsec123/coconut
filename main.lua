@@ -6466,42 +6466,45 @@ end,
 local ab=game:GetService("ReplicatedStorage")
 local ac=game:GetService("CollectionService")
 
-local ad=require(LocalPlayer.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
 
-local ae=false
-local af=0.1
+local ad=game:GetService("Players")
+local ae=ad.LocalPlayer
+local af=require(ae.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
+
+local ah=false
+local ai=0.1
 
 
 
-local ah=ad.object
-ad.ObjectChanged:Connect(function(ai)
-ah=ai
+local aj=af.object
+af.ObjectChanged:Connect(function(ak)
+aj=ak
 end)
 
 
 
 
-local function ai()
-local aj=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-if not aj then return nil end
+local function ak()
+local al=ae.Character and ae.Character:FindFirstChild("HumanoidRootPart")
+if not al then return nil end
 
-local ak,al=nil,math.huge
+local am,an=nil,math.huge
 
-for am,an in ipairs(ac:GetTagged("LassoCapture"))do
-if not an:IsDescendantOf(workspace)then continue end
+for ao,ap in ipairs(ac:GetTagged("LassoCapture"))do
+if not ap:IsDescendantOf(workspace)then continue end
 
-local ao=an:FindFirstChild("HumanoidRootPart")
-or an:FindFirstChildWhichIsA("BasePart")
-if not ao then continue end
+local aq=ap:FindFirstChild("HumanoidRootPart")
+or ap:FindFirstChildWhichIsA("BasePart")
+if not aq then continue end
 
-local ap=(aj.Position-ao.Position).Magnitude
-if ap<al then
-al=ap
-ak=an
+local ar=(al.Position-aq.Position).Magnitude
+if ar<an then
+an=ar
+am=ap
 end
 end
 
-return ak
+return am
 end
 
 
@@ -6509,18 +6512,18 @@ end
 
 task.spawn(function()
 while true do
-task.wait(af)
-if not ae then continue end
+task.wait(ai)
 if not ah then continue end
-if not ai()then continue end
-pcall(function()ah:Activate()end)
+if not aj then continue end
+if not ak()then continue end
+pcall(function()aj:Activate()end)
 end
 end)
 
 return{
-setEnabled=function(aj)ae=aj end,
-setDuration=function(aj)af=tonumber(aj)or 0.1 end,
-isEnabled=function()return ae end,
+setEnabled=function(al)ah=al end,
+setDuration=function(al)ai=tonumber(al)or 0.1 end,
+isEnabled=function()return ah end,
 }end function a.f():typeof(aa())local ab=a.cache.f if not ab then ab={c=aa()}a.cache.f=ab end return ab.c end end do local function aa()
 
 
@@ -6657,11 +6660,12 @@ local ab=game:GetService("ReplicatedStorage")
 local ac=game:GetService("HttpService")
 local ad=require(ab.References.HorseVariants)
 local ae=a.g()
+local af=game:GetService("Players")
+local ah=af.LocalPlayer
+local ai=require(ab.References.Utilities).Network
+local aj=require(ah.PlayerScripts.Priority:WaitForChild("InventoryHandler"))
 
-local af=require(ab.References.Utilities).Network
-local ah=require(LocalPlayer.PlayerScripts.Priority:WaitForChild("InventoryHandler"))
-
-local ai={
+local ak={
 
 "mismatchHairColour",
 "naturallyDyedHairColour",
@@ -6741,32 +6745,32 @@ local ai={
 
 
 do
-local aj={}
-local ak={}
-for al,am in ipairs(ai)do
-if not aj[am]then
-aj[am]=true
-table.insert(ak,am)
+local al={}
+local am={}
+for an,ao in ipairs(ak)do
+if not al[ao]then
+al[ao]=true
+table.insert(am,ao)
 end
 end
-ai=ak
+ak=am
 end
 
-local aj={}
-for ak,al in ipairs(ai)do
-aj[al]=false
+local al={}
+for am,an in ipairs(ak)do
+al[an]=false
 end
 
-local ak=0.975
-local al=0.5
+local am=0.975
+local an=0.5
 
 
 
 
-local am=""
-local an=false
+local ao=""
+local ap=false
 
-local ao={
+local aq={
 mismatchHairColour="Mismatched Hair",
 naturallyDyedHairColour="Naturally Dyed Hair",
 islandUniqueHairColour="Island Unique Hair Colour",
@@ -6831,7 +6835,7 @@ spring="Spring Hair",
 stpatricksday="St. Patrick's Day Hair",
 }
 
-local ap={
+local ar={
 ["sandy"]=true,["pearly purple"]=true,["pearly gold"]=true,["clear sea glass"]=true,
 ["blessed"]=true,["iceyBlue"]=true,["iceyWhite"]=true,["iceyPink"]=true,
 ["iceyBlack"]=true,["iceyGreen"]=true,["winterStreaks"]=true,["flowery"]=true,
@@ -6851,171 +6855,171 @@ local ap={
 
 
 
-local function aq(ar,as,at)
-if not an or am==""then return end
+local function as(at,au,b)
+if not ap or ao==""then return end
 
-local au=as and as.variants or{}
-local b={}
+local c=au and au.variants or{}
+local d={}
 
-table.insert(b,{
+table.insert(d,{
 name="Lock Reason",
-value=ao[at]or at or"Unknown",
+value=aq[b]or b or"Unknown",
 inline=true,
 })
 
-if au.colour then
-local c=ad.colour[au.colour]
-table.insert(b,{
+if c.colour then
+local e=ad.colour[c.colour]
+table.insert(d,{
 name="Coat",
-value=(c and c.name)or au.colour,
+value=(e and e.name)or c.colour,
 inline=true,
 })
-if c then
-table.insert(b,{
+if e then
+table.insert(d,{
 name="Rarity",
-value=tostring(math.floor((c.rarityFloat or 0)*100)).."%",
+value=tostring(math.floor((e.rarityFloat or 0)*100)).."%",
 inline=true,
 })
 end
 end
 
-if au.maneColour then
-local c=ad.maneAndTailColour[au.maneColour]
-table.insert(b,{
+if c.maneColour then
+local e=ad.maneAndTailColour[c.maneColour]
+table.insert(d,{
 name="Mane Colour",
-value=(c and c.name)or au.maneColour,
+value=(e and e.name)or c.maneColour,
 inline=true,
 })
 end
 
-if au.tailColour then
-local c=ad.maneAndTailColour[au.tailColour]
-table.insert(b,{
+if c.tailColour then
+local e=ad.maneAndTailColour[c.tailColour]
+table.insert(d,{
 name="Tail Colour",
-value=(c and c.name)or au.tailColour,
+value=(e and e.name)or c.tailColour,
 inline=true,
 })
 end
 
-if au.maneColour and au.tailColour
-and au.maneColour~=au.tailColour then
-table.insert(b,{name="Mismatch",value="Yes",inline=true})
+if c.maneColour and c.tailColour
+and c.maneColour~=c.tailColour then
+table.insert(d,{name="Mismatch",value="Yes",inline=true})
 end
 
-if au.hornStyle and au.hornStyle~=""then
-table.insert(b,{name="Horn Style",value=au.hornStyle,inline=true})
+if c.hornStyle and c.hornStyle~=""then
+table.insert(d,{name="Horn Style",value=c.hornStyle,inline=true})
 end
 
-if au.hornColour and au.hornColour~=""then
-table.insert(b,{name="Horn Colour",value=au.hornColour,inline=true})
+if c.hornColour and c.hornColour~=""then
+table.insert(d,{name="Horn Colour",value=c.hornColour,inline=true})
 end
 
-if as.isNatDyed then
-table.insert(b,{name="Naturally Dyed",value="Yes",inline=true})
+if au.isNatDyed then
+table.insert(d,{name="Naturally Dyed",value="Yes",inline=true})
 end
 
-if au.maneStyle then
-table.insert(b,{name="Mane Style",value=au.maneStyle,inline=true})
+if c.maneStyle then
+table.insert(d,{name="Mane Style",value=c.maneStyle,inline=true})
 end
 
-if au.tailStyle then
-table.insert(b,{name="Tail Style",value=au.tailStyle,inline=true})
+if c.tailStyle then
+table.insert(d,{name="Tail Style",value=c.tailStyle,inline=true})
 end
 
-table.insert(b,{
+table.insert(d,{
 name="GUID",
-value="`"..tostring(ar).."`",
+value="`"..tostring(at).."`",
 inline=false,
 })
 
-local c=ae.getStats()
-table.insert(b,{
+local e=ae.getStats()
+table.insert(d,{
 name="Session Stats",
 value=string.format("Sold: %d | Locked: %d | Coins: %d",
-c.sold,c.locked,c.coins),
+e.sold,e.locked,e.coins),
 inline=false,
 })
 
-local d=ac:JSONEncode({
+local f=ac:JSONEncode({
 embeds={{
-title="Horse Locked — "..(ao[at]or at or"Unknown"),
+title="Horse Locked — "..(aq[b]or b or"Unknown"),
 color=0xF5A623,
-fields=b,
+fields=d,
 footer={text="coconut.xyz • "..os.date("!%Y-%m-%d %H:%M:%S UTC")},
 timestamp=os.date("!%Y-%m-%dT%H:%M:%SZ"),
 }}
 })
 
 task.spawn(function()
-local e,f=pcall(function()
-local e=(syn and syn.request)or http_request or request
-if not e then warn("[AutoSell] Webhook failed: no http function available")return end
-e({Url=am,Method="POST",Headers={["Content-Type"]="application/json"},Body=d})
+local g,h=pcall(function()
+local g=(syn and syn.request)or http_request or request
+if not g then warn("[AutoSell] Webhook failed: no http function available")return end
+g({Url=ao,Method="POST",Headers={["Content-Type"]="application/json"},Body=f})
 end)
-if not e then warn("[AutoSell] Webhook failed:",f)end
+if not g then warn("[AutoSell] Webhook failed:",h)end
 end)
 end
 
 
 
 
-local function ar(as)
-if not as then return false,nil end
-local at=as.variants
-if not at then return false,nil end
+local function at(au)
+if not au then return false,nil end
+local b=au.variants
+if not b then return false,nil end
 
-if aj["horned"]==true then
-if(at.hornStyle and at.hornStyle~="")
-or(at.hornColour and at.hornColour~="")then
+if al["horned"]==true then
+if(b.hornStyle and b.hornStyle~="")
+or(b.hornColour and b.hornColour~="")then
 return true,"horned"
 end
 end
 
-if at.colour then
-local au=ad.colour[at.colour]
-if au then
-local b=au.specialItemIndicator
-if b and aj[b]==true then
-return true,b
+if b.colour then
+local c=ad.colour[b.colour]
+if c then
+local d=c.specialItemIndicator
+if d and al[d]==true then
+return true,d
 end
-if aj["rareCoat"]==true
-and(au.rarityFloat or 0)>=ak then
+if al["rareCoat"]==true
+and(c.rarityFloat or 0)>=am then
 return true,"rareCoat"
 end
 end
 end
 
-for au,b in ipairs({"maneColour","tailColour"})do
-local c=at[b]
-if c then
-local d=ad.maneAndTailColour[c]
-if d then
-local e=d.specialItemIndicator
-if e and aj[e]==true then
-return true,e
+for c,d in ipairs({"maneColour","tailColour"})do
+local e=b[d]
+if e then
+local f=ad.maneAndTailColour[e]
+if f then
+local g=f.specialItemIndicator
+if g and al[g]==true then
+return true,g
 end
 end
-if aj["islandUniqueHairColour"]==true
-and ap[c]==true then
+if al["islandUniqueHairColour"]==true
+and ar[e]==true then
 return true,"islandUniqueHairColour"
 end
 end
 end
 
-if aj["mismatchHairColour"]==true then
-local au=at.maneColour
-local b=at.tailColour
-if au and b and au~=b then return true,"mismatchHairColour"end
+if al["mismatchHairColour"]==true then
+local c=b.maneColour
+local d=b.tailColour
+if c and d and c~=d then return true,"mismatchHairColour"end
 end
 
-if aj["naturallyDyedHairColour"]==true
-and as.isNatDyed==true then
+if al["naturallyDyedHairColour"]==true
+and au.isNatDyed==true then
 return true,"naturallyDyedHairColour"
 end
 
-if as.specialItemIndicator
-and aj[as.specialItemIndicator]==true then
-return true,as.specialItemIndicator
+if au.specialItemIndicator
+and al[au.specialItemIndicator]==true then
+return true,au.specialItemIndicator
 end
 
 return false,nil
@@ -7024,36 +7028,36 @@ end
 
 
 
-local as=false
-local at=nil
+local au=false
+local b=nil
 
-local function au(b)
-as=(b~=nil)and b or(not as)
+local function c(d)
+au=(d~=nil)and d or(not au)
 
-if as then
-if not at then
-at=ah.Bind("Added",function(c,d)
-local e,f=pcall(function()
-local e,f=ar(d)
-task.delay(al,function()
-if not as then return end
-if e then
-af:FireServer("Inventory","Lock",c)
-aq(c,d,f)
-ae.recordLock(f)
+if au then
+if not b then
+b=aj.Bind("Added",function(e,f)
+local g,h=pcall(function()
+local g,h=at(f)
+task.delay(an,function()
+if not au then return end
+if g then
+ai:FireServer("Inventory","Lock",e)
+as(e,f,h)
+ae.recordLock(h)
 else
-af:FireServer("Shopping","QuickSellItem",c)
+ai:FireServer("Shopping","QuickSellItem",e)
 ae.recordSell()
 end
 end)
 end)
-if not e then warn("[AutoSell] Bind callback error:",f)end
+if not g then warn("[AutoSell] Bind callback error:",h)end
 end)
 end
 else
-if at then
-ah.Unbind(at)
-at=nil
+if b then
+aj.Unbind(b)
+b=nil
 end
 end
 end
@@ -7062,17 +7066,17 @@ end
 
 
 return{
-setEnabled=function(b)au(b)end,
-isEnabled=function()return as end,
+setEnabled=function(d)c(d)end,
+isEnabled=function()return au end,
 
 getStats=ae.getStats,
 resetCounters=ae.reset,
 snapshotBalance=ae.snapshotBalance,
 
-setWebhook=function(b)am=b or""end,
-setWebhookEnabled=function(b)an=b==true end,
+setWebhook=function(d)ao=d or""end,
+setWebhookEnabled=function(d)ap=d==true end,
 testWebhook=function()
-aq("{test-0000-0000-0000-000000000000}",{
+as("{test-0000-0000-0000-000000000000}",{
 isNatDyed=true,
 specialItemIndicator=nil,
 variants={
@@ -7087,29 +7091,29 @@ hornColour="pinkForestFlower",
 },"horned")
 end,
 
-setLockOption=function(b,c)
-local d=aj[b]~=nil
-if not d then
-for e,f in ipairs(ai)do
-if f==b then d=true break end
+setLockOption=function(d,e)
+local f=al[d]~=nil
+if not f then
+for g,h in ipairs(ak)do
+if h==d then f=true break end
 end
 end
-if not d then warn("[AutoSell] Unknown lock option:",b)return end
-aj[b]=c
+if not f then warn("[AutoSell] Unknown lock option:",d)return end
+al[d]=e
 end,
-getLockOption=function(b)return aj[b]==true end,
+getLockOption=function(d)return al[d]==true end,
 getAllLockOptions=function()
-local b={}
-for c,d in ipairs(ai)do b[d]=aj[d]==true end
-return b
+local d={}
+for e,f in ipairs(ak)do d[f]=al[f]==true end
+return d
 end,
 
-setRareThreshold=function(b)ak=tonumber(b)or ak end,
-getRareThreshold=function()return ak end,
-setActionDelay=function(b)al=tonumber(b)or al end,
-getActionDelay=function()return al end,
-checkHorse=function(b)return ar(b)end,
-getLockOptionNames=function()return ai end,
+setRareThreshold=function(d)am=tonumber(d)or am end,
+getRareThreshold=function()return am end,
+setActionDelay=function(d)an=tonumber(d)or an end,
+getActionDelay=function()return an end,
+checkHorse=function(d)return at(d)end,
+getLockOptionNames=function()return ak end,
 }end function a.h():typeof(aa())local ab=a.cache.h if not ab then ab={c=aa()}a.cache.h=ab end return ab.c end end do local function aa()
 local function ab(ac,ad)
 local ae=game:GetService("ReplicatedStorage")
