@@ -6463,68 +6463,93 @@ if not u then warn("Manual restock error:",v)end
 as=false
 end,
 }end function a.e():typeof(aa())local ab=a.cache.e if not ab then ab={c=aa()}a.cache.e=ab end return ab.c end end do local function aa()
-local ab=game:GetService("ReplicatedStorage")
-local ac=game:GetService("CollectionService")
+local ab=require(game:GetService("ReplicatedStorage").References)
+local ac=ab.Utilities
+local ad=require(ab.PlayerScripts.Priority.Data)
+local ae=game:GetService("Players")
+local af=ae.LocalPlayer
+local ah=require(ab.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
 
-
-local ad=game:GetService("Players")
-local ae=ad.LocalPlayer
-local af=require(ae.PlayerScripts.Secondary:WaitForChild("EquipmentHandler"))
-
-local ah=false
-local ai=0.1
-
-
-
-local aj=af.object
-af.ObjectChanged:Connect(function(ak)
-aj=ak
-end)
+local ai=false
+local aj=0.1
 
 
 
 
-local function ak()
-local al=ae.Character and ae.Character:FindFirstChild("HumanoidRootPart")
-if not al then return nil end
 
-local am,an=nil,math.huge
 
-for ao,ap in ipairs(ac:GetTagged("LassoCapture"))do
-if not ap:IsDescendantOf(workspace)then continue end
 
-local aq=ap:FindFirstChild("HumanoidRootPart")
-or ap:FindFirstChildWhichIsA("BasePart")
-if not aq then continue end
 
-local ar=(al.Position-aq.Position).Magnitude
-if ar<an then
-an=ar
-am=ap
+local ak=game:GetService("CollectionService")
+
+local function al()
+local am=af.Character and af.Character:FindFirstChild("HumanoidRootPart")
+if not am then return nil end
+
+local an,ao=nil,math.huge
+
+for ap,aq in ipairs(ak:GetTagged("LassoCapture"))do
+if not aq:IsDescendantOf(workspace)then continue end
+
+local ar=aq:FindFirstChild("HumanoidRootPart")
+or aq:FindFirstChildWhichIsA("BasePart")
+if not ar then continue end
+
+local as=(am.Position-ar.Position).Magnitude
+if as<ao then
+ao=as
+an=aq
 end
 end
 
-return am
+return an
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 task.spawn(function()
 while true do
-task.wait(ai)
-if not ah then continue end
-if not aj then continue end
-if not ak()then continue end
-pcall(function()aj:Activate()end)
+task.wait(aj)
+if not ai then continue end
+
+local am=ah.object
+if not am then continue end
+
+
+
+
+local an=al()
+if not an then continue end
+
+
+
+
+pcall(function()am:Activate()end)
 end
 end)
 
 return{
-setEnabled=function(al)ah=al end,
-setDuration=function(al)ai=tonumber(al)or 0.1 end,
-isEnabled=function()return ah end,
+setEnabled=function(am)ai=am end,
+setDuration=function(am)aj=tonumber(am)or 0.1 end,
+isEnabled=function()return ai end,
 }end function a.f():typeof(aa())local ab=a.cache.f if not ab then ab={c=aa()}a.cache.f=ab end return ab.c end end do local function aa()
+
+
 
 
 
