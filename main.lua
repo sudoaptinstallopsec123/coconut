@@ -5875,18 +5875,32 @@ I=true
 G=0
 J=0
 M()
+
+
+
+local P=tick()
+while b do
+if tick()-P>20 then
+b=false
+break
+end
+task.wait(0.2)
+end
+task.wait(0.5)
+
 z(O)
-local P=tick()+30
+local Q=tick()+30
 repeat
 task.wait(1)
-local Q=A()
-if Q and Q.Name==O then break end
-until tick()>P
+local R=A()
+if R and R.Name==O then break end
+until tick()>Q
 task.wait(2)
 I=false
 end
 
 local function O(P)
+if I then return end
 local Q=A()
 if not Q then return end
 B(P,Q)
