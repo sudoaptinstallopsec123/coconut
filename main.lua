@@ -8973,99 +8973,99 @@ Misc=c:AddTab("Misc"),
 local g=f.HomePageLowkey:AddLeftGroupbox("Polsec Info")
 
 
+local h=g:AddLabel(PolSec_Note)
+local i=g:AddLabel(PolSec_Creation)
+local j=g:AddLabel(PolSec_Expiry)
+local k=g:AddLabel(PolSec_UserId)
 
+local l=f.HomePageLowkey:AddRightGroupbox("Session Information")
 
-
-
-
-local h=f.HomePageLowkey:AddRightGroupbox("Session Information")
-
-local i=tick()
-local j=h:AddLabel('Time Played: 0s')
+local m=tick()
+local n=l:AddLabel('Time Played: 0s')
 
 task.spawn(function()
 while true do
 task.wait(1)
 
-local k=math.floor(tick()-i)
+local o=math.floor(tick()-m)
 
-local l=math.floor(k/3600)
-local m=math.floor((k%3600)/60)
-local n=k%60
+local p=math.floor(o/3600)
+local q=math.floor((o%3600)/60)
+local r=o%60
 
-j:SetText(string.format(
+n:SetText(string.format(
 "Time Played: %02dh %02dm %02ds",
-l,m,n
+p,q,r
 ))
 end
 end)
 
-local k=h:AddLabel('Coins Earned: 0')
+local o=l:AddLabel('Coins Earned: 0')
 
 task.spawn(function()
 while true do
 task.wait(2)
-local l=ai.getStats()
-k:SetText(string.format("Coins Earned: %d",l.coins))
+local p=ai.getStats()
+o:SetText(string.format("Coins Earned: %d",p.coins))
 end
 end)
 
-local l=h:AddLabel('Horses Captured: 0')
+local p=l:AddLabel('Horses Captured: 0')
 
 task.spawn(function()
 while true do
 task.wait(2)
-local m=ai.getStats()
-l:SetText(string.format("Horses Captured: %d",m.captures))
+local q=ai.getStats()
+p:SetText(string.format("Horses Captured: %d",q.captures))
 end
 end)
 
-local m=f.Main:AddLeftTabbox()
+local q=f.Main:AddLeftTabbox()
 
-local n=m:AddTab("Horses")
-local o=m:AddTab("Sell")
-local p=m:AddTab("Lassos")
+local r=q:AddTab("Horses")
+local s=q:AddTab("Sell")
+local t=q:AddTab("Lassos")
 
-n:AddToggle('Autofarm_Enable',{
+r:AddToggle('Autofarm_Enable',{
 Text='Enable',
 Default=false,
 Tooltip='Enables Autofarm',
 
-Callback=function(q)
-ae.setEnabled(q)
+Callback=function(u)
+ae.setEnabled(u)
 end
 })
 
-n:AddToggle('CatureHerds',{
+r:AddToggle('CatureHerds',{
 Text='Capture Herds',
 Default=false,
 Tooltip='Enables Capture Herds',
 
-Callback=function(q)
-ae.setWildherd(q)
+Callback=function(u)
+ae.setWildherd(u)
 end
 })
 
-n:AddToggle("AutoLasso",{
+r:AddToggle("AutoLasso",{
 Text="Lasso",
 Default=false,
 Tooltip="sloppy joe",
-Callback=function(q)
-af.setEnabled(q)
+Callback=function(u)
+af.setEnabled(u)
 end,
 })
 
-n:AddToggle('AutoCapture',{
+r:AddToggle('AutoCapture',{
 Text='Capture',
 Default=false,
 Tooltip='Clicks the horse to capture',
 
-Callback=function(q)
-ah.setEnabled(q)
+Callback=function(u)
+ah.setEnabled(u)
 end
 })
 
-n:AddSlider('CaptureRate',{
+r:AddSlider('CaptureRate',{
 Text='Capture Rate',
 Default=1,
 Min=1,
@@ -9074,8 +9074,8 @@ Rounding=2,
 Compact=true,
 HideMax=true,
 
-Callback=function(q)
-ah.setDuration(q)
+Callback=function(u)
+ah.setDuration(u)
 end
 })
 
@@ -9093,20 +9093,20 @@ end
 
 
 
-n:AddToggle('autotravel',{
+r:AddToggle('autotravel',{
 Text='Travel',
 Default=false,
 Tooltip='type shit',
 
-Callback=function(q)
-ae.setAutotravel(q)
+Callback=function(u)
+ae.setAutotravel(u)
 end
 })
 
 
 
 
-local q={
+local u={
 "Mainland",
 "Blizzard Island",
 "Forest Island",
@@ -9119,22 +9119,22 @@ local q={
 "Volcano Island",
 }
 
-n:AddDropdown("IslandSelection",{
+r:AddDropdown("IslandSelection",{
 Text="Select Islands",
-Values=q,
+Values=u,
 Default={},
 Multi=true,
 Tooltip="Select which islands to farm",
 
-Callback=function(r)
+Callback=function(v)
 
-for s,t in ipairs(q)do
-ae.setIsland(t,false)
+for w,x in ipairs(u)do
+ae.setIsland(x,false)
 end
 
-for s,t in pairs(r)do
-if t then
-ae.setIsland(s,true)
+for w,x in pairs(v)do
+if x then
+ae.setIsland(w,true)
 end
 end
 end,
@@ -9143,17 +9143,17 @@ Disabled=false,
 Visible=true,
 })
 
-o:AddToggle('Autosell',{
+s:AddToggle('Autosell',{
 Text='Auto Sell',
 Default=false,
 Tooltip='Automatically sells horses',
 
-Callback=function(r)
-ai.setEnabled(r)
+Callback=function(v)
+ai.setEnabled(v)
 end
 })
 
-local r={
+local v={
 
 ["Mismatched Hair Colour"]="mismatchHairColour",
 ["Naturally Dyed Hair"]="naturallyDyedHairColour",
@@ -9230,37 +9230,37 @@ local r={
 }
 
 
-local s={}
-for t,u in pairs(r)do
-s[u]=t
+local w={}
+for x,y in pairs(v)do
+w[y]=x
 end
 
 
-local t={}
-for u,v in pairs(r)do
-table.insert(t,u)
+local x={}
+for y,z in pairs(v)do
+table.insert(x,y)
 end
-table.sort(t)
+table.sort(x)
 
-o:AddDropdown("FilterTypeDropdown",{
+s:AddDropdown("FilterTypeDropdown",{
 Text="Filter",
-Values=t,
+Values=x,
 Default=0,
 Multi=true,
 Tooltip="Select which horse types to lock instead of sell",
 
-Callback=function(u)
+Callback=function(y)
 
-for v,w in pairs(r)do
-ai.setLockOption(w,false)
+for z,A in pairs(v)do
+ai.setLockOption(A,false)
 end
 
 
-for v,w in pairs(u)do
-if w then
-local x=r[v]
-if x then
-ai.setLockOption(x,true)
+for z,A in pairs(y)do
+if A then
+local B=v[z]
+if B then
+ai.setLockOption(B,true)
 end
 end
 end
@@ -9270,72 +9270,72 @@ Disabled=false,
 Visible=true,
 })
 
-o:AddDivider()
+s:AddDivider()
 
-o:AddToggle("WebhookEnabled",{
+s:AddToggle("WebhookEnabled",{
 Text="Use Webhook",
 Default=false,
 Tooltip="sends a message thru webhook each time a horse is locked",
-Callback=function(u)
-ai.setWebhookEnabled(u)
+Callback=function(y)
+ai.setWebhookEnabled(y)
 end,
 })
 
 
-o:AddInput("WebhookURL",{
+s:AddInput("WebhookURL",{
 Text="Webhook URL",
 Default="",
 Numeric=false,
 Finished=false,
 Tooltip="discord webhook input",
 Placeholder="https://discord.com/api/webhooks/...",
-Callback=function(u)
-ai.setWebhook(u)
+Callback=function(y)
+ai.setWebhook(y)
 end,
 })
 
-o:AddButton("Test Webhook",function()
+s:AddButton("Test Webhook",function()
 ai.testWebhook()
 end)
 
-local u=af.getCraftableLassos()
-local v={}
-local w={}
+local y=af.getCraftableLassos()
+local z={}
+local A={}
 
-for x,y in ipairs(u)do
-local z=y.name.." (str "..y.strength..")"
-table.insert(v,z)
-w[z]=y.id
+for B,C in ipairs(y)do
+local D=C.name.." (str "..C.strength..")"
+table.insert(z,D)
+A[D]=C.id
 end
 
 
 
 
 
-p:AddToggle("AutoCraftLasso",{
+t:AddToggle("AutoCraftLasso",{
 Text="Auto Craft",
 Default=false,
 Tooltip="makes lassos when ur ur running low",
-Callback=function(x)
-af.setCraftEnabled(x)
+Callback=function(B)
+af.setCraftEnabled(B)
 end,
 })
 
-p:AddDropdown("LassoToCraft",{
+t:AddDropdown("LassoToCraft",{
 Text="Lasso Type",
-Values=v,
+Values=z,
 Default=1,
 Multi=false,
 Tooltip="which lasso to restock",
-Callback=function(x)
-local y=w[x]
-if y then af.setSelectedLasso(y)end
+Callback=function(B)
+local C=A[B]
+if C then af.setSelectedLasso(C)end
 end,
 Disabled=false,
 Visible=true,
 })
 
-p:AddSlider("LassoRestockThreshold",{
+t:AddSlider("LassoRestockThreshold",{
 Text="Restock Threshold",
 Default=50,
 Min=1,
@@ -9344,12 +9344,12 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="threshold til buying more lassos",
-Callback=function(x)
-af.setRestockThreshold(x)
+Callback=function(B)
+af.setRestockThreshold(B)
 end,
 })
 
-p:AddSlider("LassoRestockAmount",{
+t:AddSlider("LassoRestockAmount",{
 Text="Restock Amount",
 Default=100,
 Min=1,
@@ -9358,44 +9358,44 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="how many lassos u want",
-Callback=function(x)
-af.setRestockAmount(x)
+Callback=function(B)
+af.setRestockAmount(B)
 end,
 })
 
-p:AddButton("Restock Now",function()
+t:AddButton("Restock Now",function()
 af.triggerRestock()
 end)
 
 
-local x=f.Main:AddRightTabbox()
+local B=f.Main:AddRightTabbox()
 
-local y=x:AddTab("Ores")
-local z=x:AddTab("Pickaxe")
-local A=x:AddTab("Render")
+local C=B:AddTab("Ores")
+local D=B:AddTab("Pickaxe")
+local E=B:AddTab("Render")
 
-y:AddToggle('AutoMine',{
+C:AddToggle('AutoMine',{
 Text='Mine',
 Default=false,
 Tooltip='Auto mines ores for you',
 
-Callback=function(B)
-ak.setEnabled(B)
-ak.setNoclip(B)
+Callback=function(F)
+ak.setEnabled(F)
+ak.setNoclip(F)
 end
 })
 
-y:AddToggle("RandomTP",{
+C:AddToggle("RandomTP",{
 Text="Random Teleport",
 Default=false,
 Tooltip="Teleports to a random spot on the island when idle",
 
-Callback=function(B)
-ak.setRandomTeleport(B)
+Callback=function(F)
+ak.setRandomTeleport(F)
 end,
 })
 
-y:AddSlider("ClickCooldown",{
+C:AddSlider("ClickCooldown",{
 Text="Click Cooldown",
 Default=0.05,
 Min=0,
@@ -9405,13 +9405,13 @@ Compact=true,
 HideMax=true,
 Tooltip="Delay between clicks in seconds",
 
-Callback=function(B)
-ak.setClickCooldown(B)
+Callback=function(F)
+ak.setClickCooldown(F)
 end,
 })
 
 
-y:AddSlider("IdleThreshold",{
+C:AddSlider("IdleThreshold",{
 Text="Idle Threshold",
 Default=5,
 Min=1,
@@ -9421,29 +9421,29 @@ Compact=true,
 HideMax=true,
 Tooltip="Seconds idle before random teleport fires",
 
-Callback=function(B)
-ak.setIdleThreshold(B)
+Callback=function(F)
+ak.setIdleThreshold(F)
 end,
 })
 
-local B=ak.getOreValues()
+local F=ak.getOreValues()
 
-y:AddDropdown("OreSelector",{
+C:AddDropdown("OreSelector",{
 Text="Ore Types",
-Values=B,
+Values=F,
 Default=0,
 Multi=true,
 Tooltip="Select which ores to mine",
 
-Callback=function(C)
+Callback=function(G)
 
-for D,E in ipairs(B)do
-ak.setOreTarget(E,false)
+for H,I in ipairs(F)do
+ak.setOreTarget(I,false)
 end
 
-for D,E in pairs(C)do
-if E then
-ak.setOreTarget(D,true)
+for H,I in pairs(G)do
+if I then
+ak.setOreTarget(H,true)
 end
 end
 end,
@@ -9452,25 +9452,25 @@ Disabled=false,
 Visible=true,
 })
 
-z:AddToggle("EquipPickaxe",{
+D:AddToggle("EquipPickaxe",{
 Text="Pickaxe",
 Default=false,
 Tooltip="Equips the pickaxe for you automatically",
 
-Callback=function(C)
-ak.setPickaxeEnabled(C)
+Callback=function(G)
+ak.setPickaxeEnabled(G)
 end,
 })
 
-local C=game:GetService("ReplicatedStorage")
-local D=require(C.References)
-local E=D.Utilities.Network
+local G=game:GetService("ReplicatedStorage")
+local H=require(G.References)
+local I=H.Utilities.Network
 
 
 
 
 
-local F={
+local J={
 ["Stone Harvester"]={shop="Mainland Shop",idx=4},
 ["Tin Harvester"]={shop="Mainland Shop",idx=5},
 ["Copper Harvester"]={shop="Blizzard Island Shop",idx=4},
@@ -9490,7 +9490,7 @@ local F={
 ["Prismatic Harvester"]={shop="Volcano Island Shop",idx=4},
 }
 
-local G={
+local K={
 "Harvester",
 "Stone Harvester",
 "Tin Harvester",
@@ -9511,66 +9511,66 @@ local G={
 "Prismatic Harvester",
 }
 
-local H=G[1]
+local L=K[1]
 
-z:AddDropdown("PickaxeSelector",{
+D:AddDropdown("PickaxeSelector",{
 Text="Pickaxe",
-Values=G,
+Values=K,
 Default=1,
 Multi=false,
 Tooltip="Select which pickaxe to buy",
-Callback=function(I)
-H=I
+Callback=function(M)
+L=M
 end,
 Disabled=false,
 Visible=true,
 })
 
-z:AddButton("Buy Pickaxe",function()
-local I=F[H]
-if not I then return end
+D:AddButton("Buy Pickaxe",function()
+local M=J[L]
+if not M then return end
 
 
-E:FireServer("Shopping","BuyShopItem",I.shop,I.idx,1,nil)
+I:FireServer("Shopping","BuyShopItem",M.shop,M.idx,1,nil)
 end)
 
-A:AddToggle("HighlightOre",{
+E:AddToggle("HighlightOre",{
 Text="Highlight",
 Default=false,
 Tooltip="Highlights ore that is being mined",
 
-Callback=function(I)
-ak.setHighlight(I)
+Callback=function(M)
+ak.setHighlight(M)
 end,
 })
 
-local I=f.Main:AddLeftTabbox()
+local M=f.Main:AddLeftTabbox()
 
-local J=I:AddTab("Train")
+local N=M:AddTab("Train")
 
-J:AddToggle("AutoTrainEnabled",{
+N:AddToggle("AutoTrainEnabled",{
 Text="Cross Country",
 Default=false,
 Tooltip="Automatically completes cross country",
-Callback=function(K)
-ap.setEnabled(K)
-ap.setNoclip(K)
+Callback=function(O)
+ap.setEnabled(O)
+ap.setNoclip(O)
 end,
 })
 
-J:AddToggle("AutoSingleStakeEnabled",{
+N:AddToggle("AutoSingleStakeEnabled",{
 Text="Single Stake",
 Default=false,
 Tooltip="Automatically completes single stake",
-Callback=function(K)
-at.setEnabled(K)
-at.setNoclip(K)
+Callback=function(O)
+at.setEnabled(O)
+at.setNoclip(O)
 end,
 })
 
-local K=I:AddTab("Settings")
+local O=M:AddTab("Settings")
 
-K:AddSlider("TrainSpeed",{
+O:AddSlider("TrainSpeed",{
 Text="Speed",
 Default=42,
 Min=20,
@@ -9579,20 +9579,20 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="training speed",
-Callback=function(L)
-ap.setMoveSpeed(L)
+Callback=function(P)
+ap.setMoveSpeed(P)
 end,
 })
 
-local L=f.Main:AddRightGroupbox("Treasure")
+local P=f.Main:AddRightGroupbox("Treasure")
 
-L:AddToggle("TreasureEnabled",{
+P:AddToggle("TreasureEnabled",{
 Text="Enable",
 Default=false,
 Tooltip="Auto digs treasure",
-Callback=function(M)
-ar.setEnabled(M)
-ar.setNoclip(M)
+Callback=function(Q)
+ar.setEnabled(Q)
+ar.setNoclip(Q)
 end,
 })
 
@@ -9607,21 +9607,21 @@ end,
 
 
 
-local M=f.Misc:AddLeftTabbox()
+local Q=f.Misc:AddLeftTabbox()
 
-local N=M:AddTab("Player")
-local O=M:AddTab("Horse")
+local R=Q:AddTab("Player")
+local S=Q:AddTab("Horse")
 
-N:AddToggle("WalkspeedEnabled",{
+R:AddToggle("WalkspeedEnabled",{
 Text="Walkspeed",
 Default=false,
 Tooltip="Enhances characters speed",
-Callback=function(P)
-al.setEnabled(P)
+Callback=function(T)
+al.setEnabled(T)
 end,
 })
 
-N:AddSlider("WalkspeedValue",{
+R:AddSlider("WalkspeedValue",{
 Text="Walkspeed Value",
 Default=16,
 Min=16,
@@ -9630,21 +9630,21 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="walkspeed value",
-Callback=function(P)
-al.setValue(P)
+Callback=function(T)
+al.setValue(T)
 end,
 })
 
-N:AddToggle("JumpPowerEnabled",{
+R:AddToggle("JumpPowerEnabled",{
 Text="JumpPower",
 Default=false,
 Tooltip="Enhances JumpPower",
-Callback=function(P)
-al.setJumpEnabled(P)
+Callback=function(T)
+al.setJumpEnabled(T)
 end,
 })
 
-N:AddSlider("JumpPowerValue",{
+R:AddSlider("JumpPowerValue",{
 Text="JumpPower Value",
 Default=50,
 Min=0,
@@ -9653,21 +9653,21 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="jumppower value",
-Callback=function(P)
-al.setJumpValue(P)
+Callback=function(T)
+al.setJumpValue(T)
 end,
 })
 
-O:AddToggle("HWalkspeedEnabled",{
+S:AddToggle("HWalkspeedEnabled",{
 Text="Walkspeed",
 Default=false,
 Tooltip="Enhances horses speed",
-Callback=function(P)
-am.setEnabled(P)
+Callback=function(T)
+am.setEnabled(T)
 end,
 })
 
-O:AddSlider("HWalkspeedValue",{
+S:AddSlider("HWalkspeedValue",{
 Text="Walkspeed Value",
 Default=16,
 Min=16,
@@ -9676,21 +9676,21 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="walkspeed value",
-Callback=function(P)
-am.setValue(P)
+Callback=function(T)
+am.setValue(T)
 end,
 })
 
-O:AddToggle("HJumpPowerEnabled",{
+S:AddToggle("HJumpPowerEnabled",{
 Text="JumpPower",
 Default=false,
 Tooltip="Enhances horses JumpPower",
-Callback=function(P)
-am.setJumpEnabled(P)
+Callback=function(T)
+am.setJumpEnabled(T)
 end,
 })
 
-O:AddSlider("HJumpPowerValue",{
+S:AddSlider("HJumpPowerValue",{
 Text="JumpPower Value",
 Default=50,
 Min=0,
@@ -9699,41 +9699,41 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="jumppower value",
-Callback=function(P)
-am.setJumpValue(P)
+Callback=function(T)
+am.setJumpValue(T)
 end,
 })
 
-local P=f.Misc:AddRightGroupbox("Performance")
+local T=f.Misc:AddRightGroupbox("Performance")
 
-local Q=Instance.new("ScreenGui")
-Q.Name="BackgroundCover"
-Q.DisplayOrder=-1
-Q.IgnoreGuiInset=true
-Q.Parent=game:GetService("CoreGui")
+local U=Instance.new("ScreenGui")
+U.Name="BackgroundCover"
+U.DisplayOrder=-1
+U.IgnoreGuiInset=true
+U.Parent=game:GetService("CoreGui")
 
-local R=Instance.new("Frame",Q)
-R.Size=UDim2.new(1,0,1,0)
-R.BackgroundColor3=Color3.fromRGB(0,0,0)
-R.ZIndex=1
-R.BorderSizePixel=0
-R.Visible=false
+local V=Instance.new("Frame",U)
+V.Size=UDim2.new(1,0,1,0)
+V.BackgroundColor3=Color3.fromRGB(0,0,0)
+V.ZIndex=1
+V.BorderSizePixel=0
+V.Visible=false
 
-local S=Instance.new("TextLabel",R)
-S.Size=UDim2.new(1,0,1,0)
-S.Position=UDim2.new(0,0,0,0)
-S.BackgroundTransparency=1
-S.TextColor3=Color3.fromRGB(255,255,255)
-S.Font=Enum.Font.SourceSansBold
-S.TextSize=18
-S.ZIndex=2
-S.TextXAlignment=Enum.TextXAlignment.Center
-S.TextYAlignment=Enum.TextYAlignment.Center
-S.TextWrapped=true
-S.Text=""
+local W=Instance.new("TextLabel",V)
+W.Size=UDim2.new(1,0,1,0)
+W.Position=UDim2.new(0,0,0,0)
+W.BackgroundTransparency=1
+W.TextColor3=Color3.fromRGB(255,255,255)
+W.Font=Enum.Font.SourceSansBold
+W.TextSize=18
+W.ZIndex=2
+W.TextXAlignment=Enum.TextXAlignment.Center
+W.TextYAlignment=Enum.TextYAlignment.Center
+W.TextWrapped=true
+W.Text=""
 
 
-local T={
+local X={
 mismatchHairColour="Mismatch Hair",
 summer2026="Summer 2026",
 naturallyDyedHairColour="Nat. Dyed",
@@ -9748,7 +9748,7 @@ rareCoat="Rare Coat",
 }
 
 
-local U={
+local Y={
 "horned",
 "mismatchHairColour",
 "naturallyDyedHairColour",
@@ -9763,21 +9763,21 @@ local U={
 }
 
 
-local V={}
-for W,X in ipairs(U)do
-V[X]=true
+local Z={}
+for _,av in ipairs(Y)do
+Z[av]=true
 end
 
 
-local W={}
-for X,Y in ipairs(U)do
-table.insert(W,T[Y])
+local av={}
+for _,aw in ipairs(Y)do
+table.insert(av,X[aw])
 end
 
 
-local X={}
-for Y,Z in pairs(T)do
-X[Z]=Y
+local aw={}
+for _,ax in pairs(X)do
+aw[ax]=_
 end
 
 
@@ -9787,40 +9787,40 @@ task.spawn(function()
 while true do
 task.wait(1)
 
-if not R.Visible then continue end
+if not V.Visible then continue end
 if not ai then continue end
 
-local Y,Z=pcall(function()return ai.getStats()end)
-if not Y or not Z then continue end
+local ax,_=pcall(function()return ai.getStats()end)
+if not ax or not _ then continue end
 
-local _={}
-table.insert(_,string.format("Sold: %d   Locked: %d   Coins: %d",
-Z.sold,Z.locked,Z.coins))
-table.insert(_,"")
+local ay={}
+table.insert(ay,string.format("Sold: %d   Locked: %d   Coins: %d",
+_.sold,_.locked,_.coins))
+table.insert(ay,"")
 
-for av,aw in ipairs(U)do
-if V[aw]then
-local ax=Z.lockedByReason and Z.lockedByReason[aw]or 0
-table.insert(_,string.format("%s: %d",T[aw],ax))
+for az,aA in ipairs(Y)do
+if Z[aA]then
+local aB=_.lockedByReason and _.lockedByReason[aA]or 0
+table.insert(ay,string.format("%s: %d",X[aA],aB))
 end
 end
 
-S.Text=table.concat(_,"\n")
+W.Text=table.concat(ay,"\n")
 end
 end)
-local av={}
+local ax={}
 
-P:AddToggle('MuteAmbientMusic',{
+T:AddToggle('MuteAmbientMusic',{
 Text='Ambient Music',
 Default=false,
 Tooltip='Turns on or off ambient music or sounds',
-Callback=function(aw)
-local ax=game:GetService("SoundService")
-local Y=ax:GetDescendants()
+Callback=function(ay)
+local az=game:GetService("SoundService")
+local aA=az:GetDescendants()
 
-for Z,_ in ipairs(Y)do
+for aB,_ in ipairs(aA)do
 if _:IsA("Sound")then
-if aw then
+if ay then
 
 _.Playing=false
 else
@@ -9832,35 +9832,35 @@ end
 end
 })
 
-P:AddToggle('NoGraphics',{
+T:AddToggle('NoGraphics',{
 Text='No Graphics',
 Default=false,
 Tooltip='Disables 3D rendering with a black background',
-Callback=function(aw)
+Callback=function(ay)
 do
-game:GetService("RunService"):Set3dRenderingEnabled(not aw)
-R.Visible=aw
+game:GetService("RunService"):Set3dRenderingEnabled(not ay)
+V.Visible=ay
 end
 end
 })
 
-P:AddDropdown("OverlayStatsDisplay",{
+T:AddDropdown("OverlayStatsDisplay",{
 Text="Overlay Stats",
-Values=W,
-Default=W,
+Values=av,
+Default=av,
 Multi=true,
 Tooltip="Choose which lock types to show on the black screen overlay",
 
-Callback=function(aw)
+Callback=function(ay)
 
-for ax in pairs(V)do
-V[ax]=false
+for az in pairs(Z)do
+Z[az]=false
 end
 
-for ax,Y in pairs(aw)do
-if Y then
-local Z=X[ax]
-if Z then V[Z]=true end
+for az,aA in pairs(ay)do
+if aA then
+local aB=aw[az]
+if aB then Z[aB]=true end
 end
 end
 end,
@@ -9869,18 +9869,18 @@ Disabled=false,
 Visible=true,
 })
 
-local aw=false
-local ax=60
+local ay=false
+local az=60
 
-P:AddToggle('SetFPS',{
+T:AddToggle('SetFPS',{
 Text='FPS Cap',
 Default=false,
 Tooltip='Caps the game FPS at the slider value',
-Callback=function(Y)
+Callback=function(aA)
 do
-aw=Y
-if aw then
-setfpscap(ax)
+ay=aA
+if ay then
+setfpscap(az)
 else
 setfpscap(0)
 end
@@ -9888,52 +9888,52 @@ end
 end
 })
 
-P:AddSlider('FPSCap',{
+T:AddSlider('FPSCap',{
 Text='FPS Cap Value',
 Default=60,
 Min=1,
 Max=240,
 Rounding=1,
 Compact=false,
-Callback=function(Y)
+Callback=function(aA)
 do
-ax=Y
-if aw then
-setfpscap(Y)
+az=aA
+if ay then
+setfpscap(aA)
 end
 end
 end
 })
 
-local Y=f.Misc:AddLeftGroupbox("Redeem")
+local aA=f.Misc:AddLeftGroupbox("Redeem")
 
 
 
 
-Y:AddButton("Redeem Codes",function()
+aA:AddButton("Redeem Codes",function()
 task.spawn(function()
-local Z=game:GetService("ReplicatedStorage")
-local _=require(Z:WaitForChild("References"))
-local ay=_.Flags
-local az=require(_.PlayerScripts.Priority:WaitForChild("Data"))
-local aA=_.Utilities.Network
+local aB=game:GetService("ReplicatedStorage")
+local _=require(aB:WaitForChild("References"))
+local aC=_.Flags
+local aD=require(_.PlayerScripts.Priority:WaitForChild("Data"))
+local aE=_.Utilities.Network
 
-local aB=ay.flags and ay.flags.codes or{}
-local aC,aD=0,0
+local aF=aC.flags and aC.flags.codes or{}
+local aG,aH=0,0
 
-for aE,aF in pairs(aB)do
-if az.GetLocal({"codesRedeemed",aE})==true then
-aD+=1
+for aI,aJ in pairs(aF)do
+if aD.GetLocal({"codesRedeemed",aI})==true then
+aH+=1
 else
-aA:FireServer("Codes","Submit",aE)
-ab:Notify("Submitted: "..aE,5)
-print("[Codes] Submitted: "..aE)
-aC+=1
+aE:FireServer("Codes","Submit",aI)
+ab:Notify("Submitted: "..aI,5)
+print("[Codes] Submitted: "..aI)
+aG+=1
 task.wait(1.5)
 end
 end
 
-print(string.format("[Codes] Done — submitted: %d, already redeemed: %d",aC,aD))
+print(string.format("[Codes] Done — submitted: %d, already redeemed: %d",aG,aH))
 end)
 end)
 
@@ -9944,41 +9944,41 @@ end)
 
 
 
-local function ay(az,aA,aB)
+local function aB(aC,aD,aE)
 task.spawn(function()
-local aC=game:GetService("ReplicatedStorage")
-local aD=require(aC:WaitForChild("References"))
-local aE=aD.Utilities.Network
+local aF=game:GetService("ReplicatedStorage")
+local aG=require(aF:WaitForChild("References"))
+local aH=aG.Utilities.Network
 
-print(string.format("[Trade] Firing %s x%d...",aA,aB))
-for aF=1,aB do
-local Z,_=pcall(function()
-return aE:InvokeServer("TradeIn","Trade",az)
+print(string.format("[Trade] Firing %s x%d...",aD,aE))
+for aI=1,aE do
+local aJ,_=pcall(function()
+return aH:InvokeServer("TradeIn","Trade",aC)
 end)
-if Z and _ then
-print(string.format("[Trade] %s %d/%d — got item",aA,aF,aB))
+if aJ and _ then
+print(string.format("[Trade] %s %d/%d — got item",aD,aI,aE))
 else
-warn(string.format("[Trade] %s %d/%d failed: %s",aA,aF,aB,tostring(_)))
+warn(string.format("[Trade] %s %d/%d failed: %s",aD,aI,aE,tostring(_)))
 end
-if aF<aB then task.wait(0.8)end
+if aI<aE then task.wait(0.8)end
 end
-print("[Trade] "..aA.." done.")
+print("[Trade] "..aD.." done.")
 end)
 end
 
 
 
 
-Y:AddButton("Golden Apples (20)",function()
-ay("goldenAppleBasket","Golden Apples",1)
+aA:AddButton("Golden Apples (20)",function()
+aB("goldenAppleBasket","Golden Apples",1)
 end)
 
-Y:AddButton("Volcanic Minerals (5)",function()
-ay("volcanicMinerals","Volcanic Minerals",1)
+aA:AddButton("Volcanic Minerals (5)",function()
+aB("volcanicMinerals","Volcanic Minerals",1)
 end)
 
-Y:AddButton("Training Receipts (100)",function()
-ay("trainingReceipts","Training Receipts",1)
+aA:AddButton("Training Receipts (100)",function()
+aB("trainingReceipts","Training Receipts",1)
 end)
 
 
@@ -9993,16 +9993,16 @@ end)
 
 
 
-local az=f.Misc:AddRightGroupbox("Teleport")
+local aC=f.Misc:AddRightGroupbox("Teleport")
 
 
 
 
-local aA=game:GetService("ReplicatedStorage")
-local aB=require(aA:WaitForChild("References"))
-local aC=require(aB.PlayerScripts:WaitForChild("Secondary"):WaitForChild("TravelHandler"))
+local aD=game:GetService("ReplicatedStorage")
+local aE=require(aD:WaitForChild("References"))
+local aF=require(aE.PlayerScripts:WaitForChild("Secondary"):WaitForChild("TravelHandler"))
 
-local aD={
+local aG={
 
 "Mainland",
 "Blizzard Island",
@@ -10019,7 +10019,7 @@ local aD={
 "Rescue Island",
 }
 
-local aE={
+local aH={
 ["Mainland"]=8,
 ["Blizzard Island"]=1,
 ["Forest Island"]=1,
@@ -10041,29 +10041,29 @@ local aE={
 ["Wild Island"]=1,
 }
 
-local function aF(Z)
-if not Z then return end
-local _=aE[Z]or 1
+local function aI(aJ)
+if not aJ then return end
+local _=aH[aJ]or 1
 pcall(function()
-aC.Travel(Z,_)
+aF.Travel(aJ,_)
 end)
 end
 
-az:AddDropdown("IslandTravel",{
+aC:AddDropdown("IslandTravel",{
 Text="Travel to Island",
-Values=aD,
+Values=aG,
 Default=1,
 Multi=false,
 Tooltip="Select an island to travel to",
-Callback=function(Z)
-selected_island=Z
+Callback=function(aJ)
+selected_island=aJ
 end,
 Disabled=false,
 Visible=true,
 })
 
-az:AddButton("Travel",function()
-aF(selected_island)
+aC:AddButton("Travel",function()
+aI(selected_island)
 end)
 
 
@@ -10071,46 +10071,46 @@ end)
 ab:SetWatermarkVisibility(true)
 
 
-local Z=tick()
+local aJ=tick()
 local _=0;
-local aG=60;
-local aH=(function()return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())end)
-local aI=pcall(function()return aH()end)
+local aK=60;
+local aL=(function()return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())end)
+local aM=pcall(function()return aL()end)
 
-local aJ=game:GetService("RunService").RenderStepped:Connect(function()
+local aN=game:GetService("RunService").RenderStepped:Connect(function()
 _+=1;
 
-if(tick()-Z)>=1 then
-aG=_;
-Z=tick();
+if(tick()-aJ)>=1 then
+aK=_;
+aJ=tick();
 _=0;
 end;
 
-if aI then
+if aM then
 ab:SetWatermark(("coconut - [buyer build] | %d fps | %d ms"):format(
-math.floor(aG),
-aH()
+math.floor(aK),
+aL()
 ));
 else
 ab:SetWatermark(("coconut - [buyer build] | %d fps"):format(
-math.floor(aG)
+math.floor(aK)
 ));
 end
 end);
 
 ab:OnUnload(function()
-aJ:Disconnect()
+aN:Disconnect()
 ab.Unloaded=true
 end)
 
 
-local aK=f["UI Settings"]:AddLeftGroupbox("Menu")
+local aO=f["UI Settings"]:AddLeftGroupbox("Menu")
 
-aK:AddToggle("KeybindMenuOpen",{Default=ab.KeybindFrame.Visible,Text="Open Keybind Menu",Callback=function(aL)ab.KeybindFrame.Visible=aL end})
-aK:AddToggle("BlurEnabled",{Default=true,Text="Blur",Callback=function(aL)ab.BlurEffect.Enabled=aL end})
-aK:AddDivider()
-aK:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind",{Default="RightShift",NoUI=true,Text="Menu keybind"})
-aK:AddButton("Unload",function()ab:Unload()end)
+aO:AddToggle("KeybindMenuOpen",{Default=ab.KeybindFrame.Visible,Text="Open Keybind Menu",Callback=function(aP)ab.KeybindFrame.Visible=aP end})
+aO:AddToggle("BlurEnabled",{Default=true,Text="Blur",Callback=function(aP)ab.BlurEffect.Enabled=aP end})
+aO:AddDivider()
+aO:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind",{Default="RightShift",NoUI=true,Text="Menu keybind"})
+aO:AddButton("Unload",function()ab:Unload()end)
 
 ab.ToggleKeybind=au.MenuKeybind
 
