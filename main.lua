@@ -480,9 +480,44 @@ Parent=t.ScreenGui,
 Visible=false,
 })
 
-local D=t:CreateLabel({
+local D=t:Create('Frame',{
+Name="HighlightTing4ToolTipG",
+BackgroundColor3=Color3.new(1,1,1),
+BorderColor3=t.OutlineColor;
+BorderSizePixel=0;
+BorderMode=Enum.BorderMode.Inset;
+Position=UDim2.fromOffset(0,0);
+Size=UDim2.new(0,1,0,15);
+
+ZIndex=102;
+Parent=C;
+});
+
+
+
+
+
+local E=t:Create("UIGradient",{
+Rotation=90,
+Parent=D,
+Color=ColorSequence.new({
+ColorSequenceKeypoint.new(0,t.AccentColor),
+ColorSequenceKeypoint.new(1,t.SecondAccentColor),
+}),
+});
+t:AddToRegistry(E,{
+Color=function()
+return ColorSequence.new({
+ColorSequenceKeypoint.new(0,t.AccentColor),
+ColorSequenceKeypoint.new(1,t.SecondAccentColor),
+})
+end
+});
+
+local F=t:CreateLabel({
 Position=UDim2.fromOffset(3,1),
 Size=UDim2.fromOffset(A,B);
+
 TextSize=t.FontSize;
 Text=y,
 TextColor3=t.FontColor,
@@ -495,29 +530,29 @@ t:AddToRegistry(C,{
 BackgroundColor3='MainColor';
 BorderColor3='OutlineColor';
 });
-t:AddToRegistry(D,{
+t:AddToRegistry(F,{
 TextColor3='FontColor',
 });
-local E=false
+local G=false
 
 z.MouseEnter:Connect(function()
 if t:MouseIsOverOpenedFrame()then
 return
 end
 
-E=true
+G=true
 
 C.Position=UDim2.fromOffset(o.X+15,o.Y+12)
 C.Visible=true
 
-while E do
+while G do
 j.Heartbeat:Wait()
 C.Position=UDim2.fromOffset(o.X+15,o.Y+12)
 end
 end)
 
 z.MouseLeave:Connect(function()
-E=false
+G=false
 C.Visible=false
 end)
 end
@@ -2666,11 +2701,15 @@ Parent=ak;
 local al=t:Create('ImageLabel',{
 AnchorPoint=Vector2.new(0,0.5);
 BackgroundTransparency=1;
+ImageColor3=t.AccentColor;
 Position=UDim2.new(1,-16,0.5,0);
 Size=UDim2.new(0,12,0,12);
 Image='http://www.roblox.com/asset/?id=6282522798';
 ZIndex=8;
 Parent=ak;
+});
+t:AddToRegistry(al,{
+ImageColor3='AccentColor';
 });
 local am=t:CreateLabel({
 Position=UDim2.new(0,5,0,0);
@@ -3211,7 +3250,6 @@ Parent=aj;
 });
 t:AddToRegistry(ak,{BackgroundColor3='AccentColor'},true);
 
-
 local al=t:Create("UIGradient",{
 Rotation=90,
 Parent=ak,
@@ -3503,26 +3541,6 @@ t:AddToRegistry(ah,{
 BorderColor3='OutlineColor';
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 local ai=t:Create("UIGradient",{
 Rotation=90,
 Parent=ah,
@@ -3670,12 +3688,17 @@ BorderColor3="OutlineColor";
 local J=t:CreateLabel({
 Position=UDim2.new(0,0,0,0);
 Size=UDim2.new(1,0,1,-3);
+TextColor3=t.FontColor;
 Text=F;
 FontFace=Font.new("rbxasset://fonts/families/Tahoma.json",Enum.FontWeight.Bold),
 TextSize=15,
 ZIndex=1;
 Parent=H;
 });
+
+t:AddToRegistry(J,{
+TextColor3='FontColor';
+})
 
 local K=t:Create('Frame',{
 BackgroundColor3=t.AccentColor;
@@ -3795,6 +3818,8 @@ Q[N]=nil
 end
 
 L.Visible=true
+J.TextColor3=t.AccentColor
+t.RegistryMap[J].Properties.TextColor3='AccentColor'
 H.BackgroundColor3=t.MainColor
 t.RegistryMap[H].Properties.BackgroundColor3='MainColor'
 
@@ -3819,6 +3844,8 @@ Q[N]=nil
 end
 
 L.Visible=false
+J.TextColor3=t.FontColor
+t.RegistryMap[J].Properties.TextColor3='FontColor'
 H.BackgroundColor3=t.BackgroundColor
 t.RegistryMap[H].Properties.BackgroundColor3='BackgroundColor'
 K.Visible=false
@@ -4588,6 +4615,7 @@ end
 Options.BackgroundColor:OnChanged(af)
 Options.MainColor:OnChanged(af)
 Options.AccentColor:OnChanged(af)
+Options.SecondAccentColor:OnChanged(af)
 Options.OutlineColor:OnChanged(af)
 Options.FontColor:OnChanged(af)
 end
@@ -5451,30 +5479,40 @@ local r=RaycastParams.new()
 r.FilterType=Enum.RaycastFilterType.Exclude
 r.IgnoreWater=true
 
-local s=false
 
-local function t(u,v)
-if not u then return end
-if v==s then
-if not v then return end
-end
-s=v
-for w,x in ipairs(u:GetDescendants())do
-if x:IsA("BasePart")then
-x.CanCollide=not v
-end
+
+
+
+
+local function s(t,u)
+if not t then return end
+for v,w in ipairs(t:GetDescendants())do
+if w:IsA("BasePart")then
+w.CanCollide=not u
 end
 end
-
-
-
-
-local function u()
-if p then
-local v=p.Parent
-if v then t(v,false)end
 end
 
+
+
+
+task.spawn(function()
+while true do
+ac.Heartbeat:Wait()
+if not al then continue end
+local t=ae.Character
+if not t then continue end
+local u=t:FindFirstChild("UpperTorso")
+local v=t:FindFirstChild("LowerTorso")
+if u and u.CanCollide then u.CanCollide=false end
+if v and v.CanCollide then v.CanCollide=false end
+end
+end)
+
+
+
+
+local function t()
 if o then o:Disconnect();o=nil end
 if n then n:Destroy();n=nil end
 if m then m:Destroy();m=nil end
@@ -5488,12 +5526,12 @@ end
 
 
 
-local function v(w,x,y)
-local z=workspace:Raycast(w,x.Unit*y,r)
-if z and z.Instance then
-local A=z.Instance
-if A:IsA("Terrain")or(A:IsA("BasePart")and A.CanCollide)then
-return true,z.Position
+local function u(v,w,x)
+local y=workspace:Raycast(v,w.Unit*x,r)
+if y and y.Instance then
+local z=y.Instance
+if z:IsA("Terrain")or(z:IsA("BasePart")and z.CanCollide)then
+return true,y.Position
 end
 end
 return false,nil
@@ -5502,112 +5540,102 @@ end
 
 
 
-local function w(x,y,z)
-local A=y.Position+Vector3.new(0,ai,0)
-local B=A-x.Position
-local C=B.Magnitude
+local function v(w,x,y)
+local z=x.Position+Vector3.new(0,ai,0)
+local A=z-w.Position
+local B=A.Magnitude
 
-if C<i then return Vector3.zero,C end
+if B<i then return Vector3.zero,B end
 
-local D=B.Unit
+local C=A.Unit
 
-local E={ae.Character}
-if q then table.insert(E,q)end
-r.FilterDescendantsInstances=E
+local D={ae.Character}
+if q then table.insert(D,q)end
+r.FilterDescendantsInstances=D
 
+local E,F=u(w.Position,C,math.min(B,e))
 
-local F,G=v(x.Position,D,math.min(C,e))
-
-if not F then
-return D*math.min(C*60,h),C
+if not E then
+return C*math.min(B*60,h),B
 end
 
+local G=F and F.Y or w.Position.Y
+local H=Vector3.new(z.X,G+d,z.Z)
+local I=(H-w.Position).Unit
 
-local H=G and G.Y or x.Position.Y
-local I=Vector3.new(A.X,H+d,A.Z)
-local J=(I-x.Position).Unit
-
-
-if z then
-local K=(J+z*0.8).Unit
-return K*math.min(C*60,h),C
+if y then
+local J=(I+y*0.8).Unit
+return J*math.min(B*60,h),B
 end
 
+local J=Vector3.new(C.X,0,C.Z)
+if J.Magnitude<0.01 then J=Vector3.new(1,0,0)end
+J=J.Unit
 
-local K=Vector3.new(D.X,0,D.Z)
-if K.Magnitude<0.01 then K=Vector3.new(1,0,0)end
-K=K.Unit
+local K,L=math.cos(f),math.sin(f)
 
-local L,M=math.cos(f),math.sin(f)
+local M=Vector3.new(
+J.X*K-J.Z*(-L),
+0,
+J.X*(-L)+J.Z*K
+).Unit
 
 local N=Vector3.new(
-K.X*L-K.Z*(-M),
+J.X*K-J.Z*L,
 0,
-K.X*(-M)+K.Z*L
+J.X*L+J.Z*K
 ).Unit
 
-local O=Vector3.new(
-K.X*L-K.Z*M,
-0,
-K.X*M+K.Z*L
-).Unit
+local O=u(w.Position,M,g)
+local P=u(w.Position,N,g)
 
-local P=v(x.Position,N,g)
-local Q=v(x.Position,O,g)
+local Q
+if not O and P then
+Q=M
+elseif not P and O then
+Q=N
+elseif not O and not P then
+local R=M:Dot(C)
+local S=N:Dot(C)
+Q=(R>=S)and M or N
+else
+Q=nil
+end
 
 local R
-if not P and Q then
-R=N
-elseif not Q and P then
-R=O
-elseif not P and not Q then
-local S=N:Dot(D)
-local T=O:Dot(D)
-R=(S>=T)and N or O
+if Q then
+R=(I+Q*1.2).Unit
 else
-R=nil
+R=I
 end
 
-local S
-if R then
-S=(J+R*1.2).Unit
-else
-S=J
-end
-
-return S*math.min(C*60,h),C
-end
-
-local function x(y,z)
-for A,B in ipairs(y:GetDescendants())do
-if B:IsA("BasePart")then
-B.CanCollide=not z
-end
-end
+return R*math.min(B*60,h),B
 end
 
 
 
 
-local function y(z)
-u()
+local function w(x)
+t()
 
-local A=ae.Character
-local B=A and A:FindFirstChild("HumanoidRootPart")
-if not B then return end
+local y=ae.Character
+local z=y and y:FindFirstChild("HumanoidRootPart")
+if not z then return end
 
-q=z:FindFirstAncestorOfClass("Model")
+q=x:FindFirstAncestorOfClass("Model")
 
-local C=A:FindFirstChildOfClass("Humanoid")
-if C then
-C.PlatformStand=true
-p=C
+local A=y:FindFirstChildOfClass("Humanoid")
+if A then
+A.PlatformStand=true
+p=A
 end
-x(A,true)
 
+
+
+s(y,true)
 
 m=Instance.new("Attachment")
-m.Parent=B
+m.Parent=z
 
 n=Instance.new("LinearVelocity")
 n.Attachment0=m
@@ -5615,69 +5643,82 @@ n.MaxForce=1e6
 n.RelativeTo=Enum.ActuatorRelativeTo.World
 n.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
 n.VectorVelocity=Vector3.zero
-n.Parent=B
+n.Parent=z
 
-
-local D=B.Position
-local E=tick()
-local F=nil
-local G=0
+local B=z.Position
+local C=tick()
+local D=nil
+local E=0
 
 o=ac.Heartbeat:Connect(function()
-if not z or not z.Parent then
-u()
+if not x or not x.Parent then
+t()
 return
 end
 
-local H=ae.Character and ae.Character:FindFirstChild("HumanoidRootPart")
-if not H or not n then return end
-x(ae.Character,true)
-local I=tick()
+local F=ae.Character and ae.Character:FindFirstChild("HumanoidRootPart")
+if not F or not n then return end
 
+local G=tick()
 
-local J=(H.Position-D).Magnitude
-if J>j then
-D=H.Position
-E=I
-if I>G then F=nil end
+local H=(F.Position-B).Magnitude
+if H>j then
+B=F.Position
+C=G
+if G>E then D=nil end
 else
-local K=I-E
-if K>=k and I>G then
-local L=z.Position-H.Position
-local M=Vector3.new(L.X,0,L.Z)
-if M.Magnitude>0.01 then
-local N=M.Unit:Cross(Vector3.new(0,1,0)).Unit
-F=(math.random(0,1)==0)and N or-N
-G=I+l
-E=I
+local I=G-C
+if I>=k and G>E then
+local J=x.Position-F.Position
+local K=Vector3.new(J.X,0,J.Z)
+if K.Magnitude>0.01 then
+local L=K.Unit:Cross(Vector3.new(0,1,0)).Unit
+D=(math.random(0,1)==0)and L or-L
+E=G+l
+C=G
 end
 end
 end
 
-local K=(I<=G)and F or nil
+local I=(G<=E)and D or nil
 
-local L,M=w(H,z,K)
-n.VectorVelocity=L
+local J,K=v(F,x,I)
+n.VectorVelocity=J
 end)
 end
 
 
 
 
-local function z(A)
-if not A then return end
-local B=ao[A]or 1
-pcall(function()ah.Travel(A,B)end)
+
+ae.CharacterAdded:Connect(function(x)
+task.wait(1.5)
+
+s(x,false)
+b=false
+
+if al then
+s(x,true)
+end
+end)
+
+
+
+
+local function x(y)
+if not y then return end
+local z=ao[y]or 1
+pcall(function()ah.Travel(y,z)end)
 end
 
 
 
 
-local function A()
-local B=workspace:FindFirstChild("Islands")
-if not B then return nil end
-for C,D in ipairs(B:GetChildren())do
-if D:FindFirstChild(ae.Name)then return D end
+local function y()
+local z=workspace:FindFirstChild("Islands")
+if not z then return nil end
+for A,B in ipairs(z:GetChildren())do
+if B:FindFirstChild(ae.Name)then return B end
 end
 return nil
 end
@@ -5685,202 +5726,200 @@ end
 
 
 
-local function B(C,D)
-if not D then return end
+local function z(A,B)
+if not B then return end
 if b then return end
 
-local E=ap[D.Name]
-if not E or#E==0 then return end
+local C=ap[B.Name]
+if not C or#C==0 then return end
 
-local F=E[math.random(1,#E)].Position
-local G=ae.Character
-if not G then return end
-local H=G:FindFirstChildOfClass("Humanoid")
+local D=C[math.random(1,#C)].Position
+local E=ae.Character
+if not E then return end
+local F=E:FindFirstChildOfClass("Humanoid")
 
 b=true
 c=tick()
 
-local I=15
+local G=15
 
-local J=n~=nil
-local K,L=n,m
-local M,N=nil,nil
+local H=n~=nil
+local I,J=n,m
+local K,L=nil,nil
 
-if not J then
-if H then H.PlatformStand=true end
-N=Instance.new("Attachment")
-N.Parent=C
-M=Instance.new("LinearVelocity")
-M.Attachment0=N
-M.MaxForce=1e6
-M.RelativeTo=Enum.ActuatorRelativeTo.World
-M.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-M.VectorVelocity=Vector3.zero
-M.Parent=C
-K,L=M,N
+if not H then
+if F then F.PlatformStand=true end
+L=Instance.new("Attachment")
+L.Parent=A
+K=Instance.new("LinearVelocity")
+K.Attachment0=L
+K.MaxForce=1e6
+K.RelativeTo=Enum.ActuatorRelativeTo.World
+K.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+K.VectorVelocity=Vector3.zero
+K.Parent=A
+I,J=K,L
 end
 
-local O=40
-local P=2
+local M=40
+local N=2
 
-local function Q()
-if M then M:Destroy()end
-if N then N:Destroy()end
-if H and not J then H.PlatformStand=false end
+local function O()
+if K then K:Destroy()end
+if L then L:Destroy()end
+if F and not H then
+F.PlatformStand=false
+end
 b=false
 end
 
-local R
-R=ac.Heartbeat:Connect(function()
-
-if tick()-c>I then
-R:Disconnect()
-Q()
+local P
+P=ac.Heartbeat:Connect(function()
+if tick()-c>G then
+P:Disconnect()
+O()
 return
 end
 
+local Q=ae.Character
+local R=Q and Q:FindFirstChild("HumanoidRootPart")
 
-local S=ae.Character
-local T=S and S:FindFirstChild("HumanoidRootPart")
-
-if not T or not K or not K.Parent then
-R:Disconnect()
-Q()
+if not R or not I or not I.Parent then
+P:Disconnect()
+O()
 return
 end
 
-local U=F-T.Position
-local V=U.Magnitude
+local S=D-R.Position
+local T=S.Magnitude
 
-if V<P then
-K.VectorVelocity=Vector3.zero
-R:Disconnect()
-Q()
+if T<N then
+I.VectorVelocity=Vector3.zero
+P:Disconnect()
+O()
 else
-K.VectorVelocity=U.Unit*math.min(V*8,O)
+I.VectorVelocity=S.Unit*math.min(T*8,M)
 end
 end)
 end
 
-local function C(D,E)
-local F=nil
-local G=math.huge
+
+
+
+local function A(B,C)
+local D=nil
+local E=math.huge
 
 if au then
-for H,I in ipairs(workspace:GetChildren())do
-if I:IsA("Model")then
-local J=I:FindFirstChild("HumanoidRootPart")
-if J then
-local K=(D.Position-J.Position).Magnitude
-if K<G then G=K;F=J end
+for F,G in ipairs(workspace:GetChildren())do
+if G:IsA("Model")then
+local H=G:FindFirstChild("HumanoidRootPart")
+if H then
+local I=(B.Position-H.Position).Magnitude
+if I<E then E=I;D=H end
 end
 end
 end
-if F then return F end
-end
-
-for H,I in ipairs(E:GetDescendants())do
-if I:IsA("Model")then
-local J=I:FindFirstChild("HumanoidRootPart")
-local K=I:FindFirstChild("CaptureProgress",true)
-if J and K then
-local L=(D.Position-J.Position).Magnitude
-if L<G then G=L;F=J end
-end
-end
+if D then return D end
 end
 
-return F
+for F,G in ipairs(C:GetDescendants())do
+if G:IsA("Model")then
+local H=G:FindFirstChild("HumanoidRootPart")
+local I=G:FindFirstChild("CaptureProgress",true)
+if H and I then
+local J=(B.Position-H.Position).Magnitude
+if J<E then E=J;D=H end
+end
+end
 end
 
-local function D(E)
-local F={}
-for G,H in ipairs(an)do
-if as[H]then table.insert(F,H)end
-end
-if#F==0 then return nil end
-if#F==1 then return F[1]end
-for G,H in ipairs(F)do
-if H==E then return F[(G%#F)+1]end
-end
-return F[1]
+return D
 end
 
+local function B(C)
+local D={}
+for E,F in ipairs(an)do
+if as[F]then table.insert(D,F)end
+end
+if#D==0 then return nil end
+if#D==1 then return D[1]end
+for E,F in ipairs(D)do
+if F==C then return D[(E%#D)+1]end
+end
+return D[1]
+end
 
 
 
-local function E()
-local F=workspace:FindFirstChild("Islands")
+
+local function C()
+local D=workspace:FindFirstChild("Islands")
+if not D then return end
+local E=D:FindFirstChild("Volcano Island")
+if not E then return end
+local F=E:FindFirstChild("LavaParts")
 if not F then return end
-local G=F:FindFirstChild("Volcano Island")
-if not G then return end
-local H=G:FindFirstChild("LavaParts")
-if not H then return end
-for I,J in ipairs(H:GetDescendants())do
-if J:IsA("TouchTransmitter")then J:Destroy()end
+for G,H in ipairs(F:GetDescendants())do
+if H:IsA("TouchTransmitter")then H:Destroy()end
 end
 end
 
 do
-local F=nil
+local D=nil
 ac.Heartbeat:Connect(function()
-local G=A()
-if G and G.Name=="Volcano Island"and F~="Volcano Island"then
-F="Volcano Island"
-E()
-elseif not G or G.Name~="Volcano Island"then
-F=G and G.Name or nil
+local E=y()
+if E and E.Name=="Volcano Island"and D~="Volcano Island"then
+D="Volcano Island"
+C()
+elseif not E or E.Name~="Volcano Island"then
+D=E and E.Name or nil
 end
 end)
 task.spawn(function()
-while true do E();task.wait(3)end
+while true do C();task.wait(3)end
 end)
 end
-
-
-
-
 
 
 
 
 do
-local F=5
+local D=5
 
 task.spawn(function()
-local G=0
-local H=nil
-local I=false
-local J=0
-local K=0
+local E=0
+local F=nil
+local G=false
+local H=0
+local I=0
+local J=false
 
-local function L(M)
+local function K(L)
+if not L then return false end
+if not L.Parent then return false end
+local M=L:FindFirstAncestorOfClass("Model")
 if not M then return false end
 if not M.Parent then return false end
-local N=M:FindFirstAncestorOfClass("Model")
-if not N then return false end
-if not N.Parent then return false end
 return true
 end
 
-local function M()
-u()
-H=nil
-K=0
+local function L()
+t()
+F=nil
+I=0
 end
 
-local function N(O)
-if I then return end
-I=true
-G=0
-J=0
-M()
+local function M(N)
+if G then return end
+G=true
+E=0
+H=0
+L()
 
-
-
-local P=tick()
+local O=tick()
 while b do
-if tick()-P>20 then
+if tick()-O>20 then
 b=false
 break
 end
@@ -5888,97 +5927,101 @@ task.wait(0.2)
 end
 task.wait(0.5)
 
-z(O)
-local Q=tick()+30
+x(N)
+local P=tick()+30
 repeat
 task.wait(1)
-local R=A()
-if R and R.Name==O then break end
-until tick()>Q
+local Q=y()
+if Q and Q.Name==N then break end
+until tick()>P
 task.wait(2)
-I=false
+G=false
 end
 
-local function O(P)
-if I then return end
-local Q=A()
-if not Q then return end
-B(P,Q)
+local function N(O)
+if G then return end
+local P=y()
+if not P then return end
+z(O,P)
 end
 
 while true do
 task.wait(0.4)
 
-
-
 if b and tick()-c>20 then
 b=false
 end
 
+
+if al~=J then
+J=al
+local O=ae.Character
+if O then
+s(O,al)
+end
 if not al then
-M()
-G=0
-J=0
-continue
+L()
+E=0
+H=0
+end
 end
 
-if I then continue end
+if not al then continue end
+if G then continue end
 
-local P=ae.Character
-local Q=P and P:FindFirstChild("HumanoidRootPart")
+local O=ae.Character
+local P=O and O:FindFirstChild("HumanoidRootPart")
+if not P then continue end
+
+local Q=y()
 if not Q then continue end
 
-local R=A()
-if not R then continue end
-
-if at and not as[R.Name]then
-local S=D(R.Name)
-if S then N(S)end
+if at and not as[Q.Name]then
+local R=B(Q.Name)
+if R then M(R)end
 continue
 end
 
-
-if H then
-if L(H)then
-K=0
+if F then
+if K(F)then
+I=0
 else
-K+=1
-if K>=F then M()end
+I+=1
+if I>=D then L()end
 end
 end
 
-
-if not H then
-local S=C(Q,R)
-if S then
-H=S
-K=0
-y(H)
+if not F then
+local R=A(P,Q)
+if R then
+F=R
+I=0
+w(F)
 end
 end
 
-if H then
-G=0
-J=0
+if F then
+E=0
+H=0
 else
-G+=1
-J+=0.4
+E+=1
+H+=0.4
 
-if at and J>=ak then
-local S=D(R.Name)
-if S and S~=R.Name then
-N(S)
+if at and H>=ak then
+local R=B(Q.Name)
+if R and R~=Q.Name then
+M(R)
 else
-O(Q)
-J=0
-G=0
+N(P)
+H=0
+E=0
 end
 continue
 end
 
-if G>=(tonumber(am)or aj)then
-O(Q)
-G=0
+if E>=(tonumber(am)or aj)then
+N(P)
+E=0
 end
 end
 end
@@ -5989,17 +6032,16 @@ end
 
 
 return{
-setEnabled=function(F)al=F end,
-setWildherd=function(F)au=F end,
-
+setEnabled=function(D)al=D end,
+setWildherd=function(D)au=D end,
 getIslands=function()
-local F={}
-for G,H in pairs(as)do F[G]=H end
-return F
+local D={}
+for E,F in pairs(as)do D[E]=F end
+return D
 end,
-setAutotravel=function(F)at=F end,
-setIsland=function(F,G)as[F]=G end,
-setIdleLimit=function(F)am=F end,
+setAutotravel=function(D)at=D end,
+setIsland=function(D,E)as[D]=E end,
+setIdleLimit=function(D)am=D end,
 }end function a.d():typeof(aa())local ab=a.cache.d if not ab then ab={c=aa()}a.cache.d=ab end return ab.c end end do local function aa()
 
 
@@ -6225,8 +6267,8 @@ local q=f()
 local r=q and aj.GetGuidsOfItemId(p)
 local s=false
 if r then
-for u,v in ipairs(r)do
-if v==q then
+for t,u in ipairs(r)do
+if u==q then
 s=true
 break
 end
@@ -6235,25 +6277,25 @@ end
 
 if h()and s then return end
 
-local u=tick()
-if(u-at)<au then return end
+local t=tick()
+if(t-at)<au then return end
 
 if not s then
-local v=n(p)
-if not v then return end
+local u=n(p)
+if not u then return end
 end
 
 ar=true
 at=tick()
 
-local v,w=pcall(function()
-for v=1,d do
+local u,v=pcall(function()
+for u=1,d do
 if m()then break end
-task.wait(au*v)
+task.wait(au*u)
 end
 end)
 
-if not v then warn("[AutoLasso] Equip error:",w)end
+if not u then warn("[AutoLasso] Equip error:",v)end
 ar=false
 end
 
@@ -6270,8 +6312,8 @@ return false
 end
 
 local function q(r,s)
-local u=an[r]
-if not u then
+local t=an[r]
+if not t then
 warn(string.format("[AutoLasso] No shop source for material id=%d",r))
 return 0
 end
@@ -6279,86 +6321,86 @@ end
 s=math.min(s,aq)
 if s<=0 then return 0 end
 
-local v=e(r)
-ah.Network:FireServer("Shopping","BuyShopItem",u.shop,u.slot,s,nil)
+local u=e(r)
+ah.Network:FireServer("Shopping","BuyShopItem",t.shop,t.slot,s,nil)
 
-local w=p(r,v)
-if not w then
+local v=p(r,u)
+if not v then
 warn(string.format("[AutoLasso] Buy timed out id=%d shop=%s slot=%d qty=%d",
-r,u.shop,u.slot,s))
+r,t.shop,t.slot,s))
 return 0
 end
-return e(r)-v
+return e(r)-u
 end
 
-local function r(s,u)
-u=math.min(u,ap)
-if u<=0 then return 0 end
+local function r(s,t)
+t=math.min(t,ap)
+if t<=0 then return 0 end
 
-local v=e(s)
+local u=e(s)
 ah.Network:FireServer("Crafting","Craft",{
 id=s,
 variants={},
-amt=u,
+amt=t,
 })
 
-local w=p(s,v)
-if not w then
-warn(string.format("[AutoLasso] Craft timed out id=%d qty=%d",s,u))
+local v=p(s,u)
+if not v then
+warn(string.format("[AutoLasso] Craft timed out id=%d qty=%d",s,t))
 return 0
 end
-return e(s)-v
+return e(s)-u
 end
 
-local function s(u,v)
-local w=am[u]
-if not w then
-warn(string.format("[AutoLasso] No recipe for lasso id=%d",u))
+local function s(t,u)
+local v=am[t]
+if not v then
+warn(string.format("[AutoLasso] No recipe for lasso id=%d",t))
 return
 end
 
-v=math.min(v,ap)
+u=math.min(u,ap)
 
 
-for x,y in ipairs(w)do
-local z=y.qty*v
-local A=e(y.id)
-local B=math.max(0,z-A)
-if B>0 then
-local C=q(y.id,B)
-if C<B then
+for w,x in ipairs(v)do
+local y=x.qty*u
+local z=e(x.id)
+local A=math.max(0,y-z)
+if A>0 then
+local B=q(x.id,A)
+if B<A then
 warn(string.format("[AutoLasso] Material short: id=%d needed=%d got=%d",
-y.id,B,C))
+x.id,A,B))
 end
 task.wait(ao.buyCooldown)
 end
 end
 
 
-local x=v
-for y,z in ipairs(w)do
-local A=e(z.id)
-local B=math.floor(A/z.qty)
-x=math.min(x,B)
+local w=u
+for x,y in ipairs(v)do
+local z=e(y.id)
+local A=math.floor(z/y.qty)
+w=math.min(w,A)
 end
 
-x=math.min(x,ap)
-if x<=0 then
+w=math.min(w,ap)
+if w<=0 then
 warn("[AutoLasso] No materials to craft after buying — aborting.")
 return
 end
 
 task.wait(ao.craftCooldown)
 
-local y=r(u,x)
-if y>0 then
+local x=r(t,w)
+if x>0 then
 
 
-local z=l()
-local A=al[u]or 999
-local B=al[z]or 999
-if A<=B then
-n(u)
+local y=l()
+local z=al[t]or 999
+local A=al[y]or 999
+if z<=A then
+n(t)
 task.wait(0.3)
 ah.Network:FireServer("QuickEquipment","Use","Lasso")
 end
@@ -6386,11 +6428,11 @@ task.wait(ao.craftPollInterval)
 if not ao.autoCraftEnabled then continue end
 if as then continue end
 
-local u=ao.selectedLassoId
-if e(u)<=ao.restockThreshold then
+local t=ao.selectedLassoId
+if e(t)<=ao.restockThreshold then
 as=true
-local v,w=pcall(s,u,ao.restockAmount)
-if not v then warn("[AutoLasso] Restock error:",w)end
+local u,v=pcall(s,t,ao.restockAmount)
+if not u then warn("[AutoLasso] Restock error:",v)end
 as=false
 end
 end
@@ -6409,56 +6451,56 @@ end)
 
 return{
 
-setEnabled=function(u)
-ao.autoEquipEnabled=u
-if not u then
+setEnabled=function(t)
+ao.autoEquipEnabled=t
+if not t then
 ar=false
 end
 end,
 
 
-setCraftEnabled=function(u)
-ao.autoCraftEnabled=u
-if not u then as=false end
+setCraftEnabled=function(t)
+ao.autoCraftEnabled=t
+if not t then as=false end
 end,
 
 
-setSelectedLasso=function(u)
-ao.selectedLassoId=tonumber(u)or 191
+setSelectedLasso=function(t)
+ao.selectedLassoId=tonumber(t)or 191
 end,
 
 
-setRestockThreshold=function(u)
-ao.restockThreshold=tonumber(u)or 50
+setRestockThreshold=function(t)
+ao.restockThreshold=tonumber(t)or 50
 end,
 
 
-setRestockAmount=function(u)
-ao.restockAmount=math.min(tonumber(u)or 100,ap)
+setRestockAmount=function(t)
+ao.restockAmount=math.min(tonumber(t)or 100,ap)
 end,
 
 
 getCraftableLassos=function()
-local u={}
-for v,w in ipairs(ak)do
-if w.craftable then
-table.insert(u,{id=w.id,name=w.name,strength=w.strength})
+local t={}
+for u,v in ipairs(ak)do
+if v.craftable then
+table.insert(t,{id=v.id,name=v.name,strength=v.strength})
 end
 end
-return u
+return t
 end,
 
 
 getStatus=function()
-local u=l()
+local t=l()
 return{
 autoEquipEnabled=ao.autoEquipEnabled,
 autoCraftEnabled=ao.autoCraftEnabled,
 isCycleRunning=as,
-bestLassoId=u,
+bestLassoId=t,
 bestLassoName=(function()
-for v,w in ipairs(ak)do
-if w.id==u then return w.name end
+for u,v in ipairs(ak)do
+if v.id==t then return v.name end
 end
 return"Unknown"
 end)(),
@@ -6472,8 +6514,8 @@ end,
 triggerRestock=function()
 if as then return end
 as=true
-local u,v=pcall(s,ao.selectedLassoId,ao.restockAmount)
-if not u then warn("Manual restock error:",v)end
+local t,u=pcall(s,ao.selectedLassoId,ao.restockAmount)
+if not t then warn("Manual restock error:",u)end
 as=false
 end,
 }end function a.e():typeof(aa())local ab=a.cache.e if not ab then ab={c=aa()}a.cache.e=ab end return ab.c end end do local function aa()
@@ -7277,106 +7319,106 @@ end
 local q=nil
 local r=false
 
-local function s(u,v,w)
+local function s(t,u,v)
 if r then return end
 r=true
 
-local x=200
-local y=3
-local z=12
+local w=200
+local x=3
+local y=12
 
-local A=tick()
-local B=u.Parent and u.Parent:FindFirstChildOfClass("Humanoid")
-if B then B.PlatformStand=true end
+local z=tick()
+local A=t.Parent and t.Parent:FindFirstChildOfClass("Humanoid")
+if A then A.PlatformStand=true end
 
-o(u)
+o(t)
 
 if q then q:Disconnect()end
 q=af.Heartbeat:Connect(function()
-local C=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+local B=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
 
-if not C or not l.Parent then
+if not B or not l.Parent then
 if q then q:Disconnect();q=nil end
-if B then B.PlatformStand=false end
+if A then A.PlatformStand=false end
 p()
 r=false
 return
 end
 
 
-if tick()-A>z then
+if tick()-z>y then
 q:Disconnect();q=nil
-if B then B.PlatformStand=false end
+if A then A.PlatformStand=false end
 p()
 r=false
-if w then w()end
+if v then v()end
 return
 end
 
-local D=v-C.Position
-local E=D.Magnitude
+local C=u-B.Position
+local D=C.Magnitude
 
-if E<=y then
+if D<=x then
 l.VectorVelocity=Vector3.zero
 q:Disconnect();q=nil
-if B then B.PlatformStand=false end
+if A then A.PlatformStand=false end
 p()
 r=false
-if w then w()end
+if v then v()end
 else
-l.VectorVelocity=D.Unit*math.min(E*15,x)
+l.VectorVelocity=C.Unit*math.min(D*15,w)
 end
 end)
 end
 
 
-local u=nil
+local t=nil
+
+local function u()
+local v=ai.Character
+if not v then return end
+for w,x in ipairs(v:GetDescendants())do
+if x:IsA("BasePart")then
+x.CanCollide=false
+end
+end
+end
 
 local function v()
 local w=ai.Character
 if not w then return end
 for x,y in ipairs(w:GetDescendants())do
 if y:IsA("BasePart")then
-y.CanCollide=false
+y.CanCollide=true
 end
 end
 end
 
-local function w()
-local x=ai.Character
-if not x then return end
-for y,z in ipairs(x:GetDescendants())do
-if z:IsA("BasePart")then
-z.CanCollide=true
-end
-end
-end
+local function w(x)
+c=x
+if x then
 
-local function x(y)
-c=y
-if y then
-
-if u then u:Disconnect();u=nil end
-v()
+if t then t:Disconnect();t=nil end
+u()
 else
-if u then u:Disconnect();u=nil end
-w()
+if t then t:Disconnect();t=nil end
+v()
 end
 end
 
 ai.CharacterAdded:Connect(function()
 if c then
 task.wait(0.1)
-v()
+u()
 end
 end)
 
 
-local function y()
+local function x()
 pcall(function()
 if not at then return end
-local z=al.GetLocal({"quickEquipment","Harvester"})
-if not z then return end
+local y=al.GetLocal({"quickEquipment","Harvester"})
+if not y then return end
 if not au then
 au=true
 ak.Network:FireServer("QuickEquipment","Use","Harvester")
@@ -7384,117 +7426,117 @@ end
 end)
 end
 
-local function z()
+local function y()
 au=false
 task.wait(1.5)
-y()
+x()
 end
 
 al.BindLocal({"temporary","equippedEquipment"},function()
-local A=al.GetLocal({"quickEquipment","Harvester"})
-local B=al.GetLocal({"temporary","equippedEquipment"})
-if B~=A then
+local z=al.GetLocal({"quickEquipment","Harvester"})
+local A=al.GetLocal({"temporary","equippedEquipment"})
+if A~=z then
 au=false
 task.wait(0.1)
-y()
+x()
 end
 end,true)
 
-if ai.Character then z()end
-ai.CharacterAdded:Connect(z)
+if ai.Character then y()end
+ai.CharacterAdded:Connect(y)
 
 
-local function A()
-local B=workspace:FindFirstChild("Islands")
-if not B then return nil end
-for C,D in ipairs(B:GetChildren())do
-if D:FindFirstChild(ai.Name)then return D end
+local function z()
+local A=workspace:FindFirstChild("Islands")
+if not A then return nil end
+for B,C in ipairs(A:GetChildren())do
+if C:FindFirstChild(ai.Name)then return C end
 end
 return nil
 end
 
+local A=nil
 local B=nil
-local C=nil
 
-local function D()
-B=nil
+local function C()
+A=nil
+end
+
+local function D(E)
+if A and B==E then return A end
+local F={}
+for G,H in ipairs(E:GetDescendants())do
+local I=H:GetAttribute(f)
+if H:IsA("Model")and d[I]~=nil then
+table.insert(F,H)
+end
+end
+A=F
+B=E
+E.DescendantRemoving:Connect(C)
+return F
 end
 
 local function E(F)
-if B and C==F then return B end
-local G={}
-for H,I in ipairs(F:GetDescendants())do
-local J=I:GetAttribute(f)
-if I:IsA("Model")and d[J]~=nil then
-table.insert(G,I)
-end
-end
-B=G
-C=F
-F.DescendantRemoving:Connect(D)
-return G
-end
-
-local function F(G)
-local H=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if not H then return nil end
-local I,J=nil,math.huge
-for K,L in ipairs(E(G))do
-local M=L:GetAttribute(f)
-if d[M]==true then
-local N=L:GetAttribute(g)
-if N and N>0 then
-local O=L.PrimaryPart or L:FindFirstChildWhichIsA("BasePart")
-if O then
-local P=(H.Position-O.Position).Magnitude
-if P<J then
-J=P
-I=L
+local G=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+if not G then return nil end
+local H,I=nil,math.huge
+for J,K in ipairs(D(F))do
+local L=K:GetAttribute(f)
+if d[L]==true then
+local M=K:GetAttribute(g)
+if M and M>0 then
+local N=K.PrimaryPart or K:FindFirstChildWhichIsA("BasePart")
+if N then
+local O=(G.Position-N.Position).Magnitude
+if O<I then
+I=O
+H=K
 end
 end
 end
 end
 end
-return I
+return H
 end
 
 
 
 
 
-local G=nil
+local F=nil
 
-local function H()
-local I=am.object
-if not I or not I.controller then return false end
-if I.controller._silentAimInstalled then return true end
+local function G()
+local H=am.object
+if not H or not H.controller then return false end
+if H.controller._silentAimInstalled then return true end
 
-local J=I.controller.GetTarget
-I.controller.GetTarget=function(K)
-if G and G.Parent then
-local L=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if L and(L.Position-G:GetPivot().Position).Magnitude<=10 then
-local M=G.PrimaryPart
-or G:FindFirstChildWhichIsA("BasePart")
-return G,{Position=M and M.Position or G:GetPivot().Position}
+local I=H.controller.GetTarget
+H.controller.GetTarget=function(J)
+if F and F.Parent then
+local K=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+if K and(K.Position-F:GetPivot().Position).Magnitude<=10 then
+local L=F.PrimaryPart
+or F:FindFirstChildWhichIsA("BasePart")
+return F,{Position=L and L.Position or F:GetPivot().Position}
 end
 end
-return J(K)
+return I(J)
 end
 
-I.controller._silentAimInstalled=true
+H.controller._silentAimInstalled=true
 return true
 end
 
-local function I(J)
-local K=am.object
-if not K or not K.controller then return false end
+local function H(I)
+local J=am.object
+if not J or not J.controller then return false end
 
-G=J
-H()
+F=I
+G()
 
-local L=pcall(function()K:Activate()end)
-return L
+local K=pcall(function()J:Activate()end)
+return K
 end
 
 
@@ -7507,25 +7549,25 @@ i=tick()
 continue
 end
 
-local J=ai.Character
-local K=J and J:FindFirstChild("HumanoidRootPart")
-if not K then continue end
+local I=ai.Character
+local J=I and I:FindFirstChild("HumanoidRootPart")
+if not J then continue end
 
-if(K.Position-h).Magnitude>2 then
-h=K.Position
+if(J.Position-h).Magnitude>2 then
+h=J.Position
 i=tick()
 elseif tick()-i>as then
-local L=A()
-if L then
-local M=(L.Name=="Volcano Island")
+local K=z()
+if K then
+local L=(K.Name=="Volcano Island")
 and an
-or(ad and ad[L.Name])
-if M and#M>0 then
-local N=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if N then
+or(ad and ad[K.Name])
+if L and#L>0 then
+local M=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+if M then
 
-local O=M[math.random(1,#M)]
-s(N,O.Position,nil)
+local N=L[math.random(1,#L)]
+s(M,N.Position,nil)
 end
 end
 end
@@ -7535,16 +7577,16 @@ end
 end)
 
 
-local J=nil
+local I=nil
 
-local function K()
-if J then
-J:Disconnect()
-J=nil
+local function J()
+if I then
+I:Disconnect()
+I=nil
 end
 p()
 b=false
-G=nil
+F=nil
 j.Enabled=false
 end
 
@@ -7553,83 +7595,83 @@ while true do
 task.wait(0.3)
 
 if not ao then
-K()
+J()
 continue
 end
 
-local L=A()
-if not L then continue end
+local K=z()
+if not K then continue end
 
-local M=F(L)
-if not M then
-K()
+local L=E(K)
+if not L then
+J()
 continue
 end
 
-local N=M.PrimaryPart or M:FindFirstChildWhichIsA("BasePart")
-if not N then continue end
+local M=L.PrimaryPart or L:FindFirstChildWhichIsA("BasePart")
+if not M then continue end
 
 if ap then
-j.Adornee=M
+j.Adornee=L
 j.Enabled=true
 end
 
-local O=M:GetAttribute(f)=="Erupted Deposit"
-local P=O and Vector3.new(0,10,0)or Vector3.new(0,2,2)
+local N=L:GetAttribute(f)=="Erupted Deposit"
+local O=N and Vector3.new(0,10,0)or Vector3.new(0,2,2)
 
-K()
-
-
+J()
 
 
-if O then
+
+
+if N then
 task.wait(3)
-if not M.Parent or(M:GetAttribute(g)or 0)<=0 then continue end
+if not L.Parent or(L:GetAttribute(g)or 0)<=0 then continue end
 end
 
 b=true
 
 
-J=af.Heartbeat:Connect(function()
-local Q=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
-if not Q then K();return end
+I=af.Heartbeat:Connect(function()
+local P=ai.Character and ai.Character:FindFirstChild("HumanoidRootPart")
+if not P then J();return end
 
-if not M or not M.Parent or(M:GetAttribute(g)or 0)<=0 then
-K()
+if not L or not L.Parent or(L:GetAttribute(g)or 0)<=0 then
+J()
 return
 end
 
-local R=N.Position+P
-o(Q)
+local Q=M.Position+O
+o(P)
 
-local S=R-Q.Position
-local T=S.Magnitude
+local R=Q-P.Position
+local S=R.Magnitude
 
-if T<=n then
+if S<=n then
 l.VectorVelocity=Vector3.zero
 else
-l.VectorVelocity=S.Unit*math.min(T*10,m)
+l.VectorVelocity=R.Unit*math.min(S*10,m)
 end
 end)
 
 
-local Q=M:GetAttribute(g)
+local P=L:GetAttribute(g)
 
 while ao
-and M.Parent
-and(M:GetAttribute(g)or 0)>0
-and d[M:GetAttribute(f)]==true
+and L.Parent
+and(L:GetAttribute(g)or 0)>0
+and d[L:GetAttribute(f)]==true
 do
-I(M)
+H(L)
 
 
-local R=tick()
-while tick()-R<5 do
+local Q=tick()
+while tick()-Q<5 do
 task.wait(0.05)
-if not M.Parent or(M:GetAttribute(g)or 0)<=0 then break end
-local S=M:GetAttribute(g)
-if S~=Q then
-Q=S
+if not L.Parent or(L:GetAttribute(g)or 0)<=0 then break end
+local R=L:GetAttribute(g)
+if R~=P then
+P=R
 break
 end
 end
@@ -7639,33 +7681,33 @@ task.wait(ar)
 end
 end
 
-K()
+J()
 end
 end)
 
 
 return{
-setEnabled=function(L)
-ao=L
-if not L then K()end
+setEnabled=function(K)
+ao=K
+if not K then J()end
 end,
-setPickaxeEnabled=function(L)
-at=L
-if L then y()end
+setPickaxeEnabled=function(K)
+at=K
+if K then x()end
 end,
 isEnabled=function()return ao end,
-setHighlight=function(L)
-ap=L
-if not L then j.Enabled=false end
+setHighlight=function(K)
+ap=K
+if not K then j.Enabled=false end
 end,
-setRandomTeleport=function(L)aq=L end,
-setIdleThreshold=function(L)as=tonumber(L)or 5 end,
-setClickCooldown=function(L)ar=tonumber(L)or 0.05 end,
-setOreTarget=function(L,M)
-if d[L]~=nil then d[L]=M end
+setRandomTeleport=function(K)aq=K end,
+setIdleThreshold=function(K)as=tonumber(K)or 5 end,
+setClickCooldown=function(K)ar=tonumber(K)or 0.05 end,
+setOreTarget=function(K,L)
+if d[K]~=nil then d[K]=L end
 end,
 getOreValues=function()return e end,
-setNoclip=function(L)x(L)end,
+setNoclip=function(K)w(K)end,
 isNoclipEnabled=function()return c end,
 }
 end
@@ -8055,10 +8097,10 @@ end
 
 
 local n,o,p,q,r,s
-local u=false
+local t=false
 
-local function v()
-u=false
+local function u()
+t=false
 if p then pcall(function()p:Disconnect()end);p=nil end
 if q then pcall(function()q:Disconnect()end);q=nil end
 if n then
@@ -8073,71 +8115,71 @@ g(s)
 s=nil
 end
 
-local function w()
+local function v()
 aq:FireServer("CheckpointActivity","TriggerInteractable",au)
 task.wait(2)
 r=0
 end
 
-local function x()
-if u then return end
+local function w()
+if t then return end
 if not b()then
 warn("[CC] Cannot start — refs failed to resolve")
 return
 end
 
-local y=i()
-if not y then warn("[CC] Mount up before enabling");return end
-local z=j(y)
-if not z then warn("[CC] No HumanoidRootPart on mount");return end
+local x=i()
+if not x then warn("[CC] Mount up before enabling");return end
+local y=j(x)
+if not y then warn("[CC] No HumanoidRootPart on mount");return end
 
-s=y
-u=true
+s=x
+t=true
 r=0
-n,o=h(z)
+n,o=h(y)
 
-f(y)
-w()
+f(x)
+v()
 
 
 q=at.ActivityChanged:Connect(function()
-if not u then return end
+if not t then return end
 task.wait(0.3)
 if at.currentObject==nil then
 if n then n.VectorVelocity=Vector3.zero end
 task.wait(aj)
-if u and ac then
-local A=i()
-if A then f(A)end
-w()
+if t and ac then
+local z=i()
+if z then f(z)end
+v()
 end
 end
 end)
 
 
 p=am.Heartbeat:Connect(function()
-if not ac or not u then
+if not ac or not t then
 if n then n.VectorVelocity=Vector3.zero end
 return
 end
 
-local A=i()
+local z=i()
+if not z then if n then n.VectorVelocity=Vector3.zero end;return end
+local A=j(z)
 if not A then if n then n.VectorVelocity=Vector3.zero end;return end
-local B=j(A)
-if not B then if n then n.VectorVelocity=Vector3.zero end;return end
 
 
-local C=os.clock()
-if C-r>=ai then
-r=C
-A.lastTimeJumped=ar.Get()
+local B=os.clock()
+if B-r>=ai then
+r=B
+z.lastTimeJumped=ar.Get()
 end
 
-local D=B.Position
-local E=k()
-local F,G=l(D,E)
+local C=A.Position
+local D=k()
+local E,F=l(C,D)
 
-if not F then
+if not E then
 if n then n.VectorVelocity=Vector3.zero end
 return
 end
@@ -8145,13 +8187,13 @@ end
 if al then
 end
 
-local H=F.Position
-local I=G<=af and ae or 0
-local J=(Vector3.new(H.X,H.Y+I,H.Z)-D).Unit
-n.VectorVelocity=J*ad
+local G=E.Position
+local H=F<=af and ae or 0
+local I=(Vector3.new(G.X,G.Y+H,G.Z)-C).Unit
+n.VectorVelocity=I*ad
 
-if G<=ah then
-m(B,F)
+if F<=ah then
+m(A,E)
 end
 end)
 
@@ -8159,198 +8201,35 @@ end
 
 
 return{
-setEnabled=function(y)
-ac=y
-if y and not u then
-x()
-elseif not y and u then
-v()
+setEnabled=function(x)
+ac=x
+if x and not t then
+w()
+elseif not x and t then
+u()
 end
 end,
 
-setNoclip=function(y)
-ak=y
-if u then
-local z=i()
-if y then f(z)else g(z)end
+setNoclip=function(x)
+ak=x
+if t then
+local y=i()
+if x then f(y)else g(y)end
 end
 end,
 
-setMoveSpeed=function(y)ad=y end,
-setYBias=function(y)ae=y end,
-setCloseDist=function(y)af=y end,
-setTriggerDist=function(y)ah=y end,
-setJumpInterval=function(y)ai=y end,
-setRetriggerDelay=function(y)aj=y end,
-setDebug=function(y)al=y end,
-stop=v,
+setMoveSpeed=function(x)ad=x end,
+setYBias=function(x)ae=x end,
+setCloseDist=function(x)af=x end,
+setTriggerDist=function(x)ah=x end,
+setJumpInterval=function(x)ai=x end,
+setRetriggerDelay=function(x)aj=x end,
+setDebug=function(x)al=x end,
+stop=u,
 }
 end
 
 return ab end function a.l():typeof(aa())local ab=a.cache.l if not ab then ab={c=aa()}a.cache.l=ab end return ab.c end end do local function aa()
-
-
-
-
-local ab=a.a()
-
-
-
-
-
-
-
-local function ac()
-
-
-local ad=false
-local ae=45
-local af=47
-local ah=15
-local ai=true
-
-
-local aj=game:GetService("Players")
-local ak=aj.LocalPlayer
-
-
-local al=false
-local am=nil
-
-
-local an,ao
-
-local function ap()
-if an then return true end
-
-local aq,ar=pcall(require,game:GetService("ReplicatedStorage").References)
-if not aq then
-warn("[WAL] References failed:",ar)
-return false
-end
-
-
-
-an=ar.Utilities.Network
-
-local as,at=pcall(function()
-return workspace.Islands["Carnival Island"].Pier.Games["Whack A Larry"]["Whack a Larry Minigame"]
-end)
-if not as or not at then
-warn("[WAL] Game object not found:",at)
-ab:Notify("Game object not found:",at,2)
-return false
-end
-
-ao=at
-return true
-end
-
-
-local function aq()
-if ai then end
-
-local ar,as=pcall(function()
-return an:InvokeServer("Minigame","Play",ao,nil)
-end)
-
-if not ar then
-warn("[WAL] Play error:",as)
-return false
-end
-
-if not as then
-if ai then end
-return false
-end
-
-if ai then ab:Notify("Play Accepted - waiting",ae,2)end
-
-
-local at=0
-while at<ae do
-if not al or not ad then return false end
-task.wait(0.5)
-at+=0.5
-end
-
-if not al or not ad then return false end
-
-if ai then print("[WAL] Invoking End(true,",ah,")")end
-
-
-
-local au,b=pcall(function()
-return an:InvokeServer("Minigame","End",true,ah)
-end)
-
-if not au then
-warn("[WAL] End error:",b)
-elseif ai then
-
-end
-
-return true
-end
-
-
-local function ar()
-al=true
-
-am=task.spawn(function()
-while al and ad do
-local as=aq()
-if not al or not ad then break end
-
-if as then
-if ai then print("[WAL] Cooldown:",af,"s")end
-local at=0
-while at<af do
-if not al or not ad then break end
-task.wait(0.5)
-at+=0.5
-end
-else
-
-task.wait(5)
-end
-end
-
-al=false
-if ai then end
-end)
-end
-
-local function as()
-al=false
-am=nil
-end
-
-
-return{
-setEnabled=function(at)
-ad=at
-if at and not al then
-if not ap()then
-warn("[WAL] Cannot start — refs failed")
-ad=false
-return
-end
-ar()
-elseif not at and al then
-as()
-end
-end,
-
-setGameDuration=function(at)ae=at end,
-setLoopCooldown=function(at)af=at end,
-setClaimedScore=function(at)ah=at end,
-setDebug=function(at)ai=at end,
-stop=as,
-}
-end
-
-return ac end function a.m():typeof(aa())local ab=a.cache.m if not ab then ab={c=aa()}a.cache.m=ab end return ab.c end end do local function aa()
 
 
 
@@ -8473,38 +8352,38 @@ if r then r.PlatformStand=true end
 local s=Instance.new("Attachment")
 s.Parent=q
 
-local u=Instance.new("LinearVelocity")
-u.Attachment0=s
-u.MaxForce=1e6
-u.RelativeTo=Enum.ActuatorRelativeTo.World
-u.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
-u.VectorVelocity=Vector3.zero
-u.Parent=q
+local t=Instance.new("LinearVelocity")
+t.Attachment0=s
+t.MaxForce=1e6
+t.RelativeTo=Enum.ActuatorRelativeTo.World
+t.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector
+t.VectorVelocity=Vector3.zero
+t.Parent=q
 
-local v=false
+local u=false
 
-local w=ap.Heartbeat:Connect(function()
-local w=as.Character and as.Character:FindFirstChild("HumanoidRootPart")
-if not w or not u.Parent then v=true;return end
+local v=ap.Heartbeat:Connect(function()
+local v=as.Character and as.Character:FindFirstChild("HumanoidRootPart")
+if not v or not t.Parent then u=true;return end
 
-local x=o-w.Position
-local y=x.Magnitude
+local w=o-v.Position
+local x=w.Magnitude
 
-if y<am then
-u.VectorVelocity=Vector3.zero
-v=true
+if x<am then
+t.VectorVelocity=Vector3.zero
+u=true
 else
-u.VectorVelocity=x.Unit*math.min(y*8,al)
+t.VectorVelocity=w.Unit*math.min(x*8,al)
 end
 end)
 
-local x=tick()+8
-while not v and tick()<x do
+local w=tick()+8
+while not u and tick()<w do
 task.wait(0.05)
 end
 
-w:Disconnect()
-u:Destroy()
+v:Disconnect()
+t:Destroy()
 s:Destroy()
 if r then r.PlatformStand=false end
 
@@ -8532,11 +8411,11 @@ if tostring(s)==tostring(r)then return end
 c=true
 d=tick()
 
-for u=1,af do
+for t=1,af do
 g.Network:FireServer("QuickEquipment","Use","Tool")
 task.wait(ah)
-local v=h.GetLocal({"temporary","equippedEquipment"})
-if tostring(v)==tostring(r)then break end
+local u=h.GetLocal({"temporary","equippedEquipment"})
+if tostring(u)==tostring(r)then break end
 end
 
 c=false
@@ -8565,28 +8444,28 @@ end
 
 
 local function r()
-local s,u=pcall(function()
+local s,t=pcall(function()
 return g.Network:InvokeServer("BuriedTreasure","GetPoint")
 end)
-if s and u then return u end
+if s and t then return t end
 return nil
 end
 
 
 
-local function s(u)
+local function s(t)
 pcall(function()
-local v=at.ViewportSize
-local w=Vector2.new(v.X/2,v.Y/2)
-for x=1,u do
-ar:ClickButton1(w,at.CFrame)
+local u=at.ViewportSize
+local v=Vector2.new(u.X/2,u.Y/2)
+for w=1,t do
+ar:ClickButton1(v,at.CFrame)
 task.wait(ak)
 end
 end)
 end
 
 
-local function u()
+local function t()
 au=true
 
 if an then l()end
@@ -8600,34 +8479,34 @@ p()
 task.wait(0.6)
 
 
-local v=nil
-local w=0
+local u=nil
+local v=0
 
-while not v and w<10 do
+while not u and v<10 do
 if not au or not ac then break end
-v=r()
-if not v then
-w+=1
+u=r()
+if not u then
+v+=1
 q()
 task.wait(0.5)
 end
 end
 
-if not v then
+if not u then
 if ao then print("[AT] No treasure point found — retrying")end
 task.wait(1)
 continue
 end
 
-if ao then print("[AT] Treasure at",tostring(v))end
+if ao then print("[AT] Treasure at",tostring(u))end
 
 
-o(v)
+o(u)
 
 
-if not i.object:InRange(v,ai)then
+if not i.object:InRange(u,ai)then
 if ao then print("[AT] Not in range — re-teleporting")end
-o(v)
+o(u)
 end
 
 
@@ -8649,7 +8528,7 @@ if ao then print("[AT] Loop exited.")end
 end)
 end
 
-local function v()
+local function u()
 au=false
 b=nil
 m()
@@ -8657,39 +8536,39 @@ end
 
 
 return{
-setEnabled=function(w)
-ac=w
-if w and not au then
+setEnabled=function(v)
+ac=v
+if v and not au then
 if not j()then
 warn("[AT] Cannot start — refs failed")
 ac=false
 return
 end
+t()
+elseif not v and au then
 u()
-elseif not w and au then
-v()
 end
 end,
 
-setNoclip=function(w)
-an=w
+setNoclip=function(v)
+an=v
 if au then
-if w then l()else m()end
+if v then l()else m()end
 end
 end,
 
-setDigClicks=function(w)aj=w end,
-setDigClickDelay=function(w)ak=w end,
-setDigRange=function(w)ai=w end,
-setTeleSpeed=function(w)al=w end,
-setPollInterval=function(w)ad=w end,
-setEquipCooldown=function(w)ae=w end,
-setDebug=function(w)ao=w end,
-stop=v,
+setDigClicks=function(v)aj=v end,
+setDigClickDelay=function(v)ak=v end,
+setDigRange=function(v)ai=v end,
+setTeleSpeed=function(v)al=v end,
+setPollInterval=function(v)ad=v end,
+setEquipCooldown=function(v)ae=v end,
+setDebug=function(v)ao=v end,
+stop=u,
 }
 end
 
-return ab end function a.n():typeof(aa())local ab=a.cache.n if not ab then ab={c=aa()}a.cache.n=ab end return ab.c end end do local function aa()
+return ab end function a.m():typeof(aa())local ab=a.cache.m if not ab then ab={c=aa()}a.cache.m=ab end return ab.c end end do local function aa()
 
 
 
@@ -8887,34 +8766,34 @@ f(q)
 q=nil
 end
 
-local function u()
+local function t()
 ap:FireServer("CheckpointActivity","TriggerInteractable",at)
 task.wait(2)
 p=0
 end
 
-local function v()
+local function u()
 if r then return end
 if not au()then
 warn("[SS] Cannot start — refs failed")
 return
 end
 
-local w=h()
-if not w then warn("[SS] Mount up before enabling");return end
-local x=i(w)
-if not x then warn("[SS] No HumanoidRootPart on mount");return end
+local v=h()
+if not v then warn("[SS] Mount up before enabling");return end
+local w=i(v)
+if not w then warn("[SS] No HumanoidRootPart on mount");return end
 
-q=w
+q=v
 r=true
 p=0
-l,m=g(x)
+l,m=g(w)
 
-e(w)
+e(v)
 
 
 if not as.currentObject then
-u()
+t()
 end
 
 
@@ -8925,9 +8804,9 @@ if as.currentObject==nil then
 if l then l.VectorVelocity=Vector3.zero end
 task.wait(aj)
 if r and ac then
-local y=h()
-if y then e(y)end
-u()
+local x=h()
+if x then e(x)end
+t()
 end
 end
 end)
@@ -8939,22 +8818,22 @@ if l then l.VectorVelocity=Vector3.zero end
 return
 end
 
-local y=h()
+local x=h()
+if not x then
+if l then l.VectorVelocity=Vector3.zero end
+return
+end
+local y=i(x)
 if not y then
 if l then l.VectorVelocity=Vector3.zero end
 return
 end
-local z=i(y)
-if not z then
-if l then l.VectorVelocity=Vector3.zero end
-return
-end
 
 
-local A=os.clock()
-if A-p>=ai then
-p=A
-y.lastTimeJumped=aq.Get()
+local z=os.clock()
+if z-p>=ai then
+p=z
+x.lastTimeJumped=aq.Get()
 end
 
 
@@ -8963,57 +8842,57 @@ if l then l.VectorVelocity=Vector3.zero end
 return
 end
 
-local B,C,D=k()
-if not B then
+local A,B,C=k()
+if not A then
 if l then l.VectorVelocity=Vector3.zero end
 return
 end
 
-local E=z.Position
-local F=B.position
-local G=(F-E).Magnitude
-local H=G<=af and ae or 0
-local I=(Vector3.new(F.X,F.Y+H,F.Z)-E).Unit
+local D=y.Position
+local E=A.position
+local F=(E-D).Magnitude
+local G=F<=af and ae or 0
+local H=(Vector3.new(E.X,E.Y+G,E.Z)-D).Unit
 
-l.VectorVelocity=I*ad
+l.VectorVelocity=H*ad
 
 if al then
-print(string.format("[SS] cp %d/%d | dist=%.1f | target=%s",C,D,G,tostring(F)))
+print(string.format("[SS] cp %d/%d | dist=%.1f | target=%s",B,C,F,tostring(E)))
 end
 end)
 end
 
 
 return{
-setEnabled=function(w)
-ac=w
-if w and not r then
-v()
-elseif not w and r then
+setEnabled=function(v)
+ac=v
+if v and not r then
+u()
+elseif not v and r then
 s()
 end
 end,
 
-setNoclip=function(w)
-ak=w
+setNoclip=function(v)
+ak=v
 if r then
-local x=h()
-if w then e(x)else f(x)end
+local w=h()
+if v then e(w)else f(w)end
 end
 end,
 
-setMoveSpeed=function(w)ad=w end,
-setYBias=function(w)ae=w end,
-setCloseDist=function(w)af=w end,
-setTriggerDist=function(w)ah=w end,
-setJumpInterval=function(w)ai=w end,
-setRetriggerDelay=function(w)aj=w end,
-setDebug=function(w)al=w end,
+setMoveSpeed=function(v)ad=v end,
+setYBias=function(v)ae=v end,
+setCloseDist=function(v)af=v end,
+setTriggerDist=function(v)ah=v end,
+setJumpInterval=function(v)ai=v end,
+setRetriggerDelay=function(v)aj=v end,
+setDebug=function(v)al=v end,
 stop=s,
 }
 end
 
-return ab end function a.o():typeof(aa())local ab=a.cache.o if not ab then ab={c=aa()}a.cache.o=ab end return ab.c end end end
+return ab end function a.n():typeof(aa())local ab=a.cache.n if not ab then ab={c=aa()}a.cache.n=ab end return ab.c end end end
 
 local aa=os.clock()
 local ab=a.a()
@@ -9030,22 +8909,22 @@ local am=a.k()
 local an=a.g()
 local ao=a.l()
 local ap=ao()
+
+
 local aq=a.m()
 local ar=aq()
+
 local as=a.n()
 local at=as()
 
-local au=a.o()
-local b=au()
-
-local c=getgenv().Options
-local d=getgenv().Toggles
+local au=getgenv().Options
+local b=getgenv().Toggles
 
 ab.ShowToggleFrameInKeybinds=true
 ab.ShowCustomCursor=true
 ab.NotifySide="Left"
 
-local e=ab:CreateWindow({
+local c=ab:CreateWindow({
 
 
 
@@ -9067,13 +8946,13 @@ Size=UDim2.new(0,558,0,482),
 MenuFadeTime=0.2
 })
 
-local f=game:GetService("Players").LocalPlayer
-local g=game:GetService("VirtualUser")
+local d=game:GetService("Players").LocalPlayer
+local e=game:GetService("VirtualUser")
 
-f.Idled:Connect(function()
-g:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+d.Idled:Connect(function()
+e:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 task.wait(1)
-g:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+e:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
 
@@ -9082,105 +8961,111 @@ end)
 
 
 
-local h={
+local f={
 
-IlovemyWife=e:AddTab("Home"),
-Main=e:AddTab("Automation"),
-HorseRender=e:AddTab("Render"),
-Misc=e:AddTab("Misc"),
-["UI Settings"]=e:AddTab("UI Settings"),
+HomePageLowkey=c:AddTab("Home"),
+Main=c:AddTab("Automation"),
+HorseRender=c:AddTab("Render"),
+Misc=c:AddTab("Misc"),
+["UI Settings"]=c:AddTab("UI Settings"),
 }
 
-local i=h.IlovemyWife:AddLeftGroupbox("Information")
+local g=f.HomePageLowkey:AddLeftGroupbox("Polsec Info")
 
-local j=h.IlovemyWife:AddRightGroupbox("Session Information")
 
-local k=tick()
-local l=j:AddLabel('Time Played: 0s')
+
+
+
+
+
+local h=f.HomePageLowkey:AddRightGroupbox("Session Information")
+
+local i=tick()
+local j=h:AddLabel('Time Played: 0s')
 
 task.spawn(function()
 while true do
 task.wait(1)
 
-local m=math.floor(tick()-k)
+local k=math.floor(tick()-i)
 
-local n=math.floor(m/3600)
-local o=math.floor((m%3600)/60)
-local p=m%60
+local l=math.floor(k/3600)
+local m=math.floor((k%3600)/60)
+local n=k%60
 
-l:SetText(string.format(
+j:SetText(string.format(
 "Time Played: %02dh %02dm %02ds",
-n,o,p
+l,m,n
 ))
 end
 end)
 
-local m=j:AddLabel('Coins Earned: 0')
+local k=h:AddLabel('Coins Earned: 0')
 
 task.spawn(function()
 while true do
 task.wait(2)
-local n=ai.getStats()
-m:SetText(string.format("Coins Earned: %d",n.coins))
+local l=ai.getStats()
+k:SetText(string.format("Coins Earned: %d",l.coins))
 end
 end)
 
-local n=j:AddLabel('Horses Captured: 0')
+local l=h:AddLabel('Horses Captured: 0')
 
 task.spawn(function()
 while true do
 task.wait(2)
-local o=ai.getStats()
-n:SetText(string.format("Horses Captured: %d",o.captures))
+local m=ai.getStats()
+l:SetText(string.format("Horses Captured: %d",m.captures))
 end
 end)
 
-local o=h.Main:AddLeftTabbox()
+local m=f.Main:AddLeftTabbox()
 
-local p=o:AddTab("Horses")
-local q=o:AddTab("Sell")
-local r=o:AddTab("Lassos")
+local n=m:AddTab("Horses")
+local o=m:AddTab("Sell")
+local p=m:AddTab("Lassos")
 
-p:AddToggle('Autofarm_Enable',{
+n:AddToggle('Autofarm_Enable',{
 Text='Enable',
 Default=false,
 Tooltip='Enables Autofarm',
 
-Callback=function(s)
-ae.setEnabled(s)
+Callback=function(q)
+ae.setEnabled(q)
 end
 })
 
-p:AddToggle('CatureHerds',{
+n:AddToggle('CatureHerds',{
 Text='Capture Herds',
 Default=false,
 Tooltip='Enables Capture Herds',
 
-Callback=function(s)
-ae.setWildherd(s)
+Callback=function(q)
+ae.setWildherd(q)
 end
 })
 
-p:AddToggle("AutoLasso",{
+n:AddToggle("AutoLasso",{
 Text="Lasso",
 Default=false,
 Tooltip="sloppy joe",
-Callback=function(s)
-af.setEnabled(s)
+Callback=function(q)
+af.setEnabled(q)
 end,
 })
 
-p:AddToggle('AutoCapture',{
+n:AddToggle('AutoCapture',{
 Text='Capture',
 Default=false,
 Tooltip='Clicks the horse to capture',
 
-Callback=function(s)
-ah.setEnabled(s)
+Callback=function(q)
+ah.setEnabled(q)
 end
 })
 
-p:AddSlider('CaptureRate',{
+n:AddSlider('CaptureRate',{
 Text='Capture Rate',
 Default=1,
 Min=1,
@@ -9189,8 +9074,8 @@ Rounding=2,
 Compact=true,
 HideMax=true,
 
-Callback=function(s)
-ah.setDuration(s)
+Callback=function(q)
+ah.setDuration(q)
 end
 })
 
@@ -9208,20 +9093,20 @@ end
 
 
 
-p:AddToggle('autotravel',{
+n:AddToggle('autotravel',{
 Text='Travel',
 Default=false,
 Tooltip='type shit',
 
-Callback=function(s)
-ae.setAutotravel(s)
+Callback=function(q)
+ae.setAutotravel(q)
 end
 })
 
 
 
 
-local s={
+local q={
 "Mainland",
 "Blizzard Island",
 "Forest Island",
@@ -9234,22 +9119,22 @@ local s={
 "Volcano Island",
 }
 
-p:AddDropdown("IslandSelection",{
+n:AddDropdown("IslandSelection",{
 Text="Select Islands",
-Values=s,
+Values=q,
 Default={},
 Multi=true,
 Tooltip="Select which islands to farm",
 
-Callback=function(u)
+Callback=function(r)
 
-for v,w in ipairs(s)do
-ae.setIsland(w,false)
+for s,t in ipairs(q)do
+ae.setIsland(t,false)
 end
 
-for v,w in pairs(u)do
-if w then
-ae.setIsland(v,true)
+for s,t in pairs(r)do
+if t then
+ae.setIsland(s,true)
 end
 end
 end,
@@ -9258,17 +9143,17 @@ Disabled=false,
 Visible=true,
 })
 
-q:AddToggle('Autosell',{
+o:AddToggle('Autosell',{
 Text='Auto Sell',
 Default=false,
 Tooltip='Automatically sells horses',
 
-Callback=function(u)
-ai.setEnabled(u)
+Callback=function(r)
+ai.setEnabled(r)
 end
 })
 
-local u={
+local r={
 
 ["Mismatched Hair Colour"]="mismatchHairColour",
 ["Naturally Dyed Hair"]="naturallyDyedHairColour",
@@ -9345,37 +9230,37 @@ local u={
 }
 
 
-local v={}
-for w,x in pairs(u)do
-v[x]=w
+local s={}
+for t,u in pairs(r)do
+s[u]=t
 end
 
 
-local w={}
-for x,y in pairs(u)do
-table.insert(w,x)
+local t={}
+for u,v in pairs(r)do
+table.insert(t,u)
 end
-table.sort(w)
+table.sort(t)
 
-q:AddDropdown("FilterTypeDropdown",{
+o:AddDropdown("FilterTypeDropdown",{
 Text="Filter",
-Values=w,
+Values=t,
 Default=0,
 Multi=true,
 Tooltip="Select which horse types to lock instead of sell",
 
-Callback=function(x)
+Callback=function(u)
 
-for y,z in pairs(u)do
-ai.setLockOption(z,false)
+for v,w in pairs(r)do
+ai.setLockOption(w,false)
 end
 
 
-for y,z in pairs(x)do
-if z then
-local A=u[y]
-if A then
-ai.setLockOption(A,true)
+for v,w in pairs(u)do
+if w then
+local x=r[v]
+if x then
+ai.setLockOption(x,true)
 end
 end
 end
@@ -9385,72 +9270,72 @@ Disabled=false,
 Visible=true,
 })
 
-q:AddDivider()
+o:AddDivider()
 
-q:AddToggle("WebhookEnabled",{
+o:AddToggle("WebhookEnabled",{
 Text="Use Webhook",
 Default=false,
 Tooltip="sends a message thru webhook each time a horse is locked",
-Callback=function(x)
-ai.setWebhookEnabled(x)
+Callback=function(u)
+ai.setWebhookEnabled(u)
 end,
 })
 
 
-q:AddInput("WebhookURL",{
+o:AddInput("WebhookURL",{
 Text="Webhook URL",
 Default="",
 Numeric=false,
 Finished=false,
 Tooltip="discord webhook input",
 Placeholder="https://discord.com/api/webhooks/...",
-Callback=function(x)
-ai.setWebhook(x)
+Callback=function(u)
+ai.setWebhook(u)
 end,
 })
 
-q:AddButton("Test Webhook",function()
+o:AddButton("Test Webhook",function()
 ai.testWebhook()
 end)
 
-local x=af.getCraftableLassos()
-local y={}
-local z={}
+local u=af.getCraftableLassos()
+local v={}
+local w={}
 
-for A,B in ipairs(x)do
-local C=B.name.." (str "..B.strength..")"
-table.insert(y,C)
-z[C]=B.id
+for x,y in ipairs(u)do
+local z=y.name.." (str "..y.strength..")"
+table.insert(v,z)
+w[z]=y.id
 end
 
 
 
 
 
-r:AddToggle("AutoCraftLasso",{
+p:AddToggle("AutoCraftLasso",{
 Text="Auto Craft",
 Default=false,
 Tooltip="makes lassos when ur ur running low",
-Callback=function(A)
-af.setCraftEnabled(A)
+Callback=function(x)
+af.setCraftEnabled(x)
 end,
 })
 
-r:AddDropdown("LassoToCraft",{
+p:AddDropdown("LassoToCraft",{
 Text="Lasso Type",
-Values=y,
+Values=v,
 Default=1,
 Multi=false,
 Tooltip="which lasso to restock",
-Callback=function(A)
-local B=z[A]
-if B then af.setSelectedLasso(B)end
+Callback=function(x)
+local y=w[x]
+if y then af.setSelectedLasso(y)end
 end,
 Disabled=false,
 Visible=true,
 })
 
-r:AddSlider("LassoRestockThreshold",{
+p:AddSlider("LassoRestockThreshold",{
 Text="Restock Threshold",
 Default=50,
 Min=1,
@@ -9459,12 +9344,12 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="threshold til buying more lassos",
-Callback=function(A)
-af.setRestockThreshold(A)
+Callback=function(x)
+af.setRestockThreshold(x)
 end,
 })
 
-r:AddSlider("LassoRestockAmount",{
+p:AddSlider("LassoRestockAmount",{
 Text="Restock Amount",
 Default=100,
 Min=1,
@@ -9473,44 +9358,44 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="how many lassos u want",
-Callback=function(A)
-af.setRestockAmount(A)
+Callback=function(x)
+af.setRestockAmount(x)
 end,
 })
 
-r:AddButton("Restock Now",function()
+p:AddButton("Restock Now",function()
 af.triggerRestock()
 end)
 
 
-local A=h.Main:AddRightTabbox()
+local x=f.Main:AddRightTabbox()
 
-local B=A:AddTab("Ores")
-local C=A:AddTab("Pickaxe")
-local D=A:AddTab("Render")
+local y=x:AddTab("Ores")
+local z=x:AddTab("Pickaxe")
+local A=x:AddTab("Render")
 
-B:AddToggle('AutoMine',{
+y:AddToggle('AutoMine',{
 Text='Mine',
 Default=false,
 Tooltip='Auto mines ores for you',
 
-Callback=function(E)
-ak.setEnabled(E)
-ak.setNoclip(E)
+Callback=function(B)
+ak.setEnabled(B)
+ak.setNoclip(B)
 end
 })
 
-B:AddToggle("RandomTP",{
+y:AddToggle("RandomTP",{
 Text="Random Teleport",
 Default=false,
 Tooltip="Teleports to a random spot on the island when idle",
 
-Callback=function(E)
-ak.setRandomTeleport(E)
+Callback=function(B)
+ak.setRandomTeleport(B)
 end,
 })
 
-B:AddSlider("ClickCooldown",{
+y:AddSlider("ClickCooldown",{
 Text="Click Cooldown",
 Default=0.05,
 Min=0,
@@ -9520,13 +9405,13 @@ Compact=true,
 HideMax=true,
 Tooltip="Delay between clicks in seconds",
 
-Callback=function(E)
-ak.setClickCooldown(E)
+Callback=function(B)
+ak.setClickCooldown(B)
 end,
 })
 
 
-B:AddSlider("IdleThreshold",{
+y:AddSlider("IdleThreshold",{
 Text="Idle Threshold",
 Default=5,
 Min=1,
@@ -9536,29 +9421,29 @@ Compact=true,
 HideMax=true,
 Tooltip="Seconds idle before random teleport fires",
 
-Callback=function(E)
-ak.setIdleThreshold(E)
+Callback=function(B)
+ak.setIdleThreshold(B)
 end,
 })
 
-local E=ak.getOreValues()
+local B=ak.getOreValues()
 
-B:AddDropdown("OreSelector",{
+y:AddDropdown("OreSelector",{
 Text="Ore Types",
-Values=E,
+Values=B,
 Default=0,
 Multi=true,
 Tooltip="Select which ores to mine",
 
-Callback=function(F)
+Callback=function(C)
 
-for G,H in ipairs(E)do
-ak.setOreTarget(H,false)
+for D,E in ipairs(B)do
+ak.setOreTarget(E,false)
 end
 
-for G,H in pairs(F)do
-if H then
-ak.setOreTarget(G,true)
+for D,E in pairs(C)do
+if E then
+ak.setOreTarget(D,true)
 end
 end
 end,
@@ -9567,25 +9452,25 @@ Disabled=false,
 Visible=true,
 })
 
-C:AddToggle("EquipPickaxe",{
+z:AddToggle("EquipPickaxe",{
 Text="Pickaxe",
 Default=false,
 Tooltip="Equips the pickaxe for you automatically",
 
-Callback=function(F)
-ak.setPickaxeEnabled(F)
+Callback=function(C)
+ak.setPickaxeEnabled(C)
 end,
 })
 
-local F=game:GetService("ReplicatedStorage")
-local G=require(F.References)
-local H=G.Utilities.Network
+local C=game:GetService("ReplicatedStorage")
+local D=require(C.References)
+local E=D.Utilities.Network
 
 
 
 
 
-local I={
+local F={
 ["Stone Harvester"]={shop="Mainland Shop",idx=4},
 ["Tin Harvester"]={shop="Mainland Shop",idx=5},
 ["Copper Harvester"]={shop="Blizzard Island Shop",idx=4},
@@ -9605,7 +9490,7 @@ local I={
 ["Prismatic Harvester"]={shop="Volcano Island Shop",idx=4},
 }
 
-local J={
+local G={
 "Harvester",
 "Stone Harvester",
 "Tin Harvester",
@@ -9626,66 +9511,66 @@ local J={
 "Prismatic Harvester",
 }
 
-local K=J[1]
+local H=G[1]
 
-C:AddDropdown("PickaxeSelector",{
+z:AddDropdown("PickaxeSelector",{
 Text="Pickaxe",
-Values=J,
+Values=G,
 Default=1,
 Multi=false,
 Tooltip="Select which pickaxe to buy",
-Callback=function(L)
-K=L
+Callback=function(I)
+H=I
 end,
 Disabled=false,
 Visible=true,
 })
 
-C:AddButton("Buy Pickaxe",function()
-local L=I[K]
-if not L then return end
+z:AddButton("Buy Pickaxe",function()
+local I=F[H]
+if not I then return end
 
 
-H:FireServer("Shopping","BuyShopItem",L.shop,L.idx,1,nil)
+E:FireServer("Shopping","BuyShopItem",I.shop,I.idx,1,nil)
 end)
 
-D:AddToggle("HighlightOre",{
+A:AddToggle("HighlightOre",{
 Text="Highlight",
 Default=false,
 Tooltip="Highlights ore that is being mined",
 
-Callback=function(L)
-ak.setHighlight(L)
+Callback=function(I)
+ak.setHighlight(I)
 end,
 })
 
-local L=h.Main:AddLeftTabbox()
+local I=f.Main:AddLeftTabbox()
 
-local M=L:AddTab("Train")
+local J=I:AddTab("Train")
 
-M:AddToggle("AutoTrainEnabled",{
+J:AddToggle("AutoTrainEnabled",{
 Text="Cross Country",
 Default=false,
 Tooltip="Automatically completes cross country",
-Callback=function(N)
-ap.setEnabled(N)
-ap.setNoclip(N)
+Callback=function(K)
+ap.setEnabled(K)
+ap.setNoclip(K)
 end,
 })
 
-M:AddToggle("AutoSingleStakeEnabled",{
+J:AddToggle("AutoSingleStakeEnabled",{
 Text="Single Stake",
 Default=false,
 Tooltip="Automatically completes single stake",
-Callback=function(N)
-b.setEnabled(N)
-b.setNoclip(N)
+Callback=function(K)
+at.setEnabled(K)
+at.setNoclip(K)
 end,
 })
 
-local N=L:AddTab("Settings")
+local K=I:AddTab("Settings")
 
-N:AddSlider("TrainSpeed",{
+K:AddSlider("TrainSpeed",{
 Text="Speed",
 Default=42,
 Min=20,
@@ -9694,49 +9579,49 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="training speed",
-Callback=function(O)
-ap.setMoveSpeed(O)
+Callback=function(L)
+ap.setMoveSpeed(L)
 end,
 })
 
-local O=h.Main:AddRightGroupbox("Treasure")
+local L=f.Main:AddRightGroupbox("Treasure")
 
-O:AddToggle("TreasureEnabled",{
+L:AddToggle("TreasureEnabled",{
 Text="Enable",
 Default=false,
 Tooltip="Auto digs treasure",
-Callback=function(P)
-at.setEnabled(P)
-at.setNoclip(P)
+Callback=function(M)
+ar.setEnabled(M)
+ar.setNoclip(M)
 end,
 })
 
-local P=h.Main:AddRightGroupbox("Wack A Larry")
 
-P:AddToggle("TreasureEnabled",{
-Text="Enable",
-Default=false,
-Tooltip="Auto completes larry",
-Callback=function(Q)
-ar.setEnabled(Q)
-end,
-})
 
-local Q=h.Misc:AddLeftTabbox()
 
-local R=Q:AddTab("Player")
-local S=Q:AddTab("Horse")
 
-R:AddToggle("WalkspeedEnabled",{
+
+
+
+
+
+
+
+local M=f.Misc:AddLeftTabbox()
+
+local N=M:AddTab("Player")
+local O=M:AddTab("Horse")
+
+N:AddToggle("WalkspeedEnabled",{
 Text="Walkspeed",
 Default=false,
 Tooltip="Enhances characters speed",
-Callback=function(T)
-al.setEnabled(T)
+Callback=function(P)
+al.setEnabled(P)
 end,
 })
 
-R:AddSlider("WalkspeedValue",{
+N:AddSlider("WalkspeedValue",{
 Text="Walkspeed Value",
 Default=16,
 Min=16,
@@ -9745,21 +9630,21 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="walkspeed value",
-Callback=function(T)
-al.setValue(T)
+Callback=function(P)
+al.setValue(P)
 end,
 })
 
-R:AddToggle("JumpPowerEnabled",{
+N:AddToggle("JumpPowerEnabled",{
 Text="JumpPower",
 Default=false,
 Tooltip="Enhances JumpPower",
-Callback=function(T)
-al.setJumpEnabled(T)
+Callback=function(P)
+al.setJumpEnabled(P)
 end,
 })
 
-R:AddSlider("JumpPowerValue",{
+N:AddSlider("JumpPowerValue",{
 Text="JumpPower Value",
 Default=50,
 Min=0,
@@ -9768,21 +9653,21 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="jumppower value",
-Callback=function(T)
-al.setJumpValue(T)
+Callback=function(P)
+al.setJumpValue(P)
 end,
 })
 
-S:AddToggle("HWalkspeedEnabled",{
+O:AddToggle("HWalkspeedEnabled",{
 Text="Walkspeed",
 Default=false,
 Tooltip="Enhances horses speed",
-Callback=function(T)
-am.setEnabled(T)
+Callback=function(P)
+am.setEnabled(P)
 end,
 })
 
-S:AddSlider("HWalkspeedValue",{
+O:AddSlider("HWalkspeedValue",{
 Text="Walkspeed Value",
 Default=16,
 Min=16,
@@ -9791,21 +9676,21 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="walkspeed value",
-Callback=function(T)
-am.setValue(T)
+Callback=function(P)
+am.setValue(P)
 end,
 })
 
-S:AddToggle("HJumpPowerEnabled",{
+O:AddToggle("HJumpPowerEnabled",{
 Text="JumpPower",
 Default=false,
 Tooltip="Enhances horses JumpPower",
-Callback=function(T)
-am.setJumpEnabled(T)
+Callback=function(P)
+am.setJumpEnabled(P)
 end,
 })
 
-S:AddSlider("HJumpPowerValue",{
+O:AddSlider("HJumpPowerValue",{
 Text="JumpPower Value",
 Default=50,
 Min=0,
@@ -9814,41 +9699,41 @@ Rounding=0,
 Compact=true,
 HideMax=true,
 Tooltip="jumppower value",
-Callback=function(T)
-am.setJumpValue(T)
+Callback=function(P)
+am.setJumpValue(P)
 end,
 })
 
-local T=h.Misc:AddRightGroupbox("Performance")
+local P=f.Misc:AddRightGroupbox("Performance")
 
-local U=Instance.new("ScreenGui")
-U.Name="BackgroundCover"
-U.DisplayOrder=-1
-U.IgnoreGuiInset=true
-U.Parent=game:GetService("CoreGui")
+local Q=Instance.new("ScreenGui")
+Q.Name="BackgroundCover"
+Q.DisplayOrder=-1
+Q.IgnoreGuiInset=true
+Q.Parent=game:GetService("CoreGui")
 
-local V=Instance.new("Frame",U)
-V.Size=UDim2.new(1,0,1,0)
-V.BackgroundColor3=Color3.fromRGB(0,0,0)
-V.ZIndex=1
-V.BorderSizePixel=0
-V.Visible=false
+local R=Instance.new("Frame",Q)
+R.Size=UDim2.new(1,0,1,0)
+R.BackgroundColor3=Color3.fromRGB(0,0,0)
+R.ZIndex=1
+R.BorderSizePixel=0
+R.Visible=false
 
-local W=Instance.new("TextLabel",V)
-W.Size=UDim2.new(1,0,1,0)
-W.Position=UDim2.new(0,0,0,0)
-W.BackgroundTransparency=1
-W.TextColor3=Color3.fromRGB(255,255,255)
-W.Font=Enum.Font.SourceSansBold
-W.TextSize=18
-W.ZIndex=2
-W.TextXAlignment=Enum.TextXAlignment.Center
-W.TextYAlignment=Enum.TextYAlignment.Center
-W.TextWrapped=true
-W.Text=""
+local S=Instance.new("TextLabel",R)
+S.Size=UDim2.new(1,0,1,0)
+S.Position=UDim2.new(0,0,0,0)
+S.BackgroundTransparency=1
+S.TextColor3=Color3.fromRGB(255,255,255)
+S.Font=Enum.Font.SourceSansBold
+S.TextSize=18
+S.ZIndex=2
+S.TextXAlignment=Enum.TextXAlignment.Center
+S.TextYAlignment=Enum.TextYAlignment.Center
+S.TextWrapped=true
+S.Text=""
 
 
-local X={
+local T={
 mismatchHairColour="Mismatch Hair",
 summer2026="Summer 2026",
 naturallyDyedHairColour="Nat. Dyed",
@@ -9863,7 +9748,7 @@ rareCoat="Rare Coat",
 }
 
 
-local Y={
+local U={
 "horned",
 "mismatchHairColour",
 "naturallyDyedHairColour",
@@ -9878,21 +9763,21 @@ local Y={
 }
 
 
-local Z={}
-for _,av in ipairs(Y)do
-Z[av]=true
+local V={}
+for W,X in ipairs(U)do
+V[X]=true
 end
 
 
-local av={}
-for _,aw in ipairs(Y)do
-table.insert(av,X[aw])
+local W={}
+for X,Y in ipairs(U)do
+table.insert(W,T[Y])
 end
 
 
-local aw={}
-for _,ax in pairs(X)do
-aw[ax]=_
+local X={}
+for Y,Z in pairs(T)do
+X[Z]=Y
 end
 
 
@@ -9902,40 +9787,40 @@ task.spawn(function()
 while true do
 task.wait(1)
 
-if not V.Visible then continue end
+if not R.Visible then continue end
 if not ai then continue end
 
-local ax,_=pcall(function()return ai.getStats()end)
-if not ax or not _ then continue end
+local Y,Z=pcall(function()return ai.getStats()end)
+if not Y or not Z then continue end
 
-local ay={}
-table.insert(ay,string.format("Sold: %d   Locked: %d   Coins: %d",
-_.sold,_.locked,_.coins))
-table.insert(ay,"")
+local _={}
+table.insert(_,string.format("Sold: %d   Locked: %d   Coins: %d",
+Z.sold,Z.locked,Z.coins))
+table.insert(_,"")
 
-for az,aA in ipairs(Y)do
-if Z[aA]then
-local aB=_.lockedByReason and _.lockedByReason[aA]or 0
-table.insert(ay,string.format("%s: %d",X[aA],aB))
+for av,aw in ipairs(U)do
+if V[aw]then
+local ax=Z.lockedByReason and Z.lockedByReason[aw]or 0
+table.insert(_,string.format("%s: %d",T[aw],ax))
 end
 end
 
-W.Text=table.concat(ay,"\n")
+S.Text=table.concat(_,"\n")
 end
 end)
-local ax={}
+local av={}
 
-T:AddToggle('MuteAmbientMusic',{
+P:AddToggle('MuteAmbientMusic',{
 Text='Ambient Music',
 Default=false,
 Tooltip='Turns on or off ambient music or sounds',
-Callback=function(ay)
-local az=game:GetService("SoundService")
-local aA=az:GetDescendants()
+Callback=function(aw)
+local ax=game:GetService("SoundService")
+local Y=ax:GetDescendants()
 
-for aB,_ in ipairs(aA)do
+for Z,_ in ipairs(Y)do
 if _:IsA("Sound")then
-if ay then
+if aw then
 
 _.Playing=false
 else
@@ -9947,35 +9832,35 @@ end
 end
 })
 
-T:AddToggle('NoGraphics',{
+P:AddToggle('NoGraphics',{
 Text='No Graphics',
 Default=false,
 Tooltip='Disables 3D rendering with a black background',
-Callback=function(ay)
+Callback=function(aw)
 do
-game:GetService("RunService"):Set3dRenderingEnabled(not ay)
-V.Visible=ay
+game:GetService("RunService"):Set3dRenderingEnabled(not aw)
+R.Visible=aw
 end
 end
 })
 
-T:AddDropdown("OverlayStatsDisplay",{
+P:AddDropdown("OverlayStatsDisplay",{
 Text="Overlay Stats",
-Values=av,
-Default=av,
+Values=W,
+Default=W,
 Multi=true,
 Tooltip="Choose which lock types to show on the black screen overlay",
 
-Callback=function(ay)
+Callback=function(aw)
 
-for az in pairs(Z)do
-Z[az]=false
+for ax in pairs(V)do
+V[ax]=false
 end
 
-for az,aA in pairs(ay)do
-if aA then
-local aB=aw[az]
-if aB then Z[aB]=true end
+for ax,Y in pairs(aw)do
+if Y then
+local Z=X[ax]
+if Z then V[Z]=true end
 end
 end
 end,
@@ -9984,18 +9869,18 @@ Disabled=false,
 Visible=true,
 })
 
-local ay=false
-local az=60
+local aw=false
+local ax=60
 
-T:AddToggle('SetFPS',{
+P:AddToggle('SetFPS',{
 Text='FPS Cap',
 Default=false,
 Tooltip='Caps the game FPS at the slider value',
-Callback=function(aA)
+Callback=function(Y)
 do
-ay=aA
-if ay then
-setfpscap(az)
+aw=Y
+if aw then
+setfpscap(ax)
 else
 setfpscap(0)
 end
@@ -10003,52 +9888,52 @@ end
 end
 })
 
-T:AddSlider('FPSCap',{
+P:AddSlider('FPSCap',{
 Text='FPS Cap Value',
 Default=60,
 Min=1,
 Max=240,
 Rounding=1,
 Compact=false,
-Callback=function(aA)
+Callback=function(Y)
 do
-az=aA
-if ay then
-setfpscap(aA)
+ax=Y
+if aw then
+setfpscap(Y)
 end
 end
 end
 })
 
-local aA=h.Misc:AddLeftGroupbox("Redeem")
+local Y=f.Misc:AddLeftGroupbox("Redeem")
 
 
 
 
-aA:AddButton("Redeem Codes",function()
+Y:AddButton("Redeem Codes",function()
 task.spawn(function()
-local aB=game:GetService("ReplicatedStorage")
-local _=require(aB:WaitForChild("References"))
-local aC=_.Flags
-local aD=require(_.PlayerScripts.Priority:WaitForChild("Data"))
-local aE=_.Utilities.Network
+local Z=game:GetService("ReplicatedStorage")
+local _=require(Z:WaitForChild("References"))
+local ay=_.Flags
+local az=require(_.PlayerScripts.Priority:WaitForChild("Data"))
+local aA=_.Utilities.Network
 
-local aF=aC.flags and aC.flags.codes or{}
-local aG,aH=0,0
+local aB=ay.flags and ay.flags.codes or{}
+local aC,aD=0,0
 
-for aI,aJ in pairs(aF)do
-if aD.GetLocal({"codesRedeemed",aI})==true then
-aH+=1
+for aE,aF in pairs(aB)do
+if az.GetLocal({"codesRedeemed",aE})==true then
+aD+=1
 else
-aE:FireServer("Codes","Submit",aI)
-ab:Notify("Submitted: "..aI,5)
-print("[Codes] Submitted: "..aI)
-aG+=1
+aA:FireServer("Codes","Submit",aE)
+ab:Notify("Submitted: "..aE,5)
+print("[Codes] Submitted: "..aE)
+aC+=1
 task.wait(1.5)
 end
 end
 
-print(string.format("[Codes] Done — submitted: %d, already redeemed: %d",aG,aH))
+print(string.format("[Codes] Done — submitted: %d, already redeemed: %d",aC,aD))
 end)
 end)
 
@@ -10059,45 +9944,41 @@ end)
 
 
 
-local function aB(aC,aD,aE)
+local function ay(az,aA,aB)
 task.spawn(function()
-local aF=game:GetService("ReplicatedStorage")
-local aG=require(aF:WaitForChild("References"))
-local aH=aG.Utilities.Network
+local aC=game:GetService("ReplicatedStorage")
+local aD=require(aC:WaitForChild("References"))
+local aE=aD.Utilities.Network
 
-print(string.format("[Trade] Firing %s x%d...",aD,aE))
-for aI=1,aE do
-local aJ,_=pcall(function()
-return aH:InvokeServer("TradeIn","Trade",aC)
+print(string.format("[Trade] Firing %s x%d...",aA,aB))
+for aF=1,aB do
+local Z,_=pcall(function()
+return aE:InvokeServer("TradeIn","Trade",az)
 end)
-if aJ and _ then
-print(string.format("[Trade] %s %d/%d — got item",aD,aI,aE))
+if Z and _ then
+print(string.format("[Trade] %s %d/%d — got item",aA,aF,aB))
 else
-warn(string.format("[Trade] %s %d/%d failed: %s",aD,aI,aE,tostring(_)))
+warn(string.format("[Trade] %s %d/%d failed: %s",aA,aF,aB,tostring(_)))
 end
-if aI<aE then task.wait(0.8)end
+if aF<aB then task.wait(0.8)end
 end
-print("[Trade] "..aD.." done.")
+print("[Trade] "..aA.." done.")
 end)
 end
 
 
 
 
-aA:AddButton("Golden Apples (20)",function()
-aB("goldenAppleBasket","Golden Apples",1)
+Y:AddButton("Golden Apples (20)",function()
+ay("goldenAppleBasket","Golden Apples",1)
 end)
 
-aA:AddButton("Volcanic Minerals (5)",function()
-aB("volcanicMinerals","Volcanic Minerals",1)
+Y:AddButton("Volcanic Minerals (5)",function()
+ay("volcanicMinerals","Volcanic Minerals",1)
 end)
 
-aA:AddButton("Training Receipts (100)",function()
-aB("trainingReceipts","Training Receipts",1)
-end)
-
-aA:AddButton("Carnival Tickets (2k)",function()
-aB("summerCarnival","Carnival Tickets",1)
+Y:AddButton("Training Receipts (100)",function()
+ay("trainingReceipts","Training Receipts",1)
 end)
 
 
@@ -10107,16 +9988,21 @@ end)
 
 
 
-local aC=h.Misc:AddRightGroupbox("Teleport")
 
 
 
 
-local aD=game:GetService("ReplicatedStorage")
-local aE=require(aD:WaitForChild("References"))
-local aF=require(aE.PlayerScripts:WaitForChild("Secondary"):WaitForChild("TravelHandler"))
 
-local aG={
+local az=f.Misc:AddRightGroupbox("Teleport")
+
+
+
+
+local aA=game:GetService("ReplicatedStorage")
+local aB=require(aA:WaitForChild("References"))
+local aC=require(aB.PlayerScripts:WaitForChild("Secondary"):WaitForChild("TravelHandler"))
+
+local aD={
 
 "Mainland",
 "Blizzard Island",
@@ -10133,7 +10019,7 @@ local aG={
 "Rescue Island",
 }
 
-local aH={
+local aE={
 ["Mainland"]=8,
 ["Blizzard Island"]=1,
 ["Forest Island"]=1,
@@ -10155,29 +10041,29 @@ local aH={
 ["Wild Island"]=1,
 }
 
-local function aI(aJ)
-if not aJ then return end
-local _=aH[aJ]or 1
+local function aF(Z)
+if not Z then return end
+local _=aE[Z]or 1
 pcall(function()
-aF.Travel(aJ,_)
+aC.Travel(Z,_)
 end)
 end
 
-aC:AddDropdown("IslandTravel",{
+az:AddDropdown("IslandTravel",{
 Text="Travel to Island",
-Values=aG,
+Values=aD,
 Default=1,
 Multi=false,
 Tooltip="Select an island to travel to",
-Callback=function(aJ)
-selected_island=aJ
+Callback=function(Z)
+selected_island=Z
 end,
 Disabled=false,
 Visible=true,
 })
 
-aC:AddButton("Travel",function()
-aI(selected_island)
+az:AddButton("Travel",function()
+aF(selected_island)
 end)
 
 
@@ -10185,48 +10071,48 @@ end)
 ab:SetWatermarkVisibility(true)
 
 
-local aJ=tick()
+local Z=tick()
 local _=0;
-local aK=60;
-local aL=(function()return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())end)
-local aM=pcall(function()return aL()end)
+local aG=60;
+local aH=(function()return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())end)
+local aI=pcall(function()return aH()end)
 
-local aN=game:GetService("RunService").RenderStepped:Connect(function()
+local aJ=game:GetService("RunService").RenderStepped:Connect(function()
 _+=1;
 
-if(tick()-aJ)>=1 then
-aK=_;
-aJ=tick();
+if(tick()-Z)>=1 then
+aG=_;
+Z=tick();
 _=0;
 end;
 
-if aM then
+if aI then
 ab:SetWatermark(("coconut - [buyer build] | %d fps | %d ms"):format(
-math.floor(aK),
-aL()
+math.floor(aG),
+aH()
 ));
 else
 ab:SetWatermark(("coconut - [buyer build] | %d fps"):format(
-math.floor(aK)
+math.floor(aG)
 ));
 end
 end);
 
 ab:OnUnload(function()
-aN:Disconnect()
+aJ:Disconnect()
 ab.Unloaded=true
 end)
 
 
-local aO=h["UI Settings"]:AddLeftGroupbox("Menu")
+local aK=f["UI Settings"]:AddLeftGroupbox("Menu")
 
-aO:AddToggle("KeybindMenuOpen",{Default=ab.KeybindFrame.Visible,Text="Open Keybind Menu",Callback=function(aP)ab.KeybindFrame.Visible=aP end})
-aO:AddToggle("BlurEnabled",{Default=true,Text="Blur",Callback=function(aP)ab.BlurEffect.Enabled=aP end})
-aO:AddDivider()
-aO:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind",{Default="RightShift",NoUI=true,Text="Menu keybind"})
-aO:AddButton("Unload",function()ab:Unload()end)
+aK:AddToggle("KeybindMenuOpen",{Default=ab.KeybindFrame.Visible,Text="Open Keybind Menu",Callback=function(aL)ab.KeybindFrame.Visible=aL end})
+aK:AddToggle("BlurEnabled",{Default=true,Text="Blur",Callback=function(aL)ab.BlurEffect.Enabled=aL end})
+aK:AddDivider()
+aK:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind",{Default="RightShift",NoUI=true,Text="Menu keybind"})
+aK:AddButton("Unload",function()ab:Unload()end)
 
-ab.ToggleKeybind=c.MenuKeybind
+ab.ToggleKeybind=au.MenuKeybind
 
 
 
@@ -10255,11 +10141,11 @@ ad:SetFolder("coconut/whi")
 
 
 
-ad:BuildConfigSection(h["UI Settings"])
+ad:BuildConfigSection(f["UI Settings"])
 
 
 
-ac:ApplyToTab(h["UI Settings"])
+ac:ApplyToTab(f["UI Settings"])
 
 
 
